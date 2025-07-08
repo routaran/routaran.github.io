@@ -44,7 +44,7 @@ No player needs a GitHub account; the only requirement is an e‑mail address ca
 | **FR‑18** | On the first successful login, a player shall **claim** their name, binding it to their Supabase `auth.uid()`. Subsequent claim attempts are rejected. | Must |
 | **FR‑19** | The system shall use **Supabase Realtime** to push score and schedule updates so that all connected clients reflect changes within one second. | Must |
 | **FR‑20** | The system shall prevent conflicting score updates using optimistic locking with a version field, displaying a clear error message if a match was updated by another user since the current user's last data refresh. | Must |
-| **FR‑21** | The system shall allow the Organizer and Project Owner to modify the player list (add/remove players) only before the first match score is recorded for that Play Date. | Must |
+| **FR‑21** | The system shall pre-generate all possible partnerships for enhanced reporting and maintain a materialized view of match results for performance optimization. | Must |
 | **FR‑22** | For tournaments with odd numbers of players, the system shall ensure all partnerships play the same number of matches by rotating bye rounds fairly across all partnerships. | Must |
 
 ## 4  Non‑Functional Requirements
@@ -52,7 +52,7 @@ No player needs a GitHub account; the only requirement is an e‑mail address ca
 | ID | Requirement | Category |
 |----|-------------|----------|
 | **NFR‑01** | Front‑end is static and served from GitHub Pages; remote calls are limited to Supabase Auth, Realtime and Postgres REST endpoints. | Architecture |
-| **NFR‑02** | All user inputs are sanitized; Content‑Security‑Policy blocks inline scripts; database RLS rules ensure only authorized users mutate data. | Security |
+| **NFR‑02** | All user inputs are sanitized; Content‑Security‑Policy blocks inline scripts; database RLS rules enforce permissions: Project Owner (full access), Organizer (manage their Play Dates), Player (update own matches), Visitor (read-only). | Security |
 | **NFR‑03** | Initial page load ≤ 2 s on a 3 G connection and works on last‑two‑years evergreen browsers. | Performance |
 | **NFR‑04** | UI meets WCAG 2.1 AA and is responsive from 320 px mobile to 1440 px desktop. | Usability |
 | **NFR‑05** | Codebase follows ESLint Recommended + Security; every exported function is documented with JSDoc/TSDoc. | Maintainability |
