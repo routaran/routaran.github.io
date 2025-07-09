@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Trophy, Edit2, Check, X, Clock } from 'lucide-react';
-import { Card, Button, Input, Badge } from '../common';
+import { Trophy, Edit2, Check, X, Clock, History, Zap } from 'lucide-react';
+import { Card, Button, Input, Badge, useModal } from '../common';
 import { cn } from '../../lib/utils';
 import { useAuthStore } from '../../stores/authStore';
 import { db } from '../../lib/supabase';
 import { useToast } from '../../hooks/useToast';
+import { ScoreEntryModal, QuickScoreEntry, ScoreHistoryInline } from '../score';
 import type { Match } from '../../lib/algorithms/scheduling';
 
 interface MatchCardProps {
@@ -14,15 +15,23 @@ interface MatchCardProps {
     version?: number;
   };
   playDateId: string;
+  winCondition: 'first-to-target' | 'win-by-2';
+  targetScore: number;
   isCurrentRound: boolean;
   courtName?: string;
+  showQuickEntry?: boolean;
+  showHistory?: boolean;
 }
 
 export function MatchCard({
   match,
   playDateId,
+  winCondition,
+  targetScore,
   isCurrentRound,
-  courtName
+  courtName,
+  showQuickEntry = false,
+  showHistory = true
 }: MatchCardProps) {
   const { player, canUpdateScore } = useAuthStore();
   const { showToast } = useToast();
@@ -30,6 +39,10 @@ export function MatchCard({
   const [team1Score, setTeam1Score] = useState(match.team1_score || 0);
   const [team2Score, setTeam2Score] = useState(match.team2_score || 0);
   const [isSaving, setIsSaving] = useState(false);
+  const [showScoreHistory, setShowScoreHistory] = useState(false);
+  
+  // Modal state for enhanced score entry
+  const scoreModal = useModal();
 
   const hasScore = match.team1_score !== null && match.team2_score !== null;
   const isPlayerInMatch = player && (
@@ -65,6 +78,15 @@ export function MatchCard({
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleScoreUpdated = (updatedMatch: Match) => {
+    // Update local state to reflect the changes
+    setTeam1Score(updatedMatch.team1_score || 0);
+    setTeam2Score(updatedMatch.team2_score || 0);
+    
+    // Refresh the match data - would typically come from parent component
+    // For now, we'll just trust the updated match data
   };
 
   const handleCancel = () => {
@@ -112,14 +134,39 @@ export function MatchCard({
           </div>
           
           {canEdit && !isEditing && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsEditing(true)}
-              className="h-8 px-2"
-            >
-              <Edit2 className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              {showHistory && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowScoreHistory(!showScoreHistory)}
+                  className="h-8 px-2"
+                  title="View score history"
+                >
+                  <History className="h-4 w-4" />
+                </Button>
+              )}
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+                className="h-8 px-2"
+                title="Quick edit"
+              >
+                <Edit2 className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={scoreModal.openModal}
+                className="h-8 px-2"
+                title="Advanced score entry"
+              >
+                <Zap className="h-4 w-4" />
+              </Button>
+            </div>
           )}
         </div>
 
@@ -223,7 +270,42 @@ export function MatchCard({
             </Button>
           </div>
         )}
+
+        {/* Quick Score Entry */}
+        {showQuickEntry && canEdit && !isEditing && (
+          <div className="pt-3 border-t">
+            <QuickScoreEntry
+              match={match}
+              playDateId={playDateId}
+              winCondition={winCondition}
+              targetScore={targetScore}
+              onScoreUpdated={handleScoreUpdated}
+              size="sm"
+            />
+          </div>
+        )}
+
+        {/* Score History */}
+        {showScoreHistory && showHistory && (
+          <div className="pt-3 border-t">
+            <ScoreHistoryInline
+              matchId={match.id}
+              maxEntries={3}
+            />
+          </div>
+        )}
       </div>
+
+      {/* Enhanced Score Entry Modal */}
+      <ScoreEntryModal
+        isOpen={scoreModal.isOpen}
+        onClose={scoreModal.closeModal}
+        match={match}
+        playDateId={playDateId}
+        winCondition={winCondition}
+        targetScore={targetScore}
+        onScoreUpdated={handleScoreUpdated}
+      />
     </Card>
   );
 }
