@@ -18,17 +18,18 @@ This comprehensive checklist covers all phases of the Pickleball Tracker develop
 - [x] Create color scheme and typography decisions
 
 ### 1.2 Database Schema Design (Priority: Critical)
-- [ ] Design complete database schema:
-  - [ ] `play_dates` table structure
-  - [ ] `players` table with email and project_owner flag
-  - [ ] `player_claims` for auth.uid mapping
-  - [ ] `partnerships` for pre-generated doubles pairings
-  - [ ] `matches` with version field for optimistic locking
-  - [ ] `match_results` materialized view specification
-  - [ ] `audit_log` for score edit history
-- [ ] Define all foreign key relationships
-- [ ] Plan indexes for query performance
-- [ ] Document migration strategy
+- [x] Design complete database schema:
+  - [x] `play_dates` table structure
+  - [x] `players` table with email and project_owner flag
+  - [x] `player_claims` for auth.uid mapping
+  - [x] `partnerships` for pre-generated doubles pairings
+  - [x] `matches` with version field for optimistic locking
+  - [x] `match_results` materialized view specification
+  - [x] `audit_log` for score edit history
+  - [x] `courts` table for custom court naming
+- [x] Define all foreign key relationships
+- [x] Plan indexes for query performance
+- [x] Document migration strategy
 
 ### 1.3 Security & Permissions (Priority: Critical)
 - [ ] Design Supabase RLS policies:
