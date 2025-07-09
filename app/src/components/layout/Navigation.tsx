@@ -1,13 +1,16 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useAuthStore } from '../../stores/authStore';
-import { ROUTES } from '../../router';
+import { useAuth } from '../../hooks/useAuth';
+import { useIsRealtimeConnected } from '../../contexts/RealtimeContext';
 import { cn } from '../../lib/utils';
 import { FocusTrap, useFocusManagement } from '../common/Accessibility';
+import { User, Shield, Crown, LogOut, Menu, X, Wifi, WifiOff } from 'lucide-react';
 
 export function Navigation() {
   const location = useLocation();
-  const { user, role, isAuthenticated, isLoading } = useAuthStore();
+  const navigate = useNavigate();
+  const { user, player, isAuthenticated, isInitialized, signOut } = useAuth();
+  const isRealtimeConnected = useIsRealtimeConnected();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { saveFocus, restoreFocus } = useFocusManagement();
 
@@ -38,38 +41,51 @@ export function Navigation() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Sign out failed:', error);
+    }
+  };
+
+  // Determine user role
+  const userRole = player?.project_owner ? 'project_owner' : 'player';
+
   const navItems = [
     {
-      href: ROUTES.DASHBOARD,
+      href: '/dashboard',
       label: 'Dashboard',
-      requiresAuth: true,
+      requiresAuth: false,
     },
     {
-      href: ROUTES.PLAY_DATES.CREATE,
-      label: 'Create Tournament',
-      requiresAuth: true,
-      roles: ['project_owner', 'organizer'],
+      href: '/play-dates',
+      label: 'Play Dates',
+      requiresAuth: false,
     },
     {
-      href: ROUTES.PROFILE,
+      href: '/profile',
       label: 'Profile',
       requiresAuth: true,
     },
-    {
-      href: ROUTES.ADMIN.AUDIT_LOG,
-      label: 'Audit Log',
-      requiresAuth: true,
-      roles: ['project_owner'],
-    },
   ];
 
+  // Add admin items for project owners
+  if (player?.project_owner) {
+    navItems.push({
+      href: '/admin',
+      label: 'Admin',
+      requiresAuth: true,
+    });
+  }
+
   const visibleNavItems = navItems.filter((item) => {
-    if (item.requiresAuth && !isAuthenticated()) return false;
-    if (item.roles && !item.roles.includes(role)) return false;
+    if (item.requiresAuth && !isAuthenticated) return false;
     return true;
   });
 
-  if (isLoading) {
+  if (!isInitialized) {
     return (
       <nav className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4">
@@ -137,28 +153,46 @@ export function Navigation() {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
-            {isAuthenticated() ? (
-              <div className="flex items-center space-x-2">
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
                 <span className="text-sm text-gray-600 hidden sm:block">
-                  {user?.email}
+                  {player?.name || user?.email}
                 </span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 capitalize">
-                  {role.replace('_', ' ')}
-                </span>
+                
+                {/* Role Badge */}
+                {player && (
+                  <span className={cn(
+                    "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
+                    player.project_owner 
+                      ? "bg-purple-100 text-purple-800" 
+                      : "bg-blue-100 text-blue-800"
+                  )}>
+                    {player.project_owner ? (
+                      <>
+                        <Crown className="w-3 h-3" />
+                        Owner
+                      </>
+                    ) : (
+                      <>
+                        <User className="w-3 h-3" />
+                        Player
+                      </>
+                    )}
+                  </span>
+                )}
+                
                 <button
-                  onClick={() => {
-                    // Sign out functionality will be implemented in Phase 2
-                    console.log('Sign out clicked');
-                  }}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  onClick={handleSignOut}
+                  className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px]"
                 >
-                  Sign Out
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Sign Out</span>
                 </button>
               </div>
             ) : (
               <Link
-                to={ROUTES.LOGIN}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px] transition-colors"
+                to="/login"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-h-[44px] transition-colors"
               >
                 Sign In
               </Link>
@@ -237,25 +271,42 @@ export function Navigation() {
               ))}
               
               {/* Mobile User Menu */}
-              {isAuthenticated() && (
+              {isAuthenticated && (
                 <div className="border-t border-gray-200 pt-3 mt-3">
                   <div className="px-3 py-2">
-                    <div className="text-sm text-gray-600 mb-1">
-                      {user?.email}
+                    <div className="text-sm text-gray-600 mb-2">
+                      {player?.name || user?.email}
                     </div>
-                    <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 capitalize">
-                      {role.replace('_', ' ')}
-                    </div>
+                    {player && (
+                      <div className={cn(
+                        "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
+                        player.project_owner 
+                          ? "bg-purple-100 text-purple-800" 
+                          : "bg-blue-100 text-blue-800"
+                      )}>
+                        {player.project_owner ? (
+                          <>
+                            <Crown className="w-3 h-3" />
+                            Owner
+                          </>
+                        ) : (
+                          <>
+                            <User className="w-3 h-3" />
+                            Player
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       restoreFocus();
-                      // Sign out functionality will be implemented in Phase 2
-                      console.log('Sign out clicked');
+                      handleSignOut();
                     }}
-                    className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 min-h-[44px] flex items-center transition-colors motion-reduce:transition-none"
+                    className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 min-h-[44px] flex items-center gap-2 transition-colors motion-reduce:transition-none"
                   >
+                    <LogOut className="w-4 h-4" />
                     Sign Out
                   </button>
                 </div>
@@ -266,15 +317,29 @@ export function Navigation() {
       )}
 
       {/* Connection Status Indicator */}
-      <div className="bg-primary-50 border-t border-primary-100 px-4 py-1">
+      <div className={cn(
+        "border-t px-4 py-1 transition-colors",
+        isRealtimeConnected 
+          ? "bg-green-50 border-green-100" 
+          : "bg-yellow-50 border-yellow-100"
+      )}>
         <div className="container mx-auto">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-primary-700">Connected</span>
+              {isRealtimeConnected ? (
+                <>
+                  <Wifi className="w-3 h-3 text-green-600" />
+                  <span className="text-green-700">Real-time Connected</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="w-3 h-3 text-yellow-600" />
+                  <span className="text-yellow-700">Real-time Disconnected</span>
+                </>
+              )}
             </div>
-            <span className="text-primary-600">
-              {import.meta.env.VITE_APP_NAME} v{import.meta.env.VITE_APP_VERSION}
+            <span className="text-gray-600">
+              Pickleball Tracker
             </span>
           </div>
         </div>
