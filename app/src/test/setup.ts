@@ -66,20 +66,15 @@ Object.defineProperty(window, 'sessionStorage', {
 // Mock fetch
 global.fetch = vi.fn();
 
-// Setup fake timers
-vi.useFakeTimers();
-
 // Clean up after each test
 if (typeof beforeEach !== 'undefined') {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.clearAllTimers();
   });
 }
 
 if (typeof afterEach !== 'undefined') {
   afterEach(() => {
-    vi.runOnlyPendingTimers();
-    vi.useRealTimers();
+    vi.clearAllMocks();
   });
 }
