@@ -32,14 +32,14 @@ This comprehensive checklist covers all phases of the Pickleball Tracker develop
 - [x] Document migration strategy
 
 ### 1.3 Security & Permissions (Priority: Critical)
-- [ ] Design Supabase RLS policies:
-  - [ ] Project Owner (full admin access)
-  - [ ] Organizer (manage own Play Dates)
-  - [ ] Player (update own matches)
-  - [ ] Visitor (read-only without login)
-- [ ] Plan authentication flow with magic links
-- [ ] Design audit trail for all mutations
-- [ ] Document CSP headers for GitHub Pages
+- [x] Design Supabase RLS policies:
+  - [x] Project Owner (full admin access)
+  - [x] Organizer (manage own Play Dates)
+  - [x] Player (update own matches)
+  - [x] Visitor (read-only without login)
+- [x] Plan authentication flow with magic links
+- [x] Design audit trail for all mutations
+- [x] Document CSP headers for GitHub Pages
 
 ### 1.4 Algorithm Specification (Priority: Critical)
 - [ ] Document round-robin algorithm:
