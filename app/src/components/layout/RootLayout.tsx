@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { Navigation } from './Navigation';
 import { useAuthStore } from '../../stores/authStore';
 import { auth } from '../../lib/supabase';
+import { ToastProvider } from '../../contexts/ToastContext';
+import { SkipLink, AccessibilityChecker } from '../common/Accessibility';
 
 export function RootLayout() {
   const { setAuth, setLoading, setInitialized, isInitialized } = useAuthStore();
@@ -47,11 +49,37 @@ export function RootLayout() {
   }, [setAuth, setLoading, setInitialized, isInitialized]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <main className="container mx-auto px-4 py-6">
-        <Outlet />
-      </main>
-    </div>
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <SkipLink href="#main-content">Skip to main content</SkipLink>
+        <AccessibilityChecker />
+        
+        <header className="sticky top-0 z-50">
+          <Navigation />
+        </header>
+        
+        <main 
+          id="main-content" 
+          className="flex-1 w-full mx-auto px-4 py-6 max-w-7xl sm:px-6 lg:px-8"
+          role="main"
+          aria-label="Main content"
+        >
+          <div className="w-full">
+            <Outlet />
+          </div>
+        </main>
+        
+        <footer 
+          className="bg-white border-t border-gray-200 py-4 mt-auto"
+          role="contentinfo"
+        >
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-sm text-gray-600">
+              © {new Date().getFullYear()} Pickleball Tracker. Built with React + Supabase.
+            </p>
+          </div>
+        </footer>
+      </div>
+    </ToastProvider>
   );
 }
