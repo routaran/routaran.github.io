@@ -99,7 +99,7 @@ interface CardTitleProps {
 }
 
 export function CardTitle({ children, className, level = 3 }: CardTitleProps) {
-  const Component = `h${level}` as keyof JSX.IntrinsicElements;
+  const Component = `h${level}` as keyof React.JSX.IntrinsicElements;
   
   const levelClasses = {
     1: 'text-2xl font-bold text-gray-900',

@@ -1,6 +1,6 @@
 # Development Checklist
 
-*Last Updated: 2025-07-09 (Agent 7: Project infrastructure completed - ready for Phase 2)*
+*Last Updated: 2025-07-09 (Task 2.3 Core Infrastructure completed - logging/monitoring and enhanced layout components implemented)*
 
 This comprehensive checklist covers all phases of the Pickleball Tracker development from planning through deployment. Tasks are organized by phase with priority indicators.
 
@@ -85,12 +85,12 @@ This comprehensive checklist covers all phases of the Pickleball Tracker develop
 - [x] Verify optimistic locking works
 
 ### 2.3 Core Infrastructure (Priority: High)
-- [ ] Set up routing (React Router or similar)
-- [ ] Implement Supabase client configuration
-- [ ] Create authentication context/hooks
-- [ ] Set up error boundary components
-- [ ] Implement logging/monitoring setup
-- [ ] Create base layout components
+- [x] Set up routing (React Router or similar)
+- [x] Implement Supabase client configuration
+- [x] Create authentication context/hooks
+- [x] Set up error boundary components
+- [x] Implement logging/monitoring setup
+- [x] Create base layout components
 
 ## Phase 3: Feature Development
 

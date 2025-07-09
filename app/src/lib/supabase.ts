@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/database';
+import { logger } from './logger';
+import { monitor } from './monitoring';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -27,19 +29,64 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 // Auth helpers
 export const auth = {
   signIn: async (email: string) => {
-    const { data, error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    return { data, error };
+    return await logger.time('auth.signIn', async () => {
+      logger.info('Attempting sign in', {
+        component: 'supabase',
+        action: 'signIn',
+        metadata: { email },
+      });
+
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        logger.error('Sign in failed', {
+          component: 'supabase',
+          action: 'signIn',
+          metadata: { email, errorCode: error.message },
+        }, error);
+        monitor.recordError(error, { component: 'supabase' });
+      } else {
+        logger.info('Sign in successful', {
+          component: 'supabase',
+          action: 'signIn',
+          metadata: { email },
+        });
+      }
+
+      return { data, error };
+    }, { component: 'supabase' });
   },
 
   signOut: async () => {
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    return await logger.time('auth.signOut', async () => {
+      logger.info('Attempting sign out', {
+        component: 'supabase',
+        action: 'signOut',
+      });
+
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        logger.error('Sign out failed', {
+          component: 'supabase',
+          action: 'signOut',
+        }, error);
+        monitor.recordError(error, { component: 'supabase' });
+      } else {
+        logger.info('Sign out successful', {
+          component: 'supabase',
+          action: 'signOut',
+        });
+      }
+
+      return { error };
+    }, { component: 'supabase' });
   },
 
   getSession: async () => {
@@ -61,29 +108,76 @@ export const auth = {
 export const db = {
   // Play Dates
   getPlayDates: async () => {
-    const { data, error } = await supabase
-      .from('play_dates')
-      .select('*')
-      .order('date', { ascending: false });
-    
-    if (error) throw new Error(`Failed to fetch play dates: ${error.message}`);
-    return data;
+    return await monitor.measureApiCall('getPlayDates', async () => {
+      logger.debug('Fetching play dates', {
+        component: 'supabase',
+        action: 'getPlayDates',
+      });
+
+      const { data, error } = await supabase
+        .from('play_dates')
+        .select('*')
+        .order('date', { ascending: false });
+      
+      if (error) {
+        logger.error('Failed to fetch play dates', {
+          component: 'supabase',
+          action: 'getPlayDates',
+        }, error);
+        throw new Error(`Failed to fetch play dates: ${error.message}`);
+      }
+
+      logger.info('Successfully fetched play dates', {
+        component: 'supabase',
+        action: 'getPlayDates',
+        metadata: { count: data.length },
+      });
+
+      return data;
+    }, { component: 'supabase' });
   },
 
   getPlayDate: async (id: string) => {
-    const { data, error } = await supabase
-      .from('play_dates')
-      .select(`
-        *,
-        players (*),
-        partnerships (*),
-        matches (*)
-      `)
-      .eq('id', id)
-      .single();
-    
-    if (error) throw new Error(`Failed to fetch play date: ${error.message}`);
-    return data;
+    return await monitor.measureApiCall('getPlayDate', async () => {
+      logger.debug('Fetching play date', {
+        component: 'supabase',
+        action: 'getPlayDate',
+        playDateId: id,
+      });
+
+      const { data, error } = await supabase
+        .from('play_dates')
+        .select(`
+          *,
+          players (*),
+          partnerships (*),
+          matches (*)
+        `)
+        .eq('id', id)
+        .single();
+      
+      if (error) {
+        logger.error('Failed to fetch play date', {
+          component: 'supabase',
+          action: 'getPlayDate',
+          playDateId: id,
+        }, error);
+        throw new Error(`Failed to fetch play date: ${error.message}`);
+      }
+
+      logger.info('Successfully fetched play date', {
+        component: 'supabase',
+        action: 'getPlayDate',
+        playDateId: id,
+        metadata: { 
+          playDateName: data.name,
+          playerCount: data.players?.length || 0,
+          matchCount: data.matches?.length || 0,
+        },
+      });
+
+      return data;
+    }, { component: 'supabase', playDateId: id });
   },
 
   // Players
@@ -121,26 +215,63 @@ export const db = {
     team2Score: number, 
     currentVersion: number
   ) => {
-    const { data, error } = await supabase
-      .from('matches')
-      .update({
-        team1_score: team1Score,
-        team2_score: team2Score,
-        version: currentVersion + 1,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', matchId)
-      .eq('version', currentVersion) // Optimistic locking
-      .select()
-      .single();
-    
-    if (error) {
-      if (error.code === 'PGRST116') {
-        throw new Error('Match was updated by another user. Please refresh and try again.');
+    return await monitor.measureApiCall('updateMatchScore', async () => {
+      logger.info('Updating match score', {
+        component: 'supabase',
+        action: 'updateMatchScore',
+        matchId,
+        metadata: { 
+          team1Score, 
+          team2Score, 
+          version: currentVersion,
+        },
+      });
+
+      const { data, error } = await supabase
+        .from('matches')
+        .update({
+          team1_score: team1Score,
+          team2_score: team2Score,
+          version: currentVersion + 1,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', matchId)
+        .eq('version', currentVersion) // Optimistic locking
+        .select()
+        .single();
+      
+      if (error) {
+        logger.error('Failed to update match score', {
+          component: 'supabase',
+          action: 'updateMatchScore',
+          matchId,
+          metadata: { 
+            team1Score, 
+            team2Score, 
+            version: currentVersion,
+            errorCode: error.code,
+          },
+        }, error);
+
+        if (error.code === 'PGRST116') {
+          throw new Error('Match was updated by another user. Please refresh and try again.');
+        }
+        throw new Error(`Failed to update match score: ${error.message}`);
       }
-      throw new Error(`Failed to update match score: ${error.message}`);
-    }
-    return data;
+
+      logger.info('Successfully updated match score', {
+        component: 'supabase',
+        action: 'updateMatchScore',
+        matchId,
+        metadata: { 
+          team1Score, 
+          team2Score, 
+          newVersion: currentVersion + 1,
+        },
+      });
+
+      return data;
+    }, { component: 'supabase', matchId });
   },
 
   // Rankings
@@ -160,6 +291,32 @@ export const db = {
 // Real-time subscriptions
 export const realtime = {
   subscribeToMatches: (playDateId: string, callback: (payload: any) => void) => {
+    logger.info('Subscribing to matches', {
+      component: 'supabase',
+      action: 'subscribeToMatches',
+      playDateId,
+    });
+
+    const enhancedCallback = (payload: any) => {
+      logger.debug('Match update received', {
+        component: 'supabase',
+        action: 'matchUpdate',
+        playDateId,
+        metadata: { 
+          event: payload.eventType,
+          matchId: payload.new?.id || payload.old?.id,
+        },
+      });
+
+      // Record latency if we have timing info
+      if (payload.commit_timestamp) {
+        const latency = Date.now() - new Date(payload.commit_timestamp).getTime();
+        monitor.recordLatency(latency, { component: 'supabase', playDateId });
+      }
+
+      callback(payload);
+    };
+
     return supabase
       .channel(`matches:${playDateId}`)
       .on(
@@ -170,12 +327,38 @@ export const realtime = {
           table: 'matches',
           filter: `play_date_id=eq.${playDateId}`,
         },
-        callback
+        enhancedCallback
       )
       .subscribe();
   },
 
   subscribeToRankings: (playDateId: string, callback: (payload: any) => void) => {
+    logger.info('Subscribing to rankings', {
+      component: 'supabase',
+      action: 'subscribeToRankings',
+      playDateId,
+    });
+
+    const enhancedCallback = (payload: any) => {
+      logger.debug('Rankings update received', {
+        component: 'supabase',
+        action: 'rankingsUpdate',
+        playDateId,
+        metadata: { 
+          event: payload.eventType,
+          playerId: payload.new?.player_id || payload.old?.player_id,
+        },
+      });
+
+      // Record latency if we have timing info
+      if (payload.commit_timestamp) {
+        const latency = Date.now() - new Date(payload.commit_timestamp).getTime();
+        monitor.recordLatency(latency, { component: 'supabase', playDateId });
+      }
+
+      callback(payload);
+    };
+
     return supabase
       .channel(`rankings:${playDateId}`)
       .on(
@@ -186,12 +369,17 @@ export const realtime = {
           table: 'match_results',
           filter: `play_date_id=eq.${playDateId}`,
         },
-        callback
+        enhancedCallback
       )
       .subscribe();
   },
 
   unsubscribe: (channel: any) => {
+    logger.info('Unsubscribing from channel', {
+      component: 'supabase',
+      action: 'unsubscribe',
+      metadata: { channelTopic: channel?.topic },
+    });
     return supabase.removeChannel(channel);
   },
 };

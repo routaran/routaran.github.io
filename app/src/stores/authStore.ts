@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import type { User, Session } from '@supabase/supabase-js';
 import type { UserRole, Player } from '../types/database';
+import { logger } from '../lib/logger';
 
 interface AuthState {
   // State
@@ -43,10 +44,26 @@ export const useAuthStore = create<AuthState>()(
         ...initialState,
         
         setAuth: (user, session) => {
+          logger.info('Auth state updated', {
+            component: 'authStore',
+            action: 'setAuth',
+            userId: user?.id,
+            metadata: { hasUser: !!user, hasSession: !!session },
+          });
           set({ user, session }, false, 'setAuth');
         },
         
         setPlayer: (player) => {
+          logger.info('Player state updated', {
+            component: 'authStore',
+            action: 'setPlayer',
+            userId: get().user?.id,
+            metadata: { 
+              hasPlayer: !!player,
+              playerName: player?.name,
+              isProjectOwner: player?.project_owner,
+            },
+          });
           set({ player }, false, 'setPlayer');
           
           // Update role based on player data
@@ -57,6 +74,12 @@ export const useAuthStore = create<AuthState>()(
         },
         
         setRole: (role) => {
+          logger.info('Role updated', {
+            component: 'authStore',
+            action: 'setRole',
+            userId: get().user?.id,
+            metadata: { role },
+          });
           set({ role }, false, 'setRole');
         },
         
@@ -69,6 +92,11 @@ export const useAuthStore = create<AuthState>()(
         },
         
         reset: () => {
+          logger.info('Auth store reset', {
+            component: 'authStore',
+            action: 'reset',
+            userId: get().user?.id,
+          });
           set(initialState, false, 'reset');
         },
         
@@ -108,7 +136,15 @@ export const useAuthStore = create<AuthState>()(
           
           // Players can only update scores for matches they're in
           if (role === 'player' && player && matchPlayerId) {
-            return player.id === matchPlayerId;
+            const canUpdate = player.id === matchPlayerId;
+            logger.debug('Score update permission check', {
+              component: 'authStore',
+              action: 'canUpdateScore',
+              userId: get().user?.id,
+              matchId: matchPlayerId,
+              metadata: { role, canUpdate },
+            });
+            return canUpdate;
           }
           
           return false;

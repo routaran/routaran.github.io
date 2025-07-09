@@ -1,5 +1,7 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import { logger } from '../../lib/logger';
+import { monitor } from '../../lib/monitoring';
 
 interface Props {
   children?: ReactNode;
@@ -9,6 +11,7 @@ interface State {
   hasError: boolean;
   error?: Error;
   errorInfo?: ErrorInfo;
+  errorId?: string;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -17,11 +20,37 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    // Generate a unique error ID for tracking
+    const errorId = `error-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    return { hasError: true, error, errorId };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
+    
+    // Log the error with our logging system
+    logger.error('React Error Boundary caught an error', {
+      component: 'ErrorBoundary',
+      action: 'componentDidCatch',
+      metadata: {
+        errorId: this.state.errorId,
+        errorName: error.name,
+        errorMessage: error.message,
+        componentStack: errorInfo.componentStack,
+        errorBoundary: true,
+      },
+    }, error);
+
+    // Record error in monitoring system
+    monitor.recordError(error, {
+      component: 'ErrorBoundary',
+      metadata: {
+        errorId: this.state.errorId,
+        componentStack: errorInfo.componentStack,
+        errorBoundary: true,
+      },
+    });
+
     this.setState({ error, errorInfo });
   }
 
@@ -53,6 +82,11 @@ export class ErrorBoundary extends Component<Props, State> {
               <p className="mt-2 text-sm text-gray-600">
                 We're sorry, but something unexpected happened. Please try refreshing the page.
               </p>
+              {this.state.errorId && (
+                <p className="mt-1 text-xs text-gray-500">
+                  Error ID: {this.state.errorId}
+                </p>
+              )}
             </div>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
@@ -69,13 +103,27 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <div className="mt-6 flex space-x-3">
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  logger.info('User clicked refresh after error', {
+                    component: 'ErrorBoundary',
+                    action: 'refresh',
+                    metadata: { errorId: this.state.errorId },
+                  });
+                  window.location.reload();
+                }}
                 className="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-md text-sm font-medium transition-colors"
               >
                 Refresh Page
               </button>
               <button
-                onClick={() => (window.location.href = '/')}
+                onClick={() => {
+                  logger.info('User clicked go home after error', {
+                    component: 'ErrorBoundary',
+                    action: 'goHome',
+                    metadata: { errorId: this.state.errorId },
+                  });
+                  window.location.href = '/';
+                }}
                 className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md text-sm font-medium transition-colors"
               >
                 Go Home
