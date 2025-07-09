@@ -1,6 +1,6 @@
 # Development Checklist
 
-*Last Updated: 2025-07-09 (Agent 5: All wireframes completed including Visitor role)*
+*Last Updated: 2025-07-09 (Agent 6: Algorithm specification completed with all core algorithms)*
 
 This comprehensive checklist covers all phases of the Pickleball Tracker development from planning through deployment. Tasks are organized by phase with priority indicators.
 
@@ -42,13 +42,17 @@ This comprehensive checklist covers all phases of the Pickleball Tracker develop
 - [x] Document CSP headers for GitHub Pages
 
 ### 1.4 Algorithm Specification (Priority: Critical)
-- [ ] Document round-robin algorithm:
-  - [ ] Partnership generation (C(n,2) combinations)
-  - [ ] Match scheduling to minimize wait times
-  - [ ] Bye round rotation for odd players
-  - [ ] Court assignment optimization (max 4)
-- [ ] Create worked examples (8, 12, 15 players)
-- [ ] Define edge case handling
+- [x] Document round-robin algorithm:
+  - [x] Partnership generation (C(n,2) combinations)
+  - [x] Match scheduling to minimize wait times
+  - [x] Bye round rotation for odd players
+  - [x] Court assignment optimization (max 4)
+- [x] Create worked examples (8, 12, 15 players)
+- [x] Define edge case handling
+- [x] Document score entry and validation algorithms
+- [x] Document audit logging system
+- [x] Document ranking calculation algorithms
+- [x] Document optimistic locking implementation
 
 ### 1.5 Project Infrastructure (Priority: High)
 - [ ] Set up GitHub repository
