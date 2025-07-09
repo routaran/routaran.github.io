@@ -40,12 +40,26 @@ export interface UsePlayerPresenceReturn {
 /**
  * Hook for tracking player presence and online status in real-time.
  * Uses Supabase Realtime presence feature to track who's online and playing.
+ * 
+ * @example
+ * ```tsx
+ * const { playerPresence, updatePlayingStatus } = usePlayerPresence({
+ *   playDateId: 'play-date-123',
+ *   enabled: true,
+ * });
+ * 
+ * // Update playing status when entering a match
+ * updatePlayingStatus('match-456');
+ * 
+ * // Check if a player is online
+ * const isOnline = playerPresence['player-123']?.is_online;
+ * ```
  */
 export function usePlayerPresence({
   playDateId,
   enabled = true,
-  heartbeatInterval = 30000,
-  offlineTimeout = 60000,
+  heartbeatInterval = 30000, // 30 seconds
+  offlineTimeout = 60000, // 1 minute
 }: UsePlayerPresenceOptions): UsePlayerPresenceReturn {
   const { user, currentPlayerId } = useAuth();
   const [playerPresence, setPlayerPresence] = useState<Record<string, PlayerPresenceInfo>>({});
@@ -56,6 +70,9 @@ export function usePlayerPresence({
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentMatchIdRef = useRef<string | undefined>(undefined);
 
+  /**
+   * Update playing status for current player
+   */
   const updatePlayingStatus = useCallback((matchId?: string) => {
     if (!currentPlayerId || !channelRef.current) return;
 
@@ -78,6 +95,9 @@ export function usePlayerPresence({
     });
   }, [currentPlayerId, user?.email, playDateId]);
 
+  /**
+   * Start heartbeat to maintain presence
+   */
   const startHeartbeat = useCallback(() => {
     if (heartbeatIntervalRef.current) {
       clearInterval(heartbeatIntervalRef.current);
@@ -104,6 +124,9 @@ export function usePlayerPresence({
     }, heartbeatInterval);
   }, [currentPlayerId, user?.email, playDateId, heartbeatInterval]);
 
+  /**
+   * Stop heartbeat
+   */
   const stopHeartbeat = useCallback(() => {
     if (heartbeatIntervalRef.current) {
       clearInterval(heartbeatIntervalRef.current);
@@ -111,11 +134,15 @@ export function usePlayerPresence({
     }
   }, []);
 
+  /**
+   * Process presence state changes
+   */
   const processPresenceState = useCallback((presenceState: Record<string, any[]>) => {
     const newPresence: Record<string, PlayerPresenceInfo> = {};
     const now = new Date().getTime();
 
     Object.entries(presenceState).forEach(([key, presences]) => {
+      // Use the most recent presence for each player
       const mostRecent = presences.sort((a, b) => 
         new Date(b.last_seen).getTime() - new Date(a.last_seen).getTime()
       )[0];
@@ -136,14 +163,32 @@ export function usePlayerPresence({
     });
 
     setPlayerPresence(newPresence);
+    
+    // Log presence changes
+    logger.debug('Presence state updated', {
+      component: 'usePlayerPresence',
+      action: 'presenceUpdate',
+      metadata: {
+        playDateId,
+        onlineCount: Object.values(newPresence).filter(p => p.is_online).length,
+        playingCount: Object.values(newPresence).filter(p => p.is_playing).length,
+      },
+    });
   }, [playDateId, offlineTimeout]);
 
+  /**
+   * Refresh presence data manually
+   */
   const refreshPresence = useCallback(() => {
     if (!channelRef.current) return;
+
     const currentState = channelRef.current.presenceState();
     processPresenceState(currentState);
   }, [processPresenceState]);
 
+  /**
+   * Set up presence channel
+   */
   useEffect(() => {
     if (!enabled || !playDateId || !user) {
       setIsActive(false);
@@ -155,26 +200,55 @@ export function usePlayerPresence({
     const channel = supabase.channel(channelName);
     channelRef.current = channel;
 
+    logger.info('Setting up player presence', {
+      component: 'usePlayerPresence',
+      action: 'setup',
+      metadata: { playDateId, channelName },
+    });
+
+    // Handle presence sync
     channel.on('presence', { event: 'sync' }, () => {
+      logger.debug('Presence sync received', {
+        component: 'usePlayerPresence',
+        action: 'sync',
+        metadata: { playDateId },
+      });
+
       const presenceState = channel.presenceState();
       processPresenceState(presenceState);
     });
 
+    // Handle joins
     channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
+      logger.debug('Player joined', {
+        component: 'usePlayerPresence',
+        action: 'join',
+        metadata: { playDateId, key, count: newPresences.length },
+      });
+
       const presenceState = channel.presenceState();
       processPresenceState(presenceState);
     });
 
+    // Handle leaves
     channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+      logger.debug('Player left', {
+        component: 'usePlayerPresence',
+        action: 'leave',
+        metadata: { playDateId, key, count: leftPresences.length },
+      });
+
       const presenceState = channel.presenceState();
       processPresenceState(presenceState);
     });
 
+    // Subscribe to channel
     channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
         setConnectionState('connected');
         setIsActive(true);
         
+        // Initial presence track
         if (currentPlayerId) {
           const presenceData = {
             player_id: currentPlayerId,
@@ -187,18 +261,43 @@ export function usePlayerPresence({
           await channel.track(presenceData);
           startHeartbeat();
         }
+
+        logger.info('Player presence active', {
+          component: 'usePlayerPresence',
+          action: 'active',
+          metadata: { playDateId },
+        });
       } else if (status === 'CHANNEL_ERROR') {
         setConnectionState('error');
         setIsActive(false);
         stopHeartbeat();
+        
+        logger.error('Player presence error', {
+          component: 'usePlayerPresence',
+          action: 'error',
+          metadata: { playDateId },
+        });
       } else if (status === 'CLOSED') {
         setConnectionState('disconnected');
         setIsActive(false);
         stopHeartbeat();
+        
+        logger.info('Player presence disconnected', {
+          component: 'usePlayerPresence',
+          action: 'disconnected',
+          metadata: { playDateId },
+        });
       }
     });
 
+    // Cleanup function
     return () => {
+      logger.info('Cleaning up player presence', {
+        component: 'usePlayerPresence',
+        action: 'cleanup',
+        metadata: { playDateId },
+      });
+
       stopHeartbeat();
       setIsActive(false);
       setConnectionState('disconnected');
@@ -211,6 +310,9 @@ export function usePlayerPresence({
     };
   }, [enabled, playDateId, user, currentPlayerId, processPresenceState, startHeartbeat, stopHeartbeat]);
 
+  /**
+   * Clean up on unmount
+   */
   useEffect(() => {
     return () => {
       stopHeartbeat();
@@ -220,6 +322,9 @@ export function usePlayerPresence({
     };
   }, [stopHeartbeat]);
 
+  /**
+   * Monitor presence metrics
+   */
   useEffect(() => {
     if (!isActive) return;
 
@@ -246,6 +351,9 @@ export function usePlayerPresence({
   };
 }
 
+/**
+ * Hook for tracking a specific player's presence
+ */
 export function usePlayerPresenceStatus(playDateId: string, playerId: string) {
   const { playerPresence } = usePlayerPresence({ playDateId });
   
@@ -257,6 +365,9 @@ export function usePlayerPresenceStatus(playDateId: string, playerId: string) {
   };
 }
 
+/**
+ * Hook for getting online players count
+ */
 export function useOnlinePlayersCount(playDateId: string) {
   const { playerPresence } = usePlayerPresence({ playDateId });
   

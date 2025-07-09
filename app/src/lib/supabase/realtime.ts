@@ -559,3 +559,472 @@ export const onConnectionStateChange = (
 ) => realtimeManager.onConnectionStateChange(callback);
 
 export const reconnect = () => realtimeManager.reconnect();
+
+// Performance optimization utilities
+export interface PerformanceConfig {
+  /** Enable subscription batching */
+  enableBatching?: boolean;
+  /** Batch delay in milliseconds */
+  batchDelay?: number;
+  /** Maximum batch size */
+  maxBatchSize?: number;
+  /** Enable query deduplication */
+  enableDeduplication?: boolean;
+  /** Memory usage threshold (MB) */
+  memoryThreshold?: number;
+  /** Enable compression for large payloads */
+  enableCompression?: boolean;
+}
+
+const DEFAULT_PERFORMANCE_CONFIG: PerformanceConfig = {
+  enableBatching: true,
+  batchDelay: 50,
+  maxBatchSize: 10,
+  enableDeduplication: true,
+  memoryThreshold: 50,
+  enableCompression: false,
+};
+
+/**
+ * Performance-optimized realtime manager
+ */
+export class OptimizedRealtimeManager extends RealtimeManager {
+  private performanceConfig: PerformanceConfig;
+  private subscriptionBatch: Map<string, SubscriptionConfig<any>[]> = new Map();
+  private batchTimer: NodeJS.Timeout | null = null;
+  private queryCache: Map<string, any> = new Map();
+  private memoryUsage = 0;
+  private compressionEnabled = false;
+
+  constructor(
+    reconnectionConfig: Partial<ReconnectionConfig> = {},
+    performanceConfig: Partial<PerformanceConfig> = {}
+  ) {
+    super(reconnectionConfig);
+    this.performanceConfig = { ...DEFAULT_PERFORMANCE_CONFIG, ...performanceConfig };
+    this.setupPerformanceMonitoring();
+  }
+
+  /**
+   * Set up performance monitoring
+   */
+  private setupPerformanceMonitoring(): void {
+    // Monitor memory usage
+    if (typeof window !== 'undefined' && 'performance' in window) {
+      setInterval(() => {
+        this.checkMemoryUsage();
+      }, 30000); // Check every 30 seconds
+    }
+
+    // Enable compression if supported
+    if (typeof window !== 'undefined' && 'CompressionStream' in window) {
+      this.compressionEnabled = this.performanceConfig.enableCompression || false;
+    }
+  }
+
+  /**
+   * Check memory usage and cleanup if needed
+   */
+  private checkMemoryUsage(): void {
+    if (typeof window !== 'undefined' && 'performance' in window) {
+      const memory = (window.performance as any).memory;
+      if (memory) {
+        this.memoryUsage = memory.usedJSHeapSize / (1024 * 1024); // MB
+        
+        if (this.memoryUsage > (this.performanceConfig.memoryThreshold || 50)) {
+          logger.warn('High memory usage detected, cleaning up', {
+            component: 'optimizedRealtime',
+            action: 'memoryCleanup',
+            metadata: { memoryUsage: this.memoryUsage },
+          });
+          this.performMemoryCleanup();
+        }
+      }
+    }
+  }
+
+  /**
+   * Perform memory cleanup
+   */
+  private performMemoryCleanup(): void {
+    // Clear query cache
+    this.queryCache.clear();
+    
+    // Force garbage collection if available
+    if (typeof window !== 'undefined' && 'gc' in window) {
+      (window as any).gc();
+    }
+    
+    logger.info('Memory cleanup completed', {
+      component: 'optimizedRealtime',
+      action: 'memoryCleanupComplete',
+    });
+  }
+
+  /**
+   * Subscribe with performance optimizations
+   */
+  public subscribe<T extends TableName>(
+    subscriptionId: string,
+    config: SubscriptionConfig<T>
+  ): () => void {
+    if (this.performanceConfig.enableBatching) {
+      return this.batchedSubscribe(subscriptionId, config);
+    }
+    return super.subscribe(subscriptionId, config);
+  }
+
+  /**
+   * Batched subscription for performance
+   */
+  private batchedSubscribe<T extends TableName>(
+    subscriptionId: string,
+    config: SubscriptionConfig<T>
+  ): () => void {
+    const channelName = this.getChannelName(config);
+    
+    // Add to batch
+    if (!this.subscriptionBatch.has(channelName)) {
+      this.subscriptionBatch.set(channelName, []);
+    }
+    this.subscriptionBatch.get(channelName)!.push({ ...config, subscriptionId });
+
+    // Process batch if full or start timer
+    const batch = this.subscriptionBatch.get(channelName)!;
+    if (batch.length >= (this.performanceConfig.maxBatchSize || 10)) {
+      this.processBatch(channelName);
+    } else {
+      this.scheduleBatchProcessing(channelName);
+    }
+
+    // Return unsubscribe function
+    return () => {
+      this.unsubscribe(subscriptionId);
+    };
+  }
+
+  /**
+   * Schedule batch processing
+   */
+  private scheduleBatchProcessing(channelName: string): void {
+    if (this.batchTimer) return;
+
+    this.batchTimer = setTimeout(() => {
+      this.processBatch(channelName);
+      this.batchTimer = null;
+    }, this.performanceConfig.batchDelay || 50);
+  }
+
+  /**
+   * Process subscription batch
+   */
+  private processBatch(channelName: string): void {
+    const batch = this.subscriptionBatch.get(channelName);
+    if (!batch || batch.length === 0) return;
+
+    logger.info('Processing subscription batch', {
+      component: 'optimizedRealtime',
+      action: 'processBatch',
+      metadata: { channelName, batchSize: batch.length },
+    });
+
+    // Process each subscription in batch
+    batch.forEach(config => {
+      const { subscriptionId, ...subscriptionConfig } = config as any;
+      super.subscribe(subscriptionId, subscriptionConfig);
+    });
+
+    // Clear batch
+    this.subscriptionBatch.delete(channelName);
+  }
+
+  /**
+   * Deduplicated query execution
+   */
+  public async executeQuery<T>(
+    queryKey: string,
+    queryFn: () => Promise<T>,
+    ttl: number = 5000
+  ): Promise<T> {
+    if (!this.performanceConfig.enableDeduplication) {
+      return queryFn();
+    }
+
+    const cached = this.queryCache.get(queryKey);
+    if (cached && Date.now() - cached.timestamp < ttl) {
+      logger.debug('Query cache hit', {
+        component: 'optimizedRealtime',
+        action: 'cacheHit',
+        metadata: { queryKey },
+      });
+      return cached.data;
+    }
+
+    const data = await queryFn();
+    this.queryCache.set(queryKey, {
+      data,
+      timestamp: Date.now(),
+    });
+
+    logger.debug('Query executed and cached', {
+      component: 'optimizedRealtime',
+      action: 'queryExecuted',
+      metadata: { queryKey },
+    });
+
+    return data;
+  }
+
+  /**
+   * Get performance metrics
+   */
+  public getPerformanceMetrics() {
+    return {
+      memoryUsage: this.memoryUsage,
+      cacheSize: this.queryCache.size,
+      batchCount: this.subscriptionBatch.size,
+      compressionEnabled: this.compressionEnabled,
+      config: this.performanceConfig,
+    };
+  }
+
+  /**
+   * Clear performance cache
+   */
+  public clearCache(): void {
+    this.queryCache.clear();
+    logger.info('Performance cache cleared', {
+      component: 'optimizedRealtime',
+      action: 'cacheCleared',
+    });
+  }
+}
+
+// Export optimized manager instance
+export const optimizedRealtimeManager = new OptimizedRealtimeManager();
+
+// Enhanced presence tracking utilities
+export interface PresenceConfig {
+  /** Heartbeat interval in milliseconds */
+  heartbeatInterval?: number;
+  /** Timeout to consider offline (in milliseconds) */
+  offlineTimeout?: number;
+  /** Enable presence persistence */
+  enablePersistence?: boolean;
+  /** Maximum presence history length */
+  maxHistoryLength?: number;
+}
+
+const DEFAULT_PRESENCE_CONFIG: PresenceConfig = {
+  heartbeatInterval: 30000,
+  offlineTimeout: 60000,
+  enablePersistence: false,
+  maxHistoryLength: 100,
+};
+
+/**
+ * Enhanced presence manager with persistence and analytics
+ */
+export class EnhancedPresenceManager {
+  private config: PresenceConfig;
+  private presenceHistory: Array<{
+    playerId: string;
+    timestamp: Date;
+    action: 'join' | 'leave' | 'update';
+    data: any;
+  }> = [];
+  private persistenceKey = 'pickleball_presence_history';
+
+  constructor(config: Partial<PresenceConfig> = {}) {
+    this.config = { ...DEFAULT_PRESENCE_CONFIG, ...config };
+    this.loadPersistedHistory();
+  }
+
+  /**
+   * Load persisted presence history
+   */
+  private loadPersistedHistory(): void {
+    if (!this.config.enablePersistence || typeof window === 'undefined') return;
+
+    try {
+      const stored = localStorage.getItem(this.persistenceKey);
+      if (stored) {
+        const history = JSON.parse(stored);
+        this.presenceHistory = history.map((item: any) => ({
+          ...item,
+          timestamp: new Date(item.timestamp),
+        }));
+      }
+    } catch (error) {
+      logger.warn('Failed to load presence history', {
+        component: 'enhancedPresence',
+        action: 'loadHistory',
+      }, error as Error);
+    }
+  }
+
+  /**
+   * Save presence history
+   */
+  private savePresenceHistory(): void {
+    if (!this.config.enablePersistence || typeof window === 'undefined') return;
+
+    try {
+      localStorage.setItem(this.persistenceKey, JSON.stringify(this.presenceHistory));
+    } catch (error) {
+      logger.warn('Failed to save presence history', {
+        component: 'enhancedPresence',
+        action: 'saveHistory',
+      }, error as Error);
+    }
+  }
+
+  /**
+   * Record presence event
+   */
+  public recordPresenceEvent(
+    playerId: string,
+    action: 'join' | 'leave' | 'update',
+    data: any
+  ): void {
+    const event = {
+      playerId,
+      timestamp: new Date(),
+      action,
+      data,
+    };
+
+    this.presenceHistory.unshift(event);
+
+    // Limit history length
+    if (this.presenceHistory.length > (this.config.maxHistoryLength || 100)) {
+      this.presenceHistory = this.presenceHistory.slice(0, this.config.maxHistoryLength);
+    }
+
+    this.savePresenceHistory();
+
+    logger.debug('Presence event recorded', {
+      component: 'enhancedPresence',
+      action: 'recordEvent',
+      metadata: { playerId, action, dataKeys: Object.keys(data) },
+    });
+  }
+
+  /**
+   * Get presence analytics
+   */
+  public getPresenceAnalytics(playDateId: string) {
+    const now = new Date();
+    const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    const recentEvents = this.presenceHistory.filter(
+      event => event.timestamp >= last24Hours &&
+      event.data.play_date_id === playDateId
+    );
+
+    const uniquePlayers = new Set(recentEvents.map(event => event.playerId));
+    const joinEvents = recentEvents.filter(event => event.action === 'join');
+    const leaveEvents = recentEvents.filter(event => event.action === 'leave');
+
+    return {
+      totalEvents: recentEvents.length,
+      uniquePlayers: uniquePlayers.size,
+      joinEvents: joinEvents.length,
+      leaveEvents: leaveEvents.length,
+      avgSessionDuration: this.calculateAvgSessionDuration(recentEvents),
+      peakOnlineTime: this.findPeakOnlineTime(recentEvents),
+    };
+  }
+
+  /**
+   * Calculate average session duration
+   */
+  private calculateAvgSessionDuration(events: typeof this.presenceHistory): number {
+    const sessions = new Map<string, { join: Date; leave?: Date }>();
+    
+    events.forEach(event => {
+      if (event.action === 'join') {
+        sessions.set(event.playerId, { join: event.timestamp });
+      } else if (event.action === 'leave') {
+        const session = sessions.get(event.playerId);
+        if (session) {
+          session.leave = event.timestamp;
+        }
+      }
+    });
+
+    const completedSessions = Array.from(sessions.values())
+      .filter(session => session.leave);
+
+    if (completedSessions.length === 0) return 0;
+
+    const totalDuration = completedSessions.reduce((sum, session) => 
+      sum + (session.leave!.getTime() - session.join.getTime()), 0
+    );
+
+    return totalDuration / completedSessions.length;
+  }
+
+  /**
+   * Find peak online time
+   */
+  private findPeakOnlineTime(events: typeof this.presenceHistory): Date | null {
+    const hourlyActivity = new Map<string, number>();
+    
+    events.forEach(event => {
+      const hour = event.timestamp.toISOString().slice(0, 13);
+      hourlyActivity.set(hour, (hourlyActivity.get(hour) || 0) + 1);
+    });
+
+    if (hourlyActivity.size === 0) return null;
+
+    const peakHour = Array.from(hourlyActivity.entries())
+      .sort(([,a], [,b]) => b - a)[0][0];
+
+    return new Date(peakHour + ':00:00Z');
+  }
+
+  /**
+   * Clear presence history
+   */
+  public clearHistory(): void {
+    this.presenceHistory = [];
+    this.savePresenceHistory();
+    
+    logger.info('Presence history cleared', {
+      component: 'enhancedPresence',
+      action: 'clearHistory',
+    });
+  }
+
+  /**
+   * Get presence config
+   */
+  public getConfig(): PresenceConfig {
+    return { ...this.config };
+  }
+}
+
+// Export enhanced presence manager
+export const enhancedPresenceManager = new EnhancedPresenceManager();
+
+// Export enhanced convenience functions
+export const subscribeToTableOptimized = <T extends TableName>(
+  subscriptionId: string,
+  config: SubscriptionConfig<T>
+) => optimizedRealtimeManager.subscribe(subscriptionId, config);
+
+export const executeOptimizedQuery = <T>(
+  queryKey: string,
+  queryFn: () => Promise<T>,
+  ttl?: number
+) => optimizedRealtimeManager.executeQuery(queryKey, queryFn, ttl);
+
+export const getPerformanceMetrics = () => optimizedRealtimeManager.getPerformanceMetrics();
+
+export const clearPerformanceCache = () => optimizedRealtimeManager.clearCache();
+
+export const getPresenceAnalytics = (playDateId: string) => 
+  enhancedPresenceManager.getPresenceAnalytics(playDateId);
+
+export const clearPresenceHistory = () => enhancedPresenceManager.clearHistory();

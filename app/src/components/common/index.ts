@@ -73,3 +73,6 @@ export {
   colorContrast,
   motionUtils
 } from './Accessibility';
+
+// Modal components
+export { Modal, ModalHeader, ModalBody, ModalFooter, useModal } from './Modal';

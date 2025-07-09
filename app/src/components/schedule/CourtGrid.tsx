@@ -113,7 +113,7 @@ export function CourtGrid({
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </DropdownSelect>
             
             {selectedRound === currentRound && (
               <Badge variant="default">

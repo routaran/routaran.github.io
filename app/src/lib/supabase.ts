@@ -274,6 +274,40 @@ export const db = {
     }, { component: 'supabase', matchId });
   },
 
+  // Enhanced score-specific functions
+  updateMatchScoreWithValidation: async (
+    matchId: string,
+    team1Score: number,
+    team2Score: number,
+    currentVersion: number,
+    playDateId: string,
+    reason?: string
+  ) => {
+    // This function will be imported from the new scores module
+    const { updateMatchScore } = await import('./supabase/scores');
+    const { validateMatchScore, DEFAULT_SCORE_CONFIG } = await import('./validation/scoreValidation');
+    
+    // Get play date for validation config
+    const playDate = await db.getPlayDate(playDateId);
+    const validationConfig = {
+      ...DEFAULT_SCORE_CONFIG,
+      winCondition: playDate.win_condition,
+      targetScore: playDate.target_score,
+    };
+
+    return await updateMatchScore(
+      {
+        matchId,
+        team1Score,
+        team2Score,
+        currentVersion,
+        playDateId,
+        reason,
+      },
+      validationConfig
+    );
+  },
+
   // Rankings
   getRankings: async (playDateId: string) => {
     const { data, error } = await supabase
