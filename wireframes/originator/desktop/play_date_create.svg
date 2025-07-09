@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Screen Background -->
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+  
+  <!-- Sidebar -->
+  <rect width="240" height="800" fill="#2c3e50"/>
+  <text x="20" y="40" fill="white" font-size="24" font-weight="bold" font-family="Arial">Pickleball</text>
+  <text x="20" y="65" fill="#ecf0f1" font-size="14" font-family="Arial">Organizer Dashboard</text>
+  
+  <!-- Sidebar Menu -->
+  <rect x="0" y="100" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="128" fill="white" font-size="16" font-family="Arial">📋 Play Dates</text>
+  
+  <rect x="0" y="148" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="176" fill="white" font-size="16" font-family="Arial">👥 Players</text>
+  
+  <rect x="0" y="196" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="224" fill="white" font-size="16" font-family="Arial">⚙️ Settings</text>
+  
+  <!-- Main Content Area -->
+  <rect x="280" y="40" width="880" height="720" rx="8" fill="white" stroke="#e0e0e0"/>
+  
+  <!-- Header -->
+  <text x="320" y="90" font-size="28" font-weight="bold" font-family="Arial">Create New Play Date</text>
+  
+  <!-- Two Column Layout -->
+  <!-- Left Column - Form -->
+  <rect x="320" y="120" width="400" height="580" rx="8" fill="#f9f9f9" stroke="#e0e0e0"/>
+  
+  <!-- Date Field -->
+  <text x="340" y="150" font-size="16" font-weight="bold" font-family="Arial">Tournament Date</text>
+  <rect x="340" y="160" width="360" height="48" rx="4" fill="white" stroke="#e0e0e0"/>
+  <text x="360" y="190" font-size="16" font-family="Arial">2025-07-12</text>
+  <rect x="640" y="170" width="48" height="28" rx="4" fill="#2196F3"/>
+  <text x="664" y="190" text-anchor="middle" fill="white" font-size="14" font-family="Arial">📅</text>
+  
+  <!-- Number of Courts -->
+  <text x="340" y="240" font-size="16" font-weight="bold" font-family="Arial">Number of Courts</text>
+  <g transform="translate(340, 250)">
+    <rect y="0" width="80" height="48" rx="4" fill="white" stroke="#e0e0e0" stroke-width="2"/>
+    <text x="40" y="30" text-anchor="middle" font-size="16" font-family="Arial">1</text>
+    
+    <rect x="90" y="0" width="80" height="48" rx="4" fill="white" stroke="#e0e0e0" stroke-width="2"/>
+    <text x="130" y="30" text-anchor="middle" font-size="16" font-family="Arial">2</text>
+    
+    <rect x="180" y="0" width="80" height="48" rx="4" fill="#4CAF50"/>
+    <text x="220" y="30" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">3</text>
+    
+    <rect x="270" y="0" width="80" height="48" rx="4" fill="white" stroke="#e0e0e0" stroke-width="2"/>
+    <text x="310" y="30" text-anchor="middle" font-size="16" font-family="Arial">4</text>
+  </g>
+  
+  <!-- Win Condition -->
+  <text x="340" y="340" font-size="16" font-weight="bold" font-family="Arial">Win Condition</text>
+  <rect x="340" y="350" width="360" height="60" rx="8" fill="#e8f5e9" stroke="#4CAF50" stroke-width="2"/>
+  <circle cx="365" cy="380" r="10" fill="#4CAF50"/>
+  <circle cx="365" cy="380" r="5" fill="white"/>
+  <text x="390" y="387" font-size="16" font-family="Arial">First to Target Score</text>
+  
+  <rect x="340" y="420" width="360" height="60" rx="8" fill="white" stroke="#e0e0e0"/>
+  <circle cx="365" cy="450" r="10" fill="white" stroke="#999" stroke-width="2"/>
+  <text x="390" y="457" font-size="16" font-family="Arial">Win by 2 (traditional scoring)</text>
+  
+  <!-- Target Score -->
+  <text x="340" y="510" font-size="16" font-weight="bold" font-family="Arial">Target Score</text>
+  <rect x="340" y="520" width="180" height="48" rx="4" fill="white" stroke="#e0e0e0"/>
+  <text x="360" y="550" font-size="20" font-family="Arial">11</text>
+  <text x="490" y="550" font-size="14" fill="#666" text-anchor="end" font-family="Arial">points</text>
+  
+  <text x="540" y="550" font-size="14" fill="#666" font-family="Arial">(Range: 5-21)</text>
+  
+  <!-- Create Button -->
+  <rect x="340" y="620" width="360" height="56" rx="28" fill="#4CAF50"/>
+  <text x="520" y="655" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Arial">Create Play Date</text>
+  
+  <!-- Right Column - Preview -->
+  <rect x="760" y="120" width="380" height="580" rx="8" fill="#f9f9f9" stroke="#e0e0e0"/>
+  <text x="780" y="150" font-size="20" font-weight="bold" font-family="Arial">Settings Preview</text>
+  
+  <!-- Preview Content -->
+  <rect x="780" y="170" width="340" height="400" rx="4" fill="white" stroke="#e0e0e0"/>
+  
+  <text x="800" y="200" font-size="16" font-weight="bold" font-family="Arial">Your New Play Date</text>
+  
+  <text x="800" y="230" font-size="14" fill="#666" font-family="Arial">Date:</text>
+  <text x="900" y="230" font-size="14" font-family="Arial">July 12, 2025 (Saturday)</text>
+  
+  <text x="800" y="260" font-size="14" fill="#666" font-family="Arial">Courts:</text>
+  <text x="900" y="260" font-size="14" font-family="Arial">3 courts available</text>
+  
+  <text x="800" y="290" font-size="14" fill="#666" font-family="Arial">Win Type:</text>
+  <text x="900" y="290" font-size="14" font-family="Arial">First to 11 points</text>
+  
+  <!-- Visual Preview -->
+  <rect x="800" y="320" width="300" height="2" fill="#e0e0e0"/>
+  
+  <text x="800" y="350" font-size="16" font-weight="bold" font-family="Arial">What Happens Next:</text>
+  
+  <circle cx="810" cy="380" r="4" fill="#4CAF50"/>
+  <text x="825" y="385" font-size="14" font-family="Arial">1. Add players (4-16 required)</text>
+  
+  <circle cx="810" cy="410" r="4" fill="#4CAF50"/>
+  <text x="825" y="415" font-size="14" font-family="Arial">2. Name your courts (optional)</text>
+  
+  <circle cx="810" cy="440" r="4" fill="#4CAF50"/>
+  <text x="825" y="445" font-size="14" font-family="Arial">3. Generate round-robin schedule</text>
+  
+  <circle cx="810" cy="470" r="4" fill="#4CAF50"/>
+  <text x="825" y="475" font-size="14" font-family="Arial">4. Share with players</text>
+  
+  <!-- Annotations -->
+  <g transform="translate(730, 380)">
+    <line x1="0" y1="0" x2="20" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="25" y="-14" width="200" height="28" fill="#ff5722" rx="4"/>
+    <text x="35" y="4" fill="white" font-size="12" font-family="Arial">Live preview updates</text>
+  </g>
+  
+  <g transform="translate(540, 520)">
+    <line x1="0" y1="0" x2="0" y2="-20" stroke="#ff5722" stroke-width="2"/>
+    <rect x="-80" y="-55" width="160" height="28" fill="#ff5722" rx="4"/>
+    <text x="-70" y="-37" fill="white" font-size="12" font-family="Arial">Input validation</text>
+  </g>
+</svg>

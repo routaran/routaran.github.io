@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Screen Background -->
+  <rect width="360" height="800" fill="#f5f5f5"/>
+  
+  <!-- Status Bar -->
+  <rect width="360" height="24" fill="#333"/>
+  <text x="10" y="18" fill="white" font-size="12" font-family="Arial">9:41 AM</text>
+  <text x="330" y="18" fill="white" font-size="12" font-family="Arial" text-anchor="end">100%</text>
+  
+  <!-- Header -->
+  <rect y="24" width="360" height="60" fill="white" stroke="#e0e0e0"/>
+  <text x="20" y="60" font-size="20" font-weight="bold" font-family="Arial">My Play Dates</text>
+  
+  <!-- Create New Button -->
+  <rect x="20" y="100" width="320" height="48" rx="24" fill="#4CAF50"/>
+  <text x="180" y="129" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">+ Create New Play Date</text>
+  
+  <!-- Filter Section -->
+  <rect x="20" y="164" width="150" height="36" rx="18" fill="white" stroke="#e0e0e0"/>
+  <text x="95" y="187" text-anchor="middle" font-size="14" font-family="Arial">All Dates ▼</text>
+  
+  <rect x="190" y="164" width="150" height="36" rx="18" fill="white" stroke="#e0e0e0"/>
+  <text x="265" y="187" text-anchor="middle" font-size="14" font-family="Arial">All Status ▼</text>
+  
+  <!-- Play Date Cards -->
+  <!-- Card 1 - Active -->
+  <rect x="20" y="220" width="320" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+  <circle cx="40" cy="240" r="4" fill="#4CAF50"/>
+  <text x="52" y="245" font-size="12" fill="#4CAF50" font-family="Arial">ACTIVE</text>
+  <text x="20" y="270" font-size="18" font-weight="bold" font-family="Arial" dx="20">Saturday Tournament</text>
+  <text x="20" y="290" font-size="14" fill="#666" font-family="Arial" dx="20">2025-07-12</text>
+  <text x="20" y="310" font-size="14" fill="#666" font-family="Arial" dx="20">12 players • 3 courts • 60% complete</text>
+  <text x="320" y="245" text-anchor="end" font-size="24" fill="#999" font-family="Arial">›</text>
+  
+  <!-- Card 2 - Completed -->
+  <rect x="20" y="356" width="320" height="120" rx="8" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <circle cx="40" cy="376" r="4" fill="#999"/>
+  <text x="52" y="381" font-size="12" fill="#999" font-family="Arial">COMPLETED</text>
+  <text x="20" y="406" font-size="18" font-weight="bold" font-family="Arial" dx="20">Wednesday League</text>
+  <text x="20" y="426" font-size="14" fill="#666" font-family="Arial" dx="20">2025-07-05</text>
+  <text x="20" y="446" font-size="14" fill="#666" font-family="Arial" dx="20">8 players • 2 courts • 100% complete</text>
+  <text x="320" y="381" text-anchor="end" font-size="24" fill="#999" font-family="Arial">›</text>
+  
+  <!-- Card 3 - Upcoming -->
+  <rect x="20" y="492" width="320" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+  <circle cx="40" cy="512" r="4" fill="#2196F3"/>
+  <text x="52" y="517" font-size="12" fill="#2196F3" font-family="Arial">UPCOMING</text>
+  <text x="20" y="542" font-size="18" font-weight="bold" font-family="Arial" dx="20">Sunday Doubles</text>
+  <text x="20" y="562" font-size="14" fill="#666" font-family="Arial" dx="20">2025-07-19</text>
+  <text x="20" y="582" font-size="14" fill="#666" font-family="Arial" dx="20">16 players • 4 courts • 0% complete</text>
+  <text x="320" y="517" text-anchor="end" font-size="24" fill="#999" font-family="Arial">›</text>
+  
+  <!-- Bottom Navigation -->
+  <rect y="720" width="360" height="80" fill="white" stroke="#e0e0e0"/>
+  <g transform="translate(45, 740)">
+    <rect x="-15" y="-10" width="30" height="30" rx="4" fill="#4CAF50" opacity="0.2"/>
+    <rect x="-10" y="-5" width="20" height="20" fill="#4CAF50"/>
+    <text y="40" text-anchor="middle" font-size="12" fill="#4CAF50" font-family="Arial">Play Dates</text>
+  </g>
+  <g transform="translate(180, 740)">
+    <circle r="12" fill="none" stroke="#999" stroke-width="2"/>
+    <text y="40" text-anchor="middle" font-size="12" fill="#999" font-family="Arial">Profile</text>
+  </g>
+  <g transform="translate(315, 740)">
+    <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#999" stroke-width="2"/>
+    <text y="40" text-anchor="middle" font-size="12" fill="#999" font-family="Arial">Settings</text>
+  </g>
+  
+  <!-- Annotations -->
+  <g transform="translate(360, 100)">
+    <line x1="0" y1="24" x2="40" y2="24" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="10" width="200" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="28" fill="white" font-size="12" font-family="Arial">Primary action for organizers</text>
+  </g>
+  
+  <g transform="translate(360, 280)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="180" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Quick stats at a glance</text>
+  </g>
+</svg>

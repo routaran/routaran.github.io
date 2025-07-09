@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+  
+  <!-- Sidebar -->
+  <rect width="240" height="800" fill="#2c3e50"/>
+  
+  <!-- Logo/Title in Sidebar -->
+  <text x="20" y="40" font-family="Arial, sans-serif" font-size="20" fill="white" font-weight="bold">Pickleball Admin</text>
+  
+  <!-- Sidebar Navigation -->
+  <g id="sidebar-nav">
+    <!-- Dashboard -->
+    <text x="20" y="108" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Dashboard</text>
+    
+    <!-- Play Dates -->
+    <text x="20" y="156" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Play Dates</text>
+    
+    <!-- Players (Active) -->
+    <rect x="0" y="176" width="240" height="48" fill="#34495e"/>
+    <text x="20" y="204" font-family="Arial, sans-serif" font-size="16" fill="white">Global Players</text>
+    
+    <!-- System Health -->
+    <text x="20" y="252" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">System Health</text>
+    
+    <!-- Audit Log -->
+    <text x="20" y="300" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Audit Log</text>
+    
+    <!-- Settings -->
+    <text x="20" y="348" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Settings</text>
+  </g>
+  
+  <!-- Main Content Area -->
+  <g id="main-content" transform="translate(280, 40)">
+    <!-- Header -->
+    <text font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#2c3e50">Global Players</text>
+    <text y="30" font-family="Arial, sans-serif" font-size="16" fill="#7f8c8d">Comprehensive player database across all Play Dates</text>
+    
+    <!-- Top Controls -->
+    <g id="top-controls" transform="translate(0, 80)">
+      <!-- Search Bar -->
+      <rect width="400" height="44" rx="22" fill="white" stroke="#e0e0e0"/>
+      <text x="20" y="28" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">🔍 Search players by name or email...</text>
+      
+      <!-- Filter Dropdown -->
+      <rect x="420" width="120" height="44" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="430" y="28" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">All Status ▼</text>
+      
+      <!-- Sort Dropdown -->
+      <rect x="560" width="120" height="44" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="570" y="28" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Sort by Name ▼</text>
+      
+      <!-- Add Player Button -->
+      <rect x="700" width="120" height="44" rx="4" fill="#27ae60"/>
+      <text x="760" y="28" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Add Player</text>
+    </g>
+    
+    <!-- Stats Cards -->
+    <g id="stats-cards" transform="translate(0, 150)">
+      <!-- Total Players -->
+      <rect width="200" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+      <text x="16" y="25" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Total Players</text>
+      <text x="16" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2c3e50">2,847</text>
+      <text x="16" y="70" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">↑ 23 this week</text>
+      
+      <!-- Claimed Players -->
+      <rect x="220" width="200" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+      <text x="236" y="25" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Claimed</text>
+      <text x="236" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#27ae60">1,923</text>
+      <text x="236" y="70" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">67.5% claimed</text>
+      
+      <!-- Unclaimed Players -->
+      <rect x="440" width="200" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+      <text x="456" y="25" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Unclaimed</text>
+      <text x="456" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#e74c3c">924</text>
+      <text x="456" y="70" font-family="Arial, sans-serif" font-size="12" fill="#e74c3c">32.5% unclaimed</text>
+      
+      <!-- Issues -->
+      <rect x="660" width="200" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+      <text x="676" y="25" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Issues</text>
+      <text x="676" y="50" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#f39c12">12</text>
+      <text x="676" y="70" font-family="Arial, sans-serif" font-size="12" fill="#f39c12">Duplicates & bans</text>
+    </g>
+    
+    <!-- Players Table -->
+    <g id="players-table" transform="translate(0, 260)">
+      <!-- Table Header -->
+      <rect width="880" height="48" fill="#f8f9fa" stroke="#e0e0e0"/>
+      <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Player</text>
+      <text x="300" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Email</text>
+      <text x="500" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Status</text>
+      <text x="600" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Stats</text>
+      <text x="750" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Actions</text>
+      
+      <!-- Table Rows -->
+      <!-- Row 1 - Sarah Johnson -->
+      <rect y="48" width="880" height="60" fill="white" stroke="#e0e0e0"/>
+      <circle cx="35" cy="78" r="6" fill="#27ae60"/>
+      <text x="60" y="75" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Sarah Johnson</text>
+      <text x="60" y="90" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Project Owner</text>
+      <text x="300" y="82" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">sarah.johnson@email.com</text>
+      <rect x="500" y="68" width="70" height="20" rx="10" fill="#27ae60"/>
+      <text x="535" y="80" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Claimed</text>
+      <text x="600" y="75" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50">5 Play Dates</text>
+      <text x="600" y="90" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">124 Matches</text>
+      <rect x="750" y="68" width="60" height="24" rx="4" fill="#3498db"/>
+      <text x="780" y="82" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Manage</text>
+      <rect x="820" y="68" width="50" height="24" rx="4" fill="#7f8c8d"/>
+      <text x="845" y="82" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">View</text>
+      
+      <!-- Row 2 - Mike Chen -->
+      <rect y="108" width="880" height="60" fill="white" stroke="#e0e0e0"/>
+      <circle cx="35" cy="138" r="6" fill="#e74c3c"/>
+      <text x="60" y="135" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Mike Chen</text>
+      <text x="300" y="142" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">mike.chen@email.com</text>
+      <rect x="500" y="128" width="80" height="20" rx="10" fill="#e74c3c"/>
+      <text x="540" y="140" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Unclaimed</text>
+      <text x="600" y="135" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50">3 Play Dates</text>
+      <text x="600" y="150" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">78 Matches</text>
+      <rect x="750" y="128" width="60" height="24" rx="4" fill="#e74c3c"/>
+      <text x="780" y="142" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Merge</text>
+      <rect x="820" y="128" width="50" height="24" rx="4" fill="#7f8c8d"/>
+      <text x="845" y="142" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">View</text>
+      
+      <!-- Row 3 - John Smith -->
+      <rect y="168" width="880" height="60" fill="white" stroke="#f39c12"/>
+      <circle cx="35" cy="198" r="6" fill="#f39c12"/>
+      <text x="60" y="195" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">John Smith</text>
+      <text x="60" y="210" font-family="Arial, sans-serif" font-size="12" fill="#f39c12">⚠ Possible duplicate</text>
+      <text x="300" y="202" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">john.smith@email.com</text>
+      <rect x="500" y="188" width="80" height="20" rx="10" fill="#f39c12"/>
+      <text x="540" y="200" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Duplicate</text>
+      <text x="600" y="195" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50">2 Play Dates</text>
+      <text x="600" y="210" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">45 Matches</text>
+      <rect x="750" y="188" width="60" height="24" rx="4" fill="#f39c12"/>
+      <text x="780" y="202" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Review</text>
+      <rect x="820" y="188" width="50" height="24" rx="4" fill="#7f8c8d"/>
+      <text x="845" y="202" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">View</text>
+      
+      <!-- Row 4 - Alex Thompson -->
+      <rect y="228" width="880" height="60" fill="white" stroke="#e74c3c"/>
+      <circle cx="35" cy="258" r="6" fill="#e74c3c"/>
+      <text x="60" y="255" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Alex Thompson</text>
+      <text x="60" y="270" font-family="Arial, sans-serif" font-size="12" fill="#e74c3c">🚫 Banned for misconduct</text>
+      <text x="300" y="262" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">alex.thompson@email.com</text>
+      <rect x="500" y="248" width="70" height="20" rx="10" fill="#e74c3c"/>
+      <text x="535" y="260" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Banned</text>
+      <text x="600" y="255" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50">1 Play Date</text>
+      <text x="600" y="270" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">12 Matches</text>
+      <rect x="750" y="248" width="60" height="24" rx="4" fill="#27ae60"/>
+      <text x="780" y="262" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Unban</text>
+      <rect x="820" y="248" width="50" height="24" rx="4" fill="#7f8c8d"/>
+      <text x="845" y="262" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">View</text>
+    </g>
+    
+    <!-- Pagination -->
+    <g id="pagination" transform="translate(0, 560)">
+      <rect width="200" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="10" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Showing 1-25 of 2,847</text>
+      
+      <rect x="220" width="40" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="240" y="25" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d" text-anchor="middle">←</text>
+      
+      <rect x="270" width="40" height="40" rx="4" fill="#3498db"/>
+      <text x="290" y="25" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">1</text>
+      
+      <rect x="320" width="40" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="340" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">2</text>
+      
+      <rect x="370" width="40" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="390" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">3</text>
+      
+      <rect x="420" width="40" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="440" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">→</text>
+    </g>
+    
+    <!-- Bulk Actions -->
+    <g id="bulk-actions" transform="translate(500, 560)">
+      <rect width="120" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="60" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">Bulk Actions ▼</text>
+      
+    </g>
+  </g>
+  
+  <!-- Annotation -->
+  <text x="600" y="780" font-family="Arial, sans-serif" font-size="12" fill="#e74c3c" text-anchor="middle">Comprehensive player database with advanced search, sorting, and bulk operations</text>
+</svg>

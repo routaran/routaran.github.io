@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360" height="800" viewBox="0 0 360 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="360" height="800" fill="#f8f9fa"/>
+  
+  <!-- Header -->
+  <rect width="360" height="60" fill="#2c3e50"/>
+  <text x="20" y="38" font-family="Arial, sans-serif" font-size="20" fill="white" font-weight="bold">System Health</text>
+  <text x="340" y="38" font-family="Arial, sans-serif" font-size="20" fill="white" text-anchor="end">🔄</text>
+  
+  <!-- Overall Status -->
+  <g id="overall-status" transform="translate(20, 80)">
+    <rect width="320" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+    <circle cx="40" cy="40" r="20" fill="#27ae60"/>
+    <text x="40" y="48" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle">✓</text>
+    <text x="80" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#2c3e50">System Healthy</text>
+    <text x="80" y="55" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">All systems operational</text>
+  </g>
+  
+  <!-- Refresh Info -->
+  <g id="refresh-info" transform="translate(20, 180)">
+    <text font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Last updated: 2 minutes ago</text>
+    <text x="280" font-family="Arial, sans-serif" font-size="12" fill="#3498db" text-anchor="end">Auto-refresh: ON</text>
+  </g>
+  
+  <!-- Health Metrics -->
+  <g id="health-metrics" transform="translate(20, 220)">
+    <!-- Database Health -->
+    <rect width="320" height="70" rx="8" fill="white" stroke="#e0e0e0"/>
+    <circle cx="20" cy="20" r="6" fill="#27ae60"/>
+    <text x="35" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Database</text>
+    <text x="280" y="25" font-family="Arial, sans-serif" font-size="12" fill="#27ae60" text-anchor="end">Healthy</text>
+    <text x="20" y="45" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Response time: 12ms</text>
+    <text x="20" y="60" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Connections: 47/100</text>
+    
+    <!-- Authentication Health -->
+    <g transform="translate(0, 80)">
+      <rect width="320" height="70" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="20" cy="20" r="6" fill="#27ae60"/>
+      <text x="35" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Authentication</text>
+      <text x="280" y="25" font-family="Arial, sans-serif" font-size="12" fill="#27ae60" text-anchor="end">Healthy</text>
+      <text x="20" y="45" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Active sessions: 247</text>
+      <text x="20" y="60" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Success rate: 99.8%</text>
+    </g>
+    
+    <!-- Real-time Updates -->
+    <g transform="translate(0, 160)">
+      <rect width="320" height="70" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="20" cy="20" r="6" fill="#27ae60"/>
+      <text x="35" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Real-time Updates</text>
+      <text x="280" y="25" font-family="Arial, sans-serif" font-size="12" fill="#27ae60" text-anchor="end">Healthy</text>
+      <text x="20" y="45" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Connected clients: 89</text>
+      <text x="20" y="60" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Messages/sec: 23</text>
+    </g>
+    
+    <!-- API Health -->
+    <g transform="translate(0, 240)">
+      <rect width="320" height="70" rx="8" fill="white" stroke="#f39c12"/>
+      <circle cx="20" cy="20" r="6" fill="#f39c12"/>
+      <text x="35" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">API</text>
+      <text x="280" y="25" font-family="Arial, sans-serif" font-size="12" fill="#f39c12" text-anchor="end">Warning</text>
+      <text x="20" y="45" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Response time: 450ms</text>
+      <text x="20" y="60" font-family="Arial, sans-serif" font-size="12" fill="#f39c12">⚠ High latency detected</text>
+    </g>
+    
+    <!-- Storage Health -->
+    <g transform="translate(0, 320)">
+      <rect width="320" height="70" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="20" cy="20" r="6" fill="#27ae60"/>
+      <text x="35" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">Storage</text>
+      <text x="280" y="25" font-family="Arial, sans-serif" font-size="12" fill="#27ae60" text-anchor="end">Healthy</text>
+      <text x="20" y="45" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Used: 12.4GB / 100GB</text>
+      <rect x="20" y="52" width="100" height="4" rx="2" fill="#e0e0e0"/>
+      <rect x="20" y="52" width="12" height="4" rx="2" fill="#27ae60"/>
+    </g>
+  </g>
+  
+  <!-- Error Summary -->
+  <g id="error-summary" transform="translate(20, 640)">
+    <rect width="320" height="50" rx="8" fill="white" stroke="#e0e0e0"/>
+    <text x="16" y="25" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Recent Errors (24h)</text>
+    <text x="16" y="40" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50">3 warnings, 0 critical</text>
+    <rect x="260" y="18" width="50" height="24" rx="4" fill="#3498db"/>
+    <text x="285" y="32" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle">Details</text>
+  </g>
+  
+  <!-- Bottom Navigation -->
+  <rect y="720" width="360" height="80" fill="white" stroke-top="#e0e0e0"/>
+  <g id="bottom-nav" transform="translate(0, 720)">
+    <!-- Dashboard -->
+    <g transform="translate(36, 16)">
+      <text x="20" y="20" font-family="Arial, sans-serif" font-size="20" text-anchor="middle">📊</text>
+      <text x="20" y="48" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">Dashboard</text>
+    </g>
+    
+    <!-- Players -->
+    <g transform="translate(108, 16)">
+      <text x="20" y="20" font-family="Arial, sans-serif" font-size="20" text-anchor="middle">👥</text>
+      <text x="20" y="48" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">Players</text>
+    </g>
+    
+    <!-- Health -->
+    <g transform="translate(180, 16)">
+      <rect x="-4" y="-4" width="48" height="48" rx="8" fill="#e8f5e9"/>
+      <text x="20" y="20" font-family="Arial, sans-serif" font-size="20" text-anchor="middle">❤️</text>
+      <text x="20" y="48" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#4CAF50">Health</text>
+    </g>
+    
+    <!-- Audit -->
+    <g transform="translate(252, 16)">
+      <text x="20" y="20" font-family="Arial, sans-serif" font-size="20" text-anchor="middle">📋</text>
+      <text x="20" y="48" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">Audit</text>
+    </g>
+    
+    <!-- Settings -->
+    <g transform="translate(324, 16)">
+      <text x="0" y="20" font-family="Arial, sans-serif" font-size="20" text-anchor="middle">⚙️</text>
+      <text x="0" y="48" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">Settings</text>
+    </g>
+  </g>
+  
+  <!-- Annotation -->
+  <text x="180" y="710" font-family="Arial, sans-serif" font-size="10" fill="#e74c3c" text-anchor="middle">Real-time system health monitoring with component status</text>
+</svg>

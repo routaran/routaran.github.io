@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+  
+  <!-- Sidebar -->
+  <rect width="240" height="800" fill="#2c3e50"/>
+  
+  <!-- Logo/Title in Sidebar -->
+  <text x="20" y="40" font-family="Arial, sans-serif" font-size="20" fill="white" font-weight="bold">Pickleball Admin</text>
+  
+  <!-- Sidebar Navigation -->
+  <g id="sidebar-nav">
+    <!-- Dashboard -->
+    <text x="20" y="108" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Dashboard</text>
+    
+    <!-- Play Dates -->
+    <text x="20" y="156" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Play Dates</text>
+    
+    <!-- Players -->
+    <text x="20" y="204" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Global Players</text>
+    
+    <!-- System Health (Active) -->
+    <rect x="0" y="224" width="240" height="48" fill="#34495e"/>
+    <text x="20" y="252" font-family="Arial, sans-serif" font-size="16" fill="white">System Health</text>
+    
+    <!-- Audit Log -->
+    <text x="20" y="300" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Audit Log</text>
+    
+    <!-- Settings -->
+    <text x="20" y="348" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Settings</text>
+  </g>
+  
+  <!-- Main Content Area -->
+  <g id="main-content" transform="translate(280, 40)">
+    <!-- Header -->
+    <text font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#2c3e50">System Health</text>
+    <text y="30" font-family="Arial, sans-serif" font-size="16" fill="#7f8c8d">Real-time system monitoring and diagnostics</text>
+    
+    <!-- Overall Status Card -->
+    <g id="overall-status" transform="translate(0, 80)">
+      <rect width="880" height="100" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="60" cy="50" r="30" fill="#27ae60"/>
+      <text x="60" y="60" font-family="Arial, sans-serif" font-size="36" fill="white" text-anchor="middle">✓</text>
+      <text x="120" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2c3e50">System Healthy</text>
+      <text x="120" y="65" font-family="Arial, sans-serif" font-size="16" fill="#7f8c8d">All systems operational</text>
+      <text x="120" y="85" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Last updated: 2 minutes ago | Auto-refresh: ON</text>
+      
+      <!-- Refresh Button -->
+      <rect x="780" y="25" width="80" height="40" rx="4" fill="#3498db"/>
+      <text x="820" y="48" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Refresh</text>
+    </g>
+    
+    <!-- Health Metrics Grid -->
+    <g id="health-metrics" transform="translate(0, 200)">
+      <!-- Database Health -->
+      <rect width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="30" cy="30" r="12" fill="#27ae60"/>
+      <text x="30" y="36" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">✓</text>
+      <text x="55" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Database</text>
+      <text x="55" y="40" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">Healthy</text>
+      <text x="20" y="65" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Response time: 12ms</text>
+      <text x="20" y="80" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Connections: 47/100</text>
+      <text x="20" y="95" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">CPU: 23% | Memory: 45%</text>
+      
+      <!-- Authentication Health -->
+      <rect x="300" width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="330" cy="30" r="12" fill="#27ae60"/>
+      <text x="330" y="36" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">✓</text>
+      <text x="355" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Authentication</text>
+      <text x="355" y="40" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">Healthy</text>
+      <text x="320" y="65" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Active sessions: 247</text>
+      <text x="320" y="80" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Success rate: 99.8%</text>
+      <text x="320" y="95" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Login attempts: 1,234</text>
+      
+      <!-- Real-time Updates -->
+      <rect x="600" width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="630" cy="30" r="12" fill="#27ae60"/>
+      <text x="630" y="36" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">✓</text>
+      <text x="655" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Real-time Updates</text>
+      <text x="655" y="40" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">Healthy</text>
+      <text x="620" y="65" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Connected clients: 89</text>
+      <text x="620" y="80" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Messages/sec: 23</text>
+      <text x="620" y="95" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Avg latency: 45ms</text>
+      
+      <!-- API Health -->
+      <rect y="140" width="280" height="120" rx="8" fill="white" stroke="#f39c12"/>
+      <circle cx="30" cy="170" r="12" fill="#f39c12"/>
+      <text x="30" y="176" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">⚠</text>
+      <text x="55" y="165" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">API</text>
+      <text x="55" y="180" font-family="Arial, sans-serif" font-size="12" fill="#f39c12">Warning</text>
+      <text x="20" y="205" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Response time: 450ms</text>
+      <text x="20" y="220" font-family="Arial, sans-serif" font-size="12" fill="#f39c12">⚠ High latency detected</text>
+      <text x="20" y="235" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Requests/min: 1,245</text>
+      
+      <!-- Storage Health -->
+      <rect x="300" y="140" width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="330" cy="170" r="12" fill="#27ae60"/>
+      <text x="330" y="176" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">✓</text>
+      <text x="355" y="165" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Storage</text>
+      <text x="355" y="180" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">Healthy</text>
+      <text x="320" y="205" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Used: 12.4GB / 100GB</text>
+      <rect x="320" y="220" width="160" height="8" rx="4" fill="#e0e0e0"/>
+      <rect x="320" y="220" width="20" height="8" rx="4" fill="#27ae60"/>
+      <text x="320" y="240" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">12.4% used</text>
+      
+      <!-- Email Service -->
+      <rect x="600" y="140" width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <circle cx="630" cy="170" r="12" fill="#27ae60"/>
+      <text x="630" y="176" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">✓</text>
+      <text x="655" y="165" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Email Service</text>
+      <text x="655" y="180" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">Healthy</text>
+      <text x="620" y="205" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Sent today: 1,234</text>
+      <text x="620" y="220" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Delivery rate: 99.2%</text>
+      <text x="620" y="235" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Queue: 12 pending</text>
+    </g>
+    
+    <!-- Recent Alerts -->
+    <g id="recent-alerts" transform="translate(0, 480)">
+      <text font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#2c3e50">Recent Alerts</text>
+      
+      <g transform="translate(0, 40)">
+        <!-- Alert 1 -->
+        <rect width="880" height="50" rx="4" fill="white" stroke="#f39c12"/>
+        <circle cx="25" cy="25" r="8" fill="#f39c12"/>
+        <text x="25" y="30" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">!</text>
+        <text x="45" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">API High Latency</text>
+        <text x="45" y="35" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Response time exceeded 400ms threshold</text>
+        <text x="820" y="30" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d" text-anchor="end">5 minutes ago</text>
+        
+        <!-- Alert 2 -->
+        <rect y="60" width="880" height="50" rx="4" fill="white" stroke="#3498db"/>
+        <circle cx="25" cy="85" r="8" fill="#3498db"/>
+        <text x="25" y="90" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">i</text>
+        <text x="45" y="80" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Database Maintenance</text>
+        <text x="45" y="95" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Scheduled backup completed successfully</text>
+        <text x="820" y="90" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d" text-anchor="end">2 hours ago</text>
+      </g>
+    </g>
+    
+    <!-- Performance Charts Placeholder -->
+    <g id="performance-charts" transform="translate(0, 620)">
+      <rect width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <text x="20" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">CPU Usage (24h)</text>
+      <rect x="20" y="40" width="240" height="60" fill="#f8f9fa"/>
+      <path d="M 20,100 L 40,80 L 60,70 L 80,85 L 100,75 L 120,90 L 140,65 L 160,80 L 180,70 L 200,85 L 220,75 L 240,80 L 260,70" 
+            stroke="#3498db" stroke-width="2" fill="none"/>
+      <text x="20" y="120" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Avg: 23%</text>
+      
+      <rect x="300" width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <text x="320" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Memory Usage (24h)</text>
+      <rect x="320" y="40" width="240" height="60" fill="#f8f9fa"/>
+      <path d="M 320,90 L 340,85 L 360,80 L 380,95 L 400,85 L 420,100 L 440,75 L 460,90 L 480,80 L 500,95 L 520,85 L 540,90 L 560,80" 
+            stroke="#27ae60" stroke-width="2" fill="none"/>
+      <text x="320" y="120" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Avg: 45%</text>
+      
+      <rect x="600" width="280" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+      <text x="620" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">Active Users (24h)</text>
+      <rect x="620" y="40" width="240" height="60" fill="#f8f9fa"/>
+      <path d="M 620,95 L 640,90 L 660,85 L 680,100 L 700,90 L 720,105 L 740,80 L 760,95 L 780,85 L 800,100 L 820,90 L 840,95 L 860,85" 
+            stroke="#e74c3c" stroke-width="2" fill="none"/>
+      <text x="620" y="120" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d">Avg: 247</text>
+    </g>
+  </g>
+  
+  <!-- Annotation -->
+  <text x="600" y="780" font-family="Arial, sans-serif" font-size="12" fill="#e74c3c" text-anchor="middle">Comprehensive system health dashboard with real-time metrics and alerting</text>
+</svg>

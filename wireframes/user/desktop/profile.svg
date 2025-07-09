@@ -1,0 +1,139 @@
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#ffffff"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="80" fill="#4CAF50"/>
+  <text x="40" y="45" fill="white" font-size="24" font-weight="bold">Player Profile</text>
+  <text x="1080" y="45" fill="white" font-size="16">Settings</text>
+  
+  <!-- Main Content Area -->
+  <rect x="40" y="120" width="1120" height="640" fill="#fafafa" stroke="#e0e0e0" rx="8"/>
+  
+  <!-- Left Column: Profile Info -->
+  <rect x="60" y="140" width="350" height="200" fill="#ffffff" stroke="#e0e0e0" rx="8"/>
+  <circle cx="120" cy="200" r="35" fill="#2196F3"/>
+  <text x="120" y="210" fill="white" font-size="20" text-anchor="middle" font-weight="bold">SJ</text>
+  <text x="170" y="185" font-size="20" font-weight="bold">Sarah Johnson</text>
+  <text x="170" y="205" font-size="14" fill="#666">sarah.johnson@email.com</text>
+  <text x="170" y="225" font-size="12" fill="#888">Claimed account • Player since 2024</text>
+  
+  <!-- Account Management -->
+  <rect x="80" y="260" width="310" height="60" fill="#f5f5f5" stroke="#e0e0e0" rx="8"/>
+  <text x="100" y="280" font-size="14" font-weight="bold">Account Management</text>
+  <text x="100" y="300" font-size="12" fill="#666">Update email and display name</text>
+  <text x="350" y="290" font-size="12" fill="#2196F3">Edit Profile</text>
+  
+  <!-- Middle Column: Performance Dashboard -->
+  <rect x="430" y="140" width="350" height="600" fill="#ffffff" stroke="#e0e0e0" rx="8"/>
+  <text x="450" y="170" font-size="20" font-weight="bold">Performance Dashboard</text>
+  
+  <!-- Current Tournament Stats -->
+  <rect x="450" y="190" width="310" height="80" fill="#e8f5e9" stroke="#4CAF50" rx="8"/>
+  <text x="470" y="215" font-size="16" font-weight="bold" fill="#2e7d32">Current Tournament</text>
+  <text x="470" y="235" font-size="14">Ranking: #2 of 12 players</text>
+  <text x="470" y="255" font-size="14">Record: 6-2 (75% win rate)</text>
+  
+  <!-- Performance Charts Area -->
+  <rect x="450" y="290" width="310" height="120" fill="#f5f5f5" stroke="#e0e0e0" rx="8"/>
+  <text x="470" y="315" font-size="16" font-weight="bold">Match Performance</text>
+  <rect x="470" y="325" width="270" height="4" fill="#e0e0e0" rx="2"/>
+  <rect x="470" y="325" width="202" height="4" fill="#4CAF50" rx="2"/>
+  <text x="470" y="345" font-size="12" fill="#666">Win Rate: 75%</text>
+  
+  <rect x="470" y="355" width="270" height="4" fill="#e0e0e0" rx="2"/>
+  <rect x="470" y="355" width="189" height="4" fill="#2196F3" rx="2"/>
+  <text x="470" y="375" font-size="12" fill="#666">Average Score: 70%</text>
+  
+  <!-- Partnership Analysis -->
+  <rect x="450" y="430" width="310" height="140" fill="#f5f5f5" stroke="#e0e0e0" rx="8"/>
+  <text x="470" y="455" font-size="16" font-weight="bold">Partnership Analysis</text>
+  
+  <rect x="470" y="470" width="270" height="30" fill="#e8f5e9" stroke="#4CAF50" rx="4"/>
+  <text x="480" y="490" font-size="12" font-weight="bold">Best Partner: Mike Chen</text>
+  <text x="650" y="490" font-size="12" fill="#666">3-0</text>
+  
+  <rect x="470" y="510" width="270" height="30" fill="#ffffff" stroke="#e0e0e0" rx="4"/>
+  <text x="480" y="530" font-size="12">Second Best: Paul K.</text>
+  <text x="650" y="530" font-size="12" fill="#666">2-1</text>
+  
+  <!-- Historical Trends -->
+  <rect x="450" y="590" width="310" height="130" fill="#f5f5f5" stroke="#e0e0e0" rx="8"/>
+  <text x="470" y="615" font-size="16" font-weight="bold">Historical Trends</text>
+  <text x="470" y="635" font-size="12" fill="#666">• Strong improvement in net play</text>
+  <text x="470" y="655" font-size="12" fill="#666">• Consistent serve accuracy</text>
+  <text x="470" y="675" font-size="12" fill="#666">• Better partnership chemistry</text>
+  <text x="470" y="695" font-size="12" fill="#666">• Improved clutch performance</text>
+  
+  <!-- Right Column: Match History -->
+  <rect x="800" y="140" width="340" height="600" fill="#ffffff" stroke="#e0e0e0" rx="8"/>
+  <text x="820" y="170" font-size="20" font-weight="bold">Detailed Match History</text>
+  
+  <!-- Match History Table -->
+  <rect x="820" y="190" width="300" height="25" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <text x="830" y="208" font-size="12" font-weight="bold">Round</text>
+  <text x="880" y="208" font-size="12" font-weight="bold">Partner</text>
+  <text x="960" y="208" font-size="12" font-weight="bold">Score</text>
+  <text x="1020" y="208" font-size="12" font-weight="bold">Result</text>
+  
+  <!-- Match Rows -->
+  <rect x="820" y="215" width="300" height="25" fill="#e8f5e9" stroke="#4CAF50"/>
+  <text x="830" y="232" font-size="11">R3</text>
+  <text x="880" y="232" font-size="11">Mike C.</text>
+  <text x="960" y="232" font-size="11">11-8</text>
+  <text x="1020" y="232" font-size="11" fill="#2e7d32">Won</text>
+  
+  <rect x="820" y="240" width="300" height="25" fill="#e8f5e9" stroke="#4CAF50"/>
+  <text x="830" y="257" font-size="11">R2</text>
+  <text x="880" y="257" font-size="11">Mike C.</text>
+  <text x="960" y="257" font-size="11">11-6</text>
+  <text x="1020" y="257" font-size="11" fill="#2e7d32">Won</text>
+  
+  <rect x="820" y="265" width="300" height="25" fill="#ffebee" stroke="#f44336"/>
+  <text x="830" y="282" font-size="11">R1</text>
+  <text x="880" y="282" font-size="11">Paul K.</text>
+  <text x="960" y="282" font-size="11">9-11</text>
+  <text x="1020" y="282" font-size="11" fill="#c62828">Lost</text>
+  
+  <!-- Continue pattern for more matches -->
+  <rect x="820" y="290" width="300" height="25" fill="#e8f5e9" stroke="#4CAF50"/>
+  <text x="830" y="307" font-size="11">R4</text>
+  <text x="880" y="307" font-size="11">Tim R.</text>
+  <text x="960" y="307" font-size="11">11-7</text>
+  <text x="1020" y="307" font-size="11" fill="#2e7d32">Won</text>
+  
+  <rect x="820" y="315" width="300" height="25" fill="#ffebee" stroke="#f44336"/>
+  <text x="830" y="332" font-size="11">R5</text>
+  <text x="880" y="332" font-size="11">Emma S.</text>
+  <text x="960" y="332" font-size="11">8-11</text>
+  <text x="1020" y="332" font-size="11" fill="#c62828">Lost</text>
+  
+  <!-- Advanced Statistics -->
+  <rect x="820" y="360" width="300" height="160" fill="#f5f5f5" stroke="#e0e0e0" rx="8"/>
+  <text x="840" y="385" font-size="16" font-weight="bold">Advanced Statistics</text>
+  
+  <text x="840" y="410" font-size="12" font-weight="bold">Scoring Patterns:</text>
+  <text x="840" y="430" font-size="11" fill="#666">• Average points per game: 9.2</text>
+  <text x="840" y="445" font-size="11" fill="#666">• Close games (&lt;3 point margin): 4</text>
+  <text x="840" y="460" font-size="11" fill="#666">• Dominant wins (&gt;5 points): 2</text>
+  
+  <text x="840" y="485" font-size="12" font-weight="bold">Tournament Impact:</text>
+  <text x="840" y="505" font-size="11" fill="#666">• Games that affected rankings: 6</text>
+  
+  <!-- Personal Notes -->
+  <rect x="820" y="540" width="300" height="180" fill="#f5f5f5" stroke="#e0e0e0" rx="8"/>
+  <text x="840" y="565" font-size="16" font-weight="bold">Personal Notes & Goals</text>
+  
+  <text x="840" y="590" font-size="12" fill="#666">Strengths:</text>
+  <text x="840" y="610" font-size="11" fill="#666">• Consistent serving</text>
+  <text x="840" y="625" font-size="11" fill="#666">• Strong net presence</text>
+  <text x="840" y="640" font-size="11" fill="#666">• Good court positioning</text>
+  
+  <text x="840" y="665" font-size="12" fill="#666">Areas for Improvement:</text>
+  <text x="840" y="685" font-size="11" fill="#666">• Overhead smashes</text>
+  <text x="840" y="700" font-size="11" fill="#666">• Backhand consistency</text>
+  
+  <!-- Annotations -->
+  <text x="60" y="100" font-size="10" fill="#888">Desktop version provides dashboard-style layout with comprehensive analytics</text>
+  <text x="60" y="780" font-size="10" fill="#888">Shows detailed performance metrics and historical trend analysis</text>
+</svg>

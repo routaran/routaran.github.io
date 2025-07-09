@@ -1,0 +1,155 @@
+<svg width="360" height="800" viewBox="0 0 360 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Phone Frame -->
+  <rect width="360" height="800" fill="#f5f5f5" stroke="#333" stroke-width="2"/>
+  
+  <!-- Status Bar -->
+  <rect x="0" y="0" width="360" height="24" fill="#333"/>
+  <text x="10" y="17" fill="white" font-family="Arial" font-size="12">9:41 AM</text>
+  <text x="300" y="17" fill="white" font-family="Arial" font-size="12">100%</text>
+  
+  <!-- App Header -->
+  <rect x="0" y="24" width="360" height="56" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="180" y="58" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold">Rankings</text>
+  
+  <!-- Sort Options -->
+  <g transform="translate(0, 80)">
+    <rect x="0" y="0" width="360" height="44" fill="#f5f5f5"/>
+    <text x="20" y="28" font-family="Arial" font-size="14">Sort by:</text>
+    <rect x="80" y="8" width="80" height="28" rx="14" fill="#2196F3"/>
+    <text x="120" y="26" text-anchor="middle" font-family="Arial" font-size="12" fill="white" font-weight="bold">Win %</text>
+    <rect x="170" y="8" width="80" height="28" rx="14" fill="#fff" stroke="#ddd"/>
+    <text x="210" y="26" text-anchor="middle" font-family="Arial" font-size="12">Points</text>
+    <rect x="260" y="8" width="80" height="28" rx="14" fill="#fff" stroke="#ddd"/>
+    <text x="300" y="26" text-anchor="middle" font-family="Arial" font-size="12">H2H</text>
+  </g>
+  
+  <!-- Rankings List -->
+  <g transform="translate(0, 124)">
+    <!-- Player 1 - Your Ranking -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="360" height="80" fill="#e8f5e9"/>
+      <!-- Rank -->
+      <circle cx="40" cy="40" r="20" fill="#4CAF50"/>
+      <text x="40" y="47" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="white">3</text>
+      
+      <!-- Player Info -->
+      <text x="75" y="30" font-family="Arial" font-size="16" font-weight="bold">You</text>
+      <text x="75" y="50" font-family="Arial" font-size="12" fill="#666">5W - 2L • Partner: Jane D.</text>
+      
+      <!-- Stats -->
+      <text x="280" y="30" text-anchor="end" font-family="Arial" font-size="20" font-weight="bold">71.4%</text>
+      <text x="280" y="50" text-anchor="end" font-family="Arial" font-size="12" fill="#666">+18 pts</text>
+      
+      <!-- Divider -->
+      <line x1="20" y1="79" x2="340" y2="79" stroke="#ddd"/>
+    </g>
+    
+    <!-- Player 2 -->
+    <g transform="translate(0, 80)">
+      <rect x="0" y="0" width="360" height="80" fill="#fff"/>
+      <!-- Rank -->
+      <circle cx="40" cy="40" r="20" fill="#FFD700"/>
+      <text x="40" y="47" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold">1</text>
+      
+      <!-- Player Info -->
+      <text x="75" y="30" font-family="Arial" font-size="16" font-weight="bold">Bob S.</text>
+      <text x="75" y="50" font-family="Arial" font-size="12" fill="#666">7W - 1L • Partner: Mary K.</text>
+      
+      <!-- Stats -->
+      <text x="280" y="30" text-anchor="end" font-family="Arial" font-size="20" font-weight="bold">87.5%</text>
+      <text x="280" y="50" text-anchor="end" font-family="Arial" font-size="12" fill="#666">+32 pts</text>
+      
+      <!-- Divider -->
+      <line x1="20" y1="79" x2="340" y2="79" stroke="#ddd"/>
+    </g>
+    
+    <!-- Player 3 -->
+    <g transform="translate(0, 160)">
+      <rect x="0" y="0" width="360" height="80" fill="#fff"/>
+      <!-- Rank -->
+      <circle cx="40" cy="40" r="20" fill="#C0C0C0"/>
+      <text x="40" y="47" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold">2</text>
+      
+      <!-- Player Info -->
+      <text x="75" y="30" font-family="Arial" font-size="16" font-weight="bold">Jane D.</text>
+      <text x="75" y="50" font-family="Arial" font-size="12" fill="#666">6W - 2L • Partner: You</text>
+      
+      <!-- Stats -->
+      <text x="280" y="30" text-anchor="end" font-family="Arial" font-size="20" font-weight="bold">75.0%</text>
+      <text x="280" y="50" text-anchor="end" font-family="Arial" font-size="12" fill="#666">+24 pts</text>
+      
+      <!-- Divider -->
+      <line x1="20" y1="79" x2="340" y2="79" stroke="#ddd"/>
+    </g>
+    
+    <!-- Player 4 -->
+    <g transform="translate(0, 240)">
+      <rect x="0" y="0" width="360" height="80" fill="#fff"/>
+      <!-- Rank -->
+      <text x="40" y="47" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#666">4</text>
+      
+      <!-- Player Info -->
+      <text x="75" y="30" font-family="Arial" font-size="16" font-weight="bold">Tom R.</text>
+      <text x="75" y="50" font-family="Arial" font-size="12" fill="#666">4W - 4L • Partner: Sue L.</text>
+      
+      <!-- Stats -->
+      <text x="280" y="30" text-anchor="end" font-family="Arial" font-size="20" font-weight="bold">50.0%</text>
+      <text x="280" y="50" text-anchor="end" font-family="Arial" font-size="12" fill="#666">+2 pts</text>
+      
+      <!-- Divider -->
+      <line x1="20" y1="79" x2="340" y2="79" stroke="#ddd"/>
+    </g>
+    
+    <!-- Player 5 -->
+    <g transform="translate(0, 320)">
+      <rect x="0" y="0" width="360" height="80" fill="#fff"/>
+      <!-- Rank -->
+      <text x="40" y="47" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#666">5</text>
+      
+      <!-- Player Info -->
+      <text x="75" y="30" font-family="Arial" font-size="16" font-weight="bold">Mary K.</text>
+      <text x="75" y="50" font-family="Arial" font-size="12" fill="#666">3W - 5L • Partner: Bob S.</text>
+      
+      <!-- Stats -->
+      <text x="280" y="30" text-anchor="end" font-family="Arial" font-size="20" font-weight="bold">37.5%</text>
+      <text x="280" y="50" text-anchor="end" font-family="Arial" font-size="12" fill="#f44336">-12 pts</text>
+      
+      <!-- Divider -->
+      <line x1="20" y1="79" x2="340" y2="79" stroke="#ddd"/>
+    </g>
+  </g>
+  
+  <!-- Bottom Navigation -->
+  <rect x="0" y="720" width="360" height="80" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  <g transform="translate(0, 720)">
+    <!-- Matches Tab -->
+    <g transform="translate(60, 10)">
+      <text x="0" y="30" text-anchor="middle" font-family="Arial" font-size="20">📋</text>
+      <text x="0" y="50" text-anchor="middle" font-family="Arial" font-size="11" fill="#666">Matches</text>
+    </g>
+    
+    <!-- Rankings Tab (Active) -->
+    <g transform="translate(180, 10)">
+      <rect x="-30" y="0" width="60" height="60" rx="4" fill="#e3f2fd"/>
+      <text x="0" y="30" text-anchor="middle" font-family="Arial" font-size="20">🏆</text>
+      <text x="0" y="50" text-anchor="middle" font-family="Arial" font-size="11" font-weight="bold">Rankings</text>
+    </g>
+    
+    <!-- Settings Tab -->
+    <g transform="translate(300, 10)">
+      <text x="0" y="30" text-anchor="middle" font-family="Arial" font-size="20">⚙️</text>
+      <text x="0" y="50" text-anchor="middle" font-family="Arial" font-size="11" fill="#666">Settings</text>
+    </g>
+  </g>
+  
+  <!-- Annotations -->
+  <g transform="translate(0, 0)">
+    <!-- Your position highlight -->
+    <line x1="360" y1="164" x2="370" y2="164" stroke="#ff0000" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="375" y="169" font-family="Arial" font-size="10" fill="#ff0000">Your position highlighted</text>
+    
+    <!-- Scrollable -->
+    <line x1="15" y1="124" x2="15" y2="720" stroke="#ff0000" stroke-width="2"/>
+    <text x="25" y="400" font-family="Arial" font-size="10" fill="#ff0000" transform="rotate(-90, 25, 400)">Scrollable</text>
+  </g>
+</svg>

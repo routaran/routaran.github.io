@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Screen Background -->
+  <rect width="360" height="800" fill="#f5f5f5"/>
+  
+  <!-- Status Bar -->
+  <rect width="360" height="24" fill="#333"/>
+  <text x="10" y="18" fill="white" font-size="12" font-family="Arial">9:41 AM</text>
+  <text x="330" y="18" fill="white" font-size="12" font-family="Arial" text-anchor="end">100%</text>
+  
+  <!-- Header -->
+  <rect y="24" width="360" height="60" fill="white" stroke="#e0e0e0"/>
+  <text x="20" y="60" font-size="24" font-family="Arial">←</text>
+  <text x="60" y="60" font-size="20" font-weight="bold" font-family="Arial">Court Setup</text>
+  
+  <!-- Info Section -->
+  <rect x="20" y="100" width="320" height="60" rx="8" fill="#e3f2fd" stroke="#2196F3"/>
+  <text x="30" y="125" font-size="16" font-weight="bold" font-family="Arial">🏓 Custom Court Names</text>
+  <text x="30" y="145" font-size="14" fill="#666" font-family="Arial">Give your courts personalized names that will appear</text>
+  <text x="30" y="160" font-size="14" fill="#666" font-family="Arial">throughout the tournament schedule and score tracking.</text>
+  
+  <!-- Court List -->
+  <text x="20" y="195" font-size="18" font-weight="bold" font-family="Arial">Your 3 Courts</text>
+  
+  <!-- Court 1 -->
+  <rect x="20" y="210" width="320" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+  <circle cx="50" cy="235" r="18" fill="#2196F3"/>
+  <text x="50" y="241" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">1</text>
+  <text x="80" y="235" font-size="14" fill="#666" font-family="Arial">Court Name</text>
+  <rect x="80" y="245" width="240" height="36" rx="4" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <text x="90" y="268" font-size="16" font-family="Arial">Court 5</text>
+  <text x="310" y="268" font-size="12" fill="#666" font-family="Arial" text-anchor="end">✎</text>
+  
+  <!-- Court 2 -->
+  <rect x="20" y="305" width="320" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+  <circle cx="50" cy="330" r="18" fill="#2196F3"/>
+  <text x="50" y="336" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">2</text>
+  <text x="80" y="330" font-size="14" fill="#666" font-family="Arial">Court Name</text>
+  <rect x="80" y="340" width="240" height="36" rx="4" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <text x="90" y="363" font-size="16" font-family="Arial">Blue Court</text>
+  <text x="310" y="363" font-size="12" fill="#666" font-family="Arial" text-anchor="end">✎</text>
+  
+  <!-- Court 3 -->
+  <rect x="20" y="400" width="320" height="80" rx="8" fill="white" stroke="#e0e0e0"/>
+  <circle cx="50" cy="425" r="18" fill="#2196F3"/>
+  <text x="50" y="431" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">3</text>
+  <text x="80" y="425" font-size="14" fill="#666" font-family="Arial">Court Name</text>
+  <rect x="80" y="435" width="240" height="36" rx="4" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <text x="90" y="458" font-size="16" font-family="Arial">Center Court</text>
+  <text x="310" y="458" font-size="12" fill="#666" font-family="Arial" text-anchor="end">✎</text>
+  
+  <!-- Examples Section -->
+  <rect x="20" y="500" width="320" height="100" rx="8" fill="#f9f9f9" stroke="#e0e0e0"/>
+  <text x="30" y="525" font-size="16" font-weight="bold" font-family="Arial">💡 Naming Examples</text>
+  <text x="30" y="545" font-size="14" fill="#666" font-family="Arial">• "Court 5" - Match your gym's numbering</text>
+  <text x="30" y="565" font-size="14" fill="#666" font-family="Arial">• "Blue Court" - Color-coded courts</text>
+  <text x="30" y="585" font-size="14" fill="#666" font-family="Arial">• "Center Court" - Location-based names</text>
+  
+  <!-- Default Names Button -->
+  <rect x="20" y="620" width="150" height="44" rx="22" fill="#666"/>
+  <text x="95" y="646" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">Use Defaults</text>
+  
+  <!-- Reset Button -->
+  <rect x="190" y="620" width="150" height="44" rx="22" fill="#FF9800"/>
+  <text x="265" y="646" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">Reset Names</text>
+  
+  <!-- Character Counter -->
+  <text x="20" y="685" font-size="12" fill="#666" font-family="Arial">Court names: Max 20 characters each • Emojis allowed 🎾</text>
+  
+  <!-- Save Button -->
+  <rect x="20" y="700" width="320" height="48" rx="24" fill="#4CAF50"/>
+  <text x="180" y="729" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">Save Court Names</text>
+  
+  <!-- Annotations -->
+  <g transform="translate(360, 250)">
+    <line x1="-20" y1="0" x2="0" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="5" y="-14" width="200" height="28" fill="#ff5722" rx="4"/>
+    <text x="15" y="4" fill="white" font-size="12" font-family="Arial">IMPORTANT: Custom naming</text>
+  </g>
+  
+  <g transform="translate(360, 360)">
+    <line x1="-20" y1="0" x2="0" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="5" y="-14" width="220" height="28" fill="#ff5722" rx="4"/>
+    <text x="15" y="4" fill="white" font-size="12" font-family="Arial">Names appear throughout app</text>
+  </g>
+  
+  <g transform="translate(360, 550)">
+    <line x1="-20" y1="0" x2="0" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="5" y="-14" width="180" height="28" fill="#ff5722" rx="4"/>
+    <text x="15" y="4" fill="white" font-size="12" font-family="Arial">Helpful examples</text>
+  </g>
+  
+  <!-- Keyboard Hint -->
+  <g transform="translate(180, 780)">
+    <rect x="-60" y="-30" width="120" height="20" fill="#333" rx="4"/>
+    <text x="0" y="-15" text-anchor="middle" fill="white" font-size="12" font-family="Arial">Keyboard Active</text>
+  </g>
+</svg>

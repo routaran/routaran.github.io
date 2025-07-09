@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Screen Background -->
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+  
+  <!-- Sidebar -->
+  <rect width="240" height="800" fill="#2c3e50"/>
+  <text x="20" y="40" fill="white" font-size="24" font-weight="bold" font-family="Arial">Pickleball</text>
+  <text x="20" y="65" fill="#ecf0f1" font-size="14" font-family="Arial">Organizer Dashboard</text>
+  
+  <!-- Sidebar Menu -->
+  <rect x="0" y="100" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="128" fill="white" font-size="16" font-family="Arial">📋 Play Dates</text>
+  
+  <rect x="0" y="148" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="176" fill="white" font-size="16" font-family="Arial">👥 Players</text>
+  
+  <rect x="0" y="196" width="240" height="48" fill="#4CAF50"/>
+  <text x="20" y="224" fill="white" font-size="16" font-family="Arial">🤝 Partnerships</text>
+  
+  <rect x="0" y="244" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="272" fill="white" font-size="16" font-family="Arial">📅 Schedule</text>
+  
+  <rect x="0" y="292" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="320" fill="white" font-size="16" font-family="Arial">⚙️ Settings</text>
+  
+  <!-- Main Content Area -->
+  <rect x="280" y="40" width="880" height="720" rx="8" fill="white" stroke="#e0e0e0"/>
+  
+  <!-- Header -->
+  <text x="320" y="90" font-size="28" font-weight="bold" font-family="Arial">Partnership Management</text>
+  <text x="320" y="115" font-size="16" fill="#666" font-family="Arial">Saturday Tournament - July 12, 2025 • 8 players</text>
+  
+  <!-- Partnership Generation Status -->
+  <rect x="320" y="140" width="800" height="60" rx="8" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="350" cy="170" r="16" fill="#4CAF50"/>
+  <text x="354" y="175" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">✓</text>
+  <text x="380" y="165" font-size="18" font-weight="bold" font-family="Arial">Partnerships Auto-Generated</text>
+  <text x="380" y="185" font-size="14" fill="#666" font-family="Arial">4 partnerships created from 8 players • Round-robin schedule: 12 matches total</text>
+  
+  <!-- Generation Rules Info -->
+  <rect x="320" y="220" width="800" height="80" rx="8" fill="#f0f8ff" stroke="#2196F3"/>
+  <text x="340" y="245" font-size="16" font-weight="bold" font-family="Arial">ℹ️ Partnership Generation Rules</text>
+  <text x="340" y="265" font-size="14" fill="#666" font-family="Arial">• Each partnership plays WITH every other partnership exactly once</text>
+  <text x="340" y="280" font-size="14" fill="#666" font-family="Arial">• Each partnership plays AGAINST every other partnership exactly once</text>
+  <text x="340" y="295" font-size="14" fill="#666" font-family="Arial">• All matches stored by partnership for enhanced analytics and reporting</text>
+  
+  <!-- Partnership Grid -->
+  <text x="320" y="335" font-size="18" font-weight="bold" font-family="Arial">Generated Partnerships</text>
+  
+  <!-- Row 1 of Partnerships -->
+  <rect x="320" y="350" width="380" height="120" rx="8" fill="#fff" stroke="#e0e0e0"/>
+  <circle cx="350" cy="380" r="20" fill="#2196F3"/>
+  <text x="350" y="386" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">A</text>
+  <text x="380" y="380" font-size="18" font-weight="bold" font-family="Arial">Team A</text>
+  <text x="380" y="400" font-size="14" fill="#666" font-family="Arial">Partnership ID: P001</text>
+  
+  <!-- Player cards for Team A -->
+  <rect x="340" y="415" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="355" cy="435" r="12" fill="#4CAF50"/>
+  <text x="359" y="440" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">JS</text>
+  <text x="375" y="440" font-size="14" font-weight="bold" font-family="Arial">John Smith</text>
+  
+  <rect x="470" y="415" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="485" cy="435" r="12" fill="#4CAF50"/>
+  <text x="489" y="440" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">MJ</text>
+  <text x="505" y="440" font-size="14" font-weight="bold" font-family="Arial">Mary Johnson</text>
+  
+  <!-- Statistics for Team A -->
+  <text x="610" y="375" font-size="14" font-family="Arial">Matches:</text>
+  <text x="610" y="390" font-size="20" font-weight="bold" fill="#4CAF50" font-family="Arial">3</text>
+  <text x="610" y="405" font-size="14" font-family="Arial">Win Rate:</text>
+  <text x="610" y="420" font-size="20" font-weight="bold" fill="#2196F3" font-family="Arial">67%</text>
+  <text x="610" y="435" font-size="14" font-family="Arial">Avg Score:</text>
+  <text x="610" y="450" font-size="20" font-weight="bold" fill="#FF9800" font-family="Arial">9.2</text>
+  
+  <rect x="740" y="350" width="380" height="120" rx="8" fill="#fff" stroke="#e0e0e0"/>
+  <circle cx="770" cy="380" r="20" fill="#2196F3"/>
+  <text x="770" y="386" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">B</text>
+  <text x="800" y="380" font-size="18" font-weight="bold" font-family="Arial">Team B</text>
+  <text x="800" y="400" font-size="14" fill="#666" font-family="Arial">Partnership ID: P002</text>
+  
+  <!-- Player cards for Team B -->
+  <rect x="760" y="415" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="775" cy="435" r="12" fill="#4CAF50"/>
+  <text x="779" y="440" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">BW</text>
+  <text x="795" y="440" font-size="14" font-weight="bold" font-family="Arial">Bob Wilson</text>
+  
+  <rect x="890" y="415" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="905" cy="435" r="12" fill="#4CAF50"/>
+  <text x="909" y="440" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">AB</text>
+  <text x="925" y="440" font-size="14" font-weight="bold" font-family="Arial">Alice Brown</text>
+  
+  <!-- Statistics for Team B -->
+  <text x="1030" y="375" font-size="14" font-family="Arial">Matches:</text>
+  <text x="1030" y="390" font-size="20" font-weight="bold" fill="#4CAF50" font-family="Arial">3</text>
+  <text x="1030" y="405" font-size="14" font-family="Arial">Win Rate:</text>
+  <text x="1030" y="420" font-size="20" font-weight="bold" fill="#2196F3" font-family="Arial">33%</text>
+  <text x="1030" y="435" font-size="14" font-family="Arial">Avg Score:</text>
+  <text x="1030" y="450" font-size="20" font-weight="bold" fill="#FF9800" font-family="Arial">7.8</text>
+  
+  <!-- Row 2 of Partnerships -->
+  <rect x="320" y="490" width="380" height="120" rx="8" fill="#fff" stroke="#e0e0e0"/>
+  <circle cx="350" cy="520" r="20" fill="#2196F3"/>
+  <text x="350" y="526" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">C</text>
+  <text x="380" y="520" font-size="18" font-weight="bold" font-family="Arial">Team C</text>
+  <text x="380" y="540" font-size="14" fill="#666" font-family="Arial">Partnership ID: P003</text>
+  
+  <!-- Player cards for Team C -->
+  <rect x="340" y="555" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="355" cy="575" r="12" fill="#4CAF50"/>
+  <text x="359" y="580" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">TD</text>
+  <text x="375" y="580" font-size="14" font-weight="bold" font-family="Arial">Tom Davis</text>
+  
+  <rect x="470" y="555" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="485" cy="575" r="12" fill="#4CAF50"/>
+  <text x="489" y="580" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">LM</text>
+  <text x="505" y="580" font-size="14" font-weight="bold" font-family="Arial">Lisa Miller</text>
+  
+  <!-- Statistics for Team C -->
+  <text x="610" y="515" font-size="14" font-family="Arial">Matches:</text>
+  <text x="610" y="530" font-size="20" font-weight="bold" fill="#4CAF50" font-family="Arial">3</text>
+  <text x="610" y="545" font-size="14" font-family="Arial">Win Rate:</text>
+  <text x="610" y="560" font-size="20" font-weight="bold" fill="#2196F3" font-family="Arial">100%</text>
+  <text x="610" y="575" font-size="14" font-family="Arial">Avg Score:</text>
+  <text x="610" y="590" font-size="20" font-weight="bold" fill="#FF9800" font-family="Arial">10.5</text>
+  
+  <rect x="740" y="490" width="380" height="120" rx="8" fill="#fff" stroke="#e0e0e0"/>
+  <circle cx="770" cy="520" r="20" fill="#2196F3"/>
+  <text x="770" y="526" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">D</text>
+  <text x="800" y="520" font-size="18" font-weight="bold" font-family="Arial">Team D</text>
+  <text x="800" y="540" font-size="14" fill="#666" font-family="Arial">Partnership ID: P004</text>
+  
+  <!-- Player cards for Team D -->
+  <rect x="760" y="555" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="775" cy="575" r="12" fill="#4CAF50"/>
+  <text x="779" y="580" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">MT</text>
+  <text x="795" y="580" font-size="14" font-weight="bold" font-family="Arial">Mike Thompson</text>
+  
+  <rect x="890" y="555" width="120" height="40" rx="4" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="905" cy="575" r="12" fill="#4CAF50"/>
+  <text x="909" y="580" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">SL</text>
+  <text x="925" y="580" font-size="14" font-weight="bold" font-family="Arial">Sarah Lee</text>
+  
+  <!-- Statistics for Team D -->
+  <text x="1030" y="515" font-size="14" font-family="Arial">Matches:</text>
+  <text x="1030" y="530" font-size="20" font-weight="bold" fill="#4CAF50" font-family="Arial">3</text>
+  <text x="1030" y="545" font-size="14" font-family="Arial">Win Rate:</text>
+  <text x="1030" y="560" font-size="20" font-weight="bold" fill="#2196F3" font-family="Arial">0%</text>
+  <text x="1030" y="575" font-size="14" font-family="Arial">Avg Score:</text>
+  <text x="1030" y="590" font-size="20" font-weight="bold" fill="#FF9800" font-family="Arial">6.1</text>
+  
+  <!-- Action Buttons -->
+  <rect x="320" y="630" width="180" height="48" rx="24" fill="#2196F3"/>
+  <text x="410" y="659" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">View Match Matrix</text>
+  
+  <rect x="520" y="630" width="150" height="48" rx="24" fill="#4CAF50"/>
+  <text x="595" y="659" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">Export Analytics</text>
+  
+  <rect x="690" y="630" width="160" height="48" rx="24" fill="#FF9800"/>
+  <text x="770" y="659" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">Partnership Report</text>
+  
+  <rect x="870" y="630" width="140" height="48" rx="24" fill="#f44336"/>
+  <text x="940" y="659" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">Reset Partners</text>
+  
+  <!-- Tournament Overview -->
+  <rect x="320" y="698" width="800" height="50" rx="8" fill="#f9f9f9" stroke="#e0e0e0"/>
+  <text x="340" y="720" font-size="14" font-family="Arial">Tournament Progress:</text>
+  <text x="340" y="735" font-size="14" fill="#666" font-family="Arial">12 total matches • 8 completed • 4 remaining • Each partnership plays 3 matches</text>
+  
+  <!-- Progress Bar -->
+  <rect x="600" y="705" width="200" height="20" rx="10" fill="#e0e0e0"/>
+  <rect x="600" y="705" width="134" height="20" rx="10" fill="#4CAF50"/>
+  <text x="700" y="718" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">67%</text>
+  
+  <text x="820" y="720" font-size="14" font-family="Arial">Estimated completion:</text>
+  <text x="820" y="735" font-size="14" fill="#666" font-family="Arial">2:30 PM (45 minutes remaining)</text>
+  
+  <!-- Annotations -->
+  <g transform="translate(1160, 170)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="200" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Auto-generated from player list</text>
+  </g>
+  
+  <g transform="translate(1160, 250)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="220" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Round-robin rules clearly explained</text>
+  </g>
+  
+  <g transform="translate(1160, 380)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="180" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Real-time statistics</text>
+  </g>
+  
+  <g transform="translate(1160, 654)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="200" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Partnership-based analytics</text>
+  </g>
+</svg>

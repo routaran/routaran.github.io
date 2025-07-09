@@ -1,0 +1,124 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Browser Frame -->
+  <rect width="1200" height="800" fill="#f5f5f5" stroke="#333" stroke-width="2"/>
+  
+  <!-- Browser Chrome -->
+  <rect x="0" y="0" width="1200" height="40" fill="#e0e0e0"/>
+  <circle cx="20" cy="20" r="6" fill="#ff5f56"/>
+  <circle cx="40" cy="20" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="20" r="6" fill="#27c93f"/>
+  <rect x="100" y="10" width="1000" height="20" rx="10" fill="#fff" stroke="#999"/>
+  <text x="110" y="25" font-family="Arial" font-size="12" fill="#666">40pluspickleball.com/dashboard</text>
+  
+  <!-- Sidebar -->
+  <rect x="0" y="40" width="240" height="760" fill="#fff" stroke="#e0e0e0" stroke-width="1"/>
+  
+  <!-- Logo in Sidebar -->
+  <g transform="translate(20, 60)">
+    <circle cx="30" cy="30" r="20" fill="#e0e0e0" stroke="#999" stroke-width="1"/>
+    <text x="60" y="35" font-family="Arial" font-size="18" font-weight="bold">40+ Pickleball</text>
+  </g>
+  
+  <!-- Navigation -->
+  <g transform="translate(0, 140)">
+    <!-- Dashboard (Active) -->
+    <rect x="0" y="0" width="240" height="48" fill="#e3f2fd"/>
+    <text x="20" y="30" font-family="Arial" font-size="16">📋 Dashboard</text>
+    
+    <!-- Rankings -->
+    <text x="20" y="78" font-family="Arial" font-size="16" fill="#666">🏆 Rankings</text>
+    
+    <!-- Settings -->
+    <text x="20" y="126" font-family="Arial" font-size="16" fill="#666">⚙️ Settings</text>
+  </g>
+  
+  <!-- User Info at Bottom of Sidebar -->
+  <g transform="translate(20, 720)">
+    <circle cx="20" cy="20" r="15" fill="#4CAF50"/>
+    <text x="20" y="25" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="white">YO</text>
+    <text x="45" y="20" font-family="Arial" font-size="14">Your Name</text>
+    <text x="45" y="35" font-family="Arial" font-size="12" fill="#666">Sign out</text>
+  </g>
+  
+  <!-- Main Content Area -->
+  <rect x="240" y="40" width="960" height="760" fill="#fafafa"/>
+  
+  <!-- Header -->
+  <g transform="translate(280, 80)">
+    <text x="0" y="0" font-family="Arial" font-size="28" font-weight="bold">Today's Matches</text>
+    <text x="0" y="30" font-family="Arial" font-size="16" fill="#666">July 8, 2025 • 3 Courts Available</text>
+  </g>
+  
+  <!-- Stats Cards -->
+  <g transform="translate(280, 140)">
+    <rect x="0" y="0" width="200" height="100" rx="8" fill="#fff" stroke="#ddd"/>
+    <text x="20" y="30" font-family="Arial" font-size="14" fill="#666">Players Today</text>
+    <text x="20" y="60" font-family="Arial" font-size="32" font-weight="bold">12</text>
+    
+    <rect x="220" y="0" width="200" height="100" rx="8" fill="#fff" stroke="#ddd"/>
+    <text x="240" y="30" font-family="Arial" font-size="14" fill="#666">Matches Completed</text>
+    <text x="240" y="60" font-family="Arial" font-size="32" font-weight="bold">8/24</text>
+    
+    <rect x="440" y="0" width="200" height="100" rx="8" fill="#fff" stroke="#ddd"/>
+    <text x="460" y="30" font-family="Arial" font-size="14" fill="#666">Current Round</text>
+    <text x="460" y="60" font-family="Arial" font-size="32" font-weight="bold">3</text>
+  </g>
+  
+  <!-- Match Grid -->
+  <g transform="translate(280, 280)">
+    <text x="0" y="-10" font-family="Arial" font-size="20" font-weight="bold">Round 3 Matches</text>
+    
+    <!-- Match Cards in 3-column grid -->
+    <!-- Row 1 -->
+    <g transform="translate(0, 20)">
+      <!-- Court 1 - Your Match -->
+      <rect x="0" y="0" width="280" height="140" rx="8" fill="#fff" stroke="#4CAF50" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#2196F3"/>
+      <text x="30" y="36" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">1</text>
+      <text x="60" y="35" font-family="Arial" font-size="16" font-weight="bold">Court 1</text>
+      <text x="20" y="65" font-family="Arial" font-size="14">You • Jane D.</text>
+      <text x="20" y="85" font-family="Arial" font-size="12" fill="#666">vs</text>
+      <text x="20" y="105" font-family="Arial" font-size="14">Bob S. • Mary K.</text>
+      <rect x="180" y="90" width="80" height="32" rx="16" fill="#4CAF50"/>
+      <text x="220" y="110" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="white">Enter Score</text>
+      
+      <!-- Court 2 - Completed -->
+      <rect x="300" y="0" width="280" height="140" rx="8" fill="#f5f5f5" stroke="#ddd"/>
+      <circle cx="330" cy="30" r="20" fill="#9E9E9E"/>
+      <text x="330" y="36" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">2</text>
+      <text x="360" y="35" font-family="Arial" font-size="16" font-weight="bold">Court 2</text>
+      <text x="320" y="65" font-family="Arial" font-size="14">Tom R. • Sue L.</text>
+      <text x="320" y="85" font-family="Arial" font-size="12" fill="#666">vs</text>
+      <text x="320" y="105" font-family="Arial" font-size="14">Pat M. • Kim T.</text>
+      <text x="520" y="70" text-anchor="end" font-family="Arial" font-size="24" font-weight="bold">11-7</text>
+      <text x="520" y="90" text-anchor="end" font-family="Arial" font-size="12" fill="#666">Completed</text>
+      
+      <!-- Court 3 - Waiting -->
+      <rect x="600" y="0" width="280" height="140" rx="8" fill="#fff" stroke="#ddd"/>
+      <circle cx="630" cy="30" r="20" fill="#2196F3"/>
+      <text x="630" y="36" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white">3</text>
+      <text x="660" y="35" font-family="Arial" font-size="16" font-weight="bold">Court 3</text>
+      <text x="620" y="65" font-family="Arial" font-size="14">Dan W. • Lisa H.</text>
+      <text x="620" y="85" font-family="Arial" font-size="12" fill="#666">vs</text>
+      <text x="620" y="105" font-family="Arial" font-size="14">Mike B. • Amy R.</text>
+      <text x="820" y="75" text-anchor="end" font-family="Arial" font-size="14" fill="#999">Waiting...</text>
+    </g>
+    
+    <!-- Row 2 -->
+    <g transform="translate(0, 170)">
+      <!-- More match cards would go here -->
+      <rect x="0" y="0" width="280" height="140" rx="8" fill="#fff" stroke="#ddd" stroke-dasharray="5,5"/>
+      <text x="140" y="75" text-anchor="middle" font-family="Arial" font-size="14" fill="#999">More matches...</text>
+    </g>
+  </g>
+  
+  <!-- Annotations -->
+  <g transform="translate(0, 0)">
+    <!-- Your match highlight -->
+    <line x1="280" y1="300" x2="200" y2="250" stroke="#ff0000" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="50" y="250" font-family="Arial" font-size="12" fill="#ff0000">Your matches highlighted</text>
+    
+    <!-- No score entry on desktop note -->
+    <text x="600" y="750" text-anchor="middle" font-family="Arial" font-size="12" fill="#ff0000">Note: Score entry redirects to mobile view</text>
+  </g>
+</svg>

@@ -1,0 +1,96 @@
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#ffffff"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="1200" height="80" fill="#4CAF50"/>
+  <text x="40" y="45" fill="white" font-size="24" font-weight="bold">Match Details</text>
+  <text x="1120" y="45" fill="white" font-size="18">← Back to Dashboard</text>
+  
+  <!-- Main Content Area -->
+  <rect x="40" y="120" width="1120" height="640" fill="#fafafa" stroke="#e0e0e0" rx="8"/>
+  
+  <!-- Left Column: Match Info -->
+  <rect x="60" y="140" width="350" height="280" fill="#ffffff" stroke="#e0e0e0" rx="8"/>
+  <text x="80" y="170" font-size="20" font-weight="bold">Round 3 - Court 1</text>
+  <text x="80" y="200" font-size="16" fill="#666">Match Status: Completed</text>
+  <text x="80" y="230" font-size="16" fill="#666">Final Score: 11 - 8</text>
+  <text x="80" y="260" font-size="14" fill="#888">Recorded by: John D.</text>
+  <text x="80" y="280" font-size="14" fill="#888">Time: 2:34 PM • 2 hours ago</text>
+  
+  <!-- Court Information -->
+  <text x="80" y="320" font-size="16" font-weight="bold">Court Information</text>
+  <text x="80" y="350" font-size="14" fill="#666">Court Name: Center Court</text>
+  <text x="80" y="370" font-size="14" fill="#666">Round Duration: ~25 minutes</text>
+  <text x="80" y="390" font-size="14" fill="#666">Win Condition: First to 11</text>
+  
+  <!-- Right Column: Teams -->
+  <rect x="430" y="140" width="350" height="280" fill="#ffffff" stroke="#e0e0e0" rx="8"/>
+  <text x="450" y="170" font-size="20" font-weight="bold">Teams</text>
+  
+  <!-- Team 1 (Winners) -->
+  <rect x="450" y="190" width="310" height="80" fill="#e8f5e9" stroke="#4CAF50" rx="8"/>
+  <text x="470" y="215" font-size="16" font-weight="bold" fill="#2e7d32">Team 1 (Winners) - 11 points</text>
+  <text x="470" y="235" font-size="14">Sarah Johnson</text>
+  <text x="470" y="255" font-size="14">Mike Chen</text>
+  
+  <!-- Team 2 -->
+  <rect x="450" y="280" width="310" height="80" fill="#f5f5f5" stroke="#e0e0e0" rx="8"/>
+  <text x="470" y="305" font-size="16" font-weight="bold">Team 2 - 8 points</text>
+  <text x="470" y="325" font-size="14">John Davis</text>
+  <text x="470" y="345" font-size="14">Lisa Wang</text>
+  
+  <!-- Far Right: Statistics -->
+  <rect x="800" y="140" width="340" height="280" fill="#ffffff" stroke="#e0e0e0" rx="8"/>
+  <text x="820" y="170" font-size="20" font-weight="bold">Match Statistics</text>
+  
+  <text x="820" y="200" font-size="16" font-weight="bold">Partnership Performance</text>
+  <text x="820" y="220" font-size="14" fill="#666">Sarah & Mike: 3-1 record</text>
+  <text x="820" y="240" font-size="14" fill="#666">John & Lisa: 2-2 record</text>
+  <text x="820" y="260" font-size="14" fill="#666">Head-to-head: First meeting</text>
+  
+  <text x="820" y="300" font-size="16" font-weight="bold">Score Analysis</text>
+  <text x="820" y="320" font-size="14" fill="#666">Winning margin: 3 points</text>
+  <text x="820" y="340" font-size="14" fill="#666">Game length: Average</text>
+  <text x="820" y="360" font-size="14" fill="#666">Tournament impact: High</text>
+  
+  <!-- Bottom Section: Head-to-Head History -->
+  <rect x="60" y="440" width="1080" height="300" fill="#ffffff" stroke="#e0e0e0" rx="8"/>
+  <text x="80" y="470" font-size="20" font-weight="bold">Head-to-Head History & Context</text>
+  
+  <!-- Previous Matches Table -->
+  <text x="80" y="510" font-size="16" font-weight="bold">Recent Matches</text>
+  
+  <!-- Table Header -->
+  <rect x="80" y="530" width="1040" height="30" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <text x="100" y="550" font-size="14" font-weight="bold">Round</text>
+  <text x="200" y="550" font-size="14" font-weight="bold">Teams</text>
+  <text x="500" y="550" font-size="14" font-weight="bold">Score</text>
+  <text x="600" y="550" font-size="14" font-weight="bold">Court</text>
+  <text x="750" y="550" font-size="14" font-weight="bold">Impact</text>
+  
+  <!-- Table Rows -->
+  <rect x="80" y="560" width="1040" height="30" fill="#ffffff" stroke="#e0e0e0"/>
+  <text x="100" y="580" font-size="12">Round 2</text>
+  <text x="200" y="580" font-size="12">Sarah & Mike vs Tom & Amy</text>
+  <text x="500" y="580" font-size="12">11-6</text>
+  <text x="600" y="580" font-size="12">Court 2</text>
+  <text x="750" y="580" font-size="12">Moved to #1 ranking</text>
+  
+  <rect x="80" y="590" width="1040" height="30" fill="#ffffff" stroke="#e0e0e0"/>
+  <text x="100" y="610" font-size="12">Round 1</text>
+  <text x="200" y="610" font-size="12">John & Lisa vs Paul & Emma</text>
+  <text x="500" y="610" font-size="12">11-9</text>
+  <text x="600" y="610" font-size="12">Court 1</text>
+  <text x="750" y="610" font-size="12">Solid start</text>
+  
+  <!-- Partnership Analysis -->
+  <text x="80" y="650" font-size="16" font-weight="bold">Partnership Analysis</text>
+  <text x="80" y="670" font-size="14" fill="#666">Sarah & Mike show strong chemistry with aggressive net play</text>
+  <text x="80" y="690" font-size="14" fill="#666">John & Lisa excel at baseline rallies but struggle with put-aways</text>
+  <text x="80" y="710" font-size="14" fill="#666">This victory solidifies Sarah & Mike as tournament favorites</text>
+  
+  <!-- Annotations -->
+  <text x="60" y="100" font-size="10" fill="#888">Desktop version shows expanded statistics and head-to-head analysis</text>
+  <text x="60" y="790" font-size="10" fill="#888">Provides comprehensive match context for detailed analysis</text>
+</svg>

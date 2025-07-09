@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Screen Background -->
+  <rect width="1200" height="800" fill="#f5f5f5"/>
+  
+  <!-- Sidebar -->
+  <rect width="240" height="800" fill="#2c3e50"/>
+  <text x="20" y="40" fill="white" font-size="24" font-weight="bold" font-family="Arial">Pickleball</text>
+  <text x="20" y="65" fill="#ecf0f1" font-size="14" font-family="Arial">Organizer Dashboard</text>
+  
+  <!-- Sidebar Menu -->
+  <rect x="0" y="100" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="128" fill="white" font-size="16" font-family="Arial">📋 Play Dates</text>
+  
+  <rect x="0" y="148" width="240" height="48" fill="#4CAF50"/>
+  <text x="20" y="176" fill="white" font-size="16" font-family="Arial">👥 Players</text>
+  
+  <rect x="0" y="196" width="240" height="48" fill="#34495e"/>
+  <text x="20" y="224" fill="white" font-size="16" font-family="Arial">⚙️ Settings</text>
+  
+  <!-- Main Content Area -->
+  <rect x="280" y="40" width="880" height="720" rx="8" fill="white" stroke="#e0e0e0"/>
+  
+  <!-- Header -->
+  <text x="320" y="90" font-size="28" font-weight="bold" font-family="Arial">Player Management</text>
+  <text x="320" y="115" font-size="16" fill="#666" font-family="Arial">Saturday Tournament - July 12, 2025</text>
+  
+  <!-- Player Counter -->
+  <rect x="320" y="140" width="800" height="48" rx="8" fill="#e8f5e9" stroke="#4CAF50"/>
+  <text x="340" y="170" font-size="18" font-weight="bold" font-family="Arial">Players: 8 of 16</text>
+  <text x="1100" y="170" font-size="14" fill="#666" font-family="Arial" text-anchor="end">Minimum: 4 • Maximum: 16</text>
+  
+  <!-- Two Column Layout -->
+  <!-- Left Column - Add Player -->
+  <rect x="320" y="208" width="380" height="240" rx="8" fill="#f9f9f9" stroke="#e0e0e0"/>
+  <text x="340" y="238" font-size="18" font-weight="bold" font-family="Arial">Add New Player</text>
+  
+  <!-- Name Input -->
+  <text x="340" y="268" font-size="14" font-family="Arial">Full Name</text>
+  <rect x="340" y="275" width="340" height="44" rx="4" fill="white" stroke="#e0e0e0"/>
+  <text x="350" y="301" font-size="16" font-family="Arial" fill="#999">Enter player name</text>
+  
+  <!-- Email Input -->
+  <text x="340" y="338" font-size="14" font-family="Arial">Email Address</text>
+  <rect x="340" y="345" width="340" height="44" rx="4" fill="white" stroke="#e0e0e0"/>
+  <text x="350" y="371" font-size="16" font-family="Arial" fill="#999">player@email.com</text>
+  
+  <!-- Add Button -->
+  <rect x="340" y="405" width="120" height="44" rx="22" fill="#4CAF50"/>
+  <text x="400" y="431" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="Arial">Add Player</text>
+  
+  
+  
+  <!-- Player Table -->
+  <rect x="320" y="468" width="800" height="280" rx="8" fill="white" stroke="#e0e0e0"/>
+  <text x="340" y="498" font-size="18" font-weight="bold" font-family="Arial">Current Players</text>
+  
+  <!-- Table Header -->
+  <rect x="340" y="510" width="760" height="36" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <text x="360" y="532" font-size="14" font-weight="bold" font-family="Arial">Name</text>
+  <text x="560" y="532" font-size="14" font-weight="bold" font-family="Arial">Email</text>
+  <text x="780" y="532" font-size="14" font-weight="bold" font-family="Arial">Status</text>
+  <text x="1000" y="532" font-size="14" font-weight="bold" font-family="Arial">Actions</text>
+  
+  <!-- Table Rows -->
+  <rect x="340" y="546" width="760" height="44" fill="white" stroke="#e0e0e0"/>
+  <circle cx="360" cy="568" r="12" fill="#4CAF50"/>
+  <text x="364" y="573" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">JS</text>
+  <text x="385" y="572" font-size="14" font-family="Arial">John Smith</text>
+  <text x="560" y="572" font-size="14" font-family="Arial">john@email.com</text>
+  <rect x="780" y="556" width="80" height="24" rx="12" fill="#e8f5e9" stroke="#4CAF50"/>
+  <text x="820" y="572" text-anchor="middle" font-size="12" fill="#4CAF50" font-family="Arial">✓ Claimed</text>
+  <circle cx="1020" cy="568" r="12" fill="#f44336"/>
+  <text x="1024" y="573" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">×</text>
+  <circle cx="1060" cy="568" r="12" fill="#666"/>
+  <text x="1064" y="573" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">✎</text>
+  
+  <rect x="340" y="590" width="760" height="44" fill="white" stroke="#e0e0e0"/>
+  <circle cx="360" cy="612" r="12" fill="#FF9800"/>
+  <text x="364" y="617" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">MJ</text>
+  <text x="385" y="616" font-size="14" font-family="Arial">Mary Johnson</text>
+  <text x="560" y="616" font-size="14" font-family="Arial">mary@email.com</text>
+  <rect x="780" y="600" width="80" height="24" rx="12" fill="#fff3e0" stroke="#FF9800"/>
+  <text x="820" y="616" text-anchor="middle" font-size="12" fill="#FF9800" font-family="Arial">⊙ Pending</text>
+  <circle cx="1020" cy="612" r="12" fill="#f44336"/>
+  <text x="1024" y="617" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">×</text>
+  <circle cx="1060" cy="612" r="12" fill="#666"/>
+  <text x="1064" y="617" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">✎</text>
+  
+  <rect x="340" y="634" width="760" height="44" fill="white" stroke="#e0e0e0"/>
+  <circle cx="360" cy="656" r="12" fill="#4CAF50"/>
+  <text x="364" y="661" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">BW</text>
+  <text x="385" y="660" font-size="14" font-family="Arial">Bob Wilson</text>
+  <text x="560" y="660" font-size="14" font-family="Arial">bob@email.com</text>
+  <rect x="780" y="644" width="80" height="24" rx="12" fill="#e8f5e9" stroke="#4CAF50"/>
+  <text x="820" y="660" text-anchor="middle" font-size="12" fill="#4CAF50" font-family="Arial">✓ Claimed</text>
+  <circle cx="1020" cy="656" r="12" fill="#f44336"/>
+  <text x="1024" y="661" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">×</text>
+  <circle cx="1060" cy="656" r="12" fill="#666"/>
+  <text x="1064" y="661" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">✎</text>
+  
+  <!-- Lock Warning -->
+  <rect x="340" y="688" width="760" height="44" rx="8" fill="#fff3e0" stroke="#FF9800"/>
+  <text x="360" y="708" font-size="14" font-weight="bold" fill="#FF9800" font-family="Arial">⚠️ Player List Lock:</text>
+  <text x="520" y="708" font-size="14" fill="#FF9800" font-family="Arial">Player list will be locked after the first score is entered. Schedule must be regenerated to modify players.</text>
+  
+  <!-- Annotations -->
+  <g transform="translate(720, 170)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="180" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Real-time validation</text>
+  </g>
+  
+  <g transform="translate(1140, 395)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="180" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Drag-and-drop support</text>
+  </g>
+  
+  <g transform="translate(1140, 568)">
+    <line x1="0" y1="0" x2="40" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="45" y="-14" width="180" height="28" fill="#ff5722" rx="4"/>
+    <text x="55" y="4" fill="white" font-size="12" font-family="Arial">Inline editing actions</text>
+  </g>
+</svg>

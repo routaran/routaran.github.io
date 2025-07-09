@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Screen Background -->
+  <rect width="360" height="800" fill="#f5f5f5"/>
+  
+  <!-- Status Bar -->
+  <rect width="360" height="24" fill="#333"/>
+  <text x="10" y="18" fill="white" font-size="12" font-family="Arial">9:41 AM</text>
+  <text x="330" y="18" fill="white" font-size="12" font-family="Arial" text-anchor="end">100%</text>
+  
+  <!-- Header -->
+  <rect y="24" width="360" height="60" fill="white" stroke="#e0e0e0"/>
+  <text x="20" y="60" font-size="24" font-family="Arial">←</text>
+  <text x="60" y="60" font-size="20" font-weight="bold" font-family="Arial">Schedule</text>
+  
+  <!-- Round Navigation -->
+  <rect x="20" y="100" width="320" height="48" rx="24" fill="white" stroke="#e0e0e0"/>
+  <text x="40" y="129" font-size="16" font-family="Arial">← Round</text>
+  <text x="180" y="129" text-anchor="middle" font-size="18" font-weight="bold" font-family="Arial">Round 2 of 6</text>
+  <text x="320" y="129" text-anchor="end" font-size="16" font-family="Arial">Round →</text>
+  
+  <!-- Round Status -->
+  <rect x="20" y="164" width="320" height="36" rx="18" fill="#e8f5e9" stroke="#4CAF50"/>
+  <circle cx="40" cy="182" r="4" fill="#4CAF50"/>
+  <text x="52" y="187" font-size="14" font-family="Arial">Round 2: 2 of 3 matches completed</text>
+  <text x="320" y="187" text-anchor="end" font-size="14" fill="#666" font-family="Arial">67%</text>
+  
+  <!-- Match Cards -->
+  <!-- Match 1 - Completed -->
+  <rect x="20" y="220" width="320" height="100" rx="8" fill="#f5f5f5" stroke="#e0e0e0"/>
+  <circle cx="45" cy="245" r="16" fill="#2196F3"/>
+  <text x="45" y="251" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">Blue</text>
+  <text x="70" y="245" font-size="14" font-weight="bold" font-family="Arial">Court 5</text>
+  <rect x="250" y="233" width="60" height="24" rx="12" fill="#4CAF50"/>
+  <text x="280" y="248" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">DONE</text>
+  
+  <!-- Partnership Display -->
+  <text x="30" y="265" font-size="12" fill="#666" font-family="Arial">Team A vs Team B</text>
+  <text x="30" y="280" font-size="14" font-family="Arial">John & Mary</text>
+  <text x="30" y="295" font-size="14" font-family="Arial">vs Bob & Alice</text>
+  
+  <!-- Score -->
+  <text x="250" y="275" font-size="16" font-weight="bold" font-family="Arial">11-7</text>
+  <text x="250" y="295" font-size="12" fill="#666" font-family="Arial">by John</text>
+  
+  <!-- Match 2 - In Progress -->
+  <rect x="20" y="335" width="320" height="100" rx="8" fill="#fff3e0" stroke="#FF9800"/>
+  <circle cx="45" cy="360" r="16" fill="#2196F3"/>
+  <text x="45" y="366" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">2</text>
+  <text x="70" y="360" font-size="14" font-weight="bold" font-family="Arial">Blue Court</text>
+  <rect x="250" y="348" width="60" height="24" rx="12" fill="#FF9800"/>
+  <text x="280" y="363" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">LIVE</text>
+  
+  <!-- Partnership Display -->
+  <text x="30" y="380" font-size="12" fill="#666" font-family="Arial">Team C vs Team D</text>
+  <text x="30" y="395" font-size="14" font-family="Arial">Tom & Lisa</text>
+  <text x="30" y="410" font-size="14" font-family="Arial">vs Mike & Sarah</text>
+  
+  <!-- Current Score -->
+  <text x="250" y="390" font-size="16" font-weight="bold" font-family="Arial">8-6</text>
+  <text x="250" y="410" font-size="12" fill="#666" font-family="Arial">ongoing</text>
+  
+  <!-- Match 3 - Waiting -->
+  <rect x="20" y="450" width="320" height="100" rx="8" fill="white" stroke="#e0e0e0"/>
+  <circle cx="45" cy="475" r="16" fill="#2196F3"/>
+  <text x="45" y="481" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">3</text>
+  <text x="70" y="475" font-size="14" font-weight="bold" font-family="Arial">Center Court</text>
+  <rect x="250" y="463" width="60" height="24" rx="12" fill="#999"/>
+  <text x="280" y="478" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Arial">WAIT</text>
+  
+  <!-- Partnership Display -->
+  <text x="30" y="495" font-size="12" fill="#666" font-family="Arial">Team A vs Team C</text>
+  <text x="30" y="510" font-size="14" font-family="Arial">John & Mary</text>
+  <text x="30" y="525" font-size="14" font-family="Arial">vs Tom & Lisa</text>
+  
+  <!-- Score -->
+  <text x="250" y="505" font-size="16" font-weight="bold" fill="#999" font-family="Arial">--</text>
+  <text x="250" y="525" font-size="12" fill="#666" font-family="Arial">pending</text>
+  
+  <!-- Bye Partnership Info -->
+  <rect x="20" y="570" width="320" height="60" rx="8" fill="#f0f8ff" stroke="#2196F3"/>
+  <text x="30" y="590" font-size="14" font-weight="bold" font-family="Arial">ℹ️ Bye Round</text>
+  <text x="30" y="605" font-size="12" fill="#666" font-family="Arial">Team B (Bob & Alice) resting this round</text>
+  <text x="30" y="620" font-size="12" fill="#666" font-family="Arial">Fair rotation ensures equal play time</text>
+  
+  <!-- Regenerate Schedule Button -->
+  <rect x="20" y="650" width="150" height="40" rx="20" fill="#f44336"/>
+  <text x="95" y="674" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">Regenerate</text>
+  
+  <!-- Lock Status -->
+  <rect x="190" y="650" width="150" height="40" rx="20" fill="#999"/>
+  <text x="265" y="674" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="Arial">🔒 Locked</text>
+  
+  <!-- Bottom Navigation -->
+  <rect y="720" width="360" height="80" fill="white" stroke="#e0e0e0"/>
+  <g transform="translate(60, 740)">
+    <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#999" stroke-width="2"/>
+    <text y="40" text-anchor="middle" font-size="12" fill="#999" font-family="Arial">Overview</text>
+  </g>
+  <g transform="translate(180, 740)">
+    <rect x="-15" y="-10" width="30" height="30" rx="4" fill="#4CAF50" opacity="0.2"/>
+    <rect x="-10" y="-5" width="20" height="20" fill="#4CAF50"/>
+    <text y="40" text-anchor="middle" font-size="12" fill="#4CAF50" font-family="Arial">Schedule</text>
+  </g>
+  <g transform="translate(300, 740)">
+    <circle r="12" fill="none" stroke="#999" stroke-width="2"/>
+    <text y="40" text-anchor="middle" font-size="12" fill="#999" font-family="Arial">Settings</text>
+  </g>
+  
+  <!-- Annotations -->
+  <g transform="translate(360, 245)">
+    <line x1="-20" y1="0" x2="0" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="5" y="-14" width="200" height="28" fill="#ff5722" rx="4"/>
+    <text x="15" y="4" fill="white" font-size="12" font-family="Arial">Custom court names displayed</text>
+  </g>
+  
+  <g transform="translate(360, 360)">
+    <line x1="-20" y1="0" x2="0" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="5" y="-14" width="180" height="28" fill="#ff5722" rx="4"/>
+    <text x="15" y="4" fill="white" font-size="12" font-family="Arial">Real-time match status</text>
+  </g>
+  
+  <g transform="translate(360, 670)">
+    <line x1="-20" y1="0" x2="0" y2="0" stroke="#ff5722" stroke-width="2"/>
+    <rect x="5" y="-14" width="220" height="28" fill="#ff5722" rx="4"/>
+    <text x="15" y="4" fill="white" font-size="12" font-family="Arial">Locked after first score entered</text>
+  </g>
+</svg>

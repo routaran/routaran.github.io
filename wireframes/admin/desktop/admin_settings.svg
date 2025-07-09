@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+  
+  <!-- Sidebar -->
+  <rect width="240" height="800" fill="#2c3e50"/>
+  
+  <!-- Logo/Title in Sidebar -->
+  <text x="20" y="40" font-family="Arial, sans-serif" font-size="20" fill="white" font-weight="bold">Pickleball Admin</text>
+  
+  <!-- Sidebar Navigation -->
+  <g id="sidebar-nav">
+    <!-- Dashboard -->
+    <text x="20" y="108" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Dashboard</text>
+    
+    <!-- Play Dates -->
+    <text x="20" y="156" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Play Dates</text>
+    
+    <!-- Players -->
+    <text x="20" y="204" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Global Players</text>
+    
+    <!-- System Health -->
+    <text x="20" y="252" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">System Health</text>
+    
+    <!-- Audit Log -->
+    <text x="20" y="300" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Audit Log</text>
+    
+    <!-- Settings (Active) -->
+    <rect x="0" y="320" width="240" height="48" fill="#34495e"/>
+    <text x="20" y="348" font-family="Arial, sans-serif" font-size="16" fill="white">Settings</text>
+  </g>
+  
+  <!-- Main Content Area -->
+  <g id="main-content" transform="translate(280, 40)">
+    <!-- Header -->
+    <text font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#2c3e50">Admin Settings</text>
+    <text y="30" font-family="Arial, sans-serif" font-size="16" fill="#7f8c8d">Global application configuration and system settings</text>
+    
+    <!-- Settings Tabs -->
+    <g id="settings-tabs" transform="translate(0, 80)">
+      <!-- Active Tab -->
+      <rect width="120" height="40" rx="4" fill="#3498db"/>
+      <text x="60" y="25" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">General</text>
+      
+      <!-- Inactive Tabs -->
+      <rect x="120" width="120" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="180" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">Email</text>
+      
+      <rect x="240" width="120" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="300" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">Security</text>
+      
+      <rect x="360" width="120" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="420" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">Backup</text>
+      
+      <rect x="480" width="120" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="540" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">API</text>
+    </g>
+    
+    <!-- Settings Content -->
+    <g id="settings-content" transform="translate(0, 140)">
+      <!-- General Settings Section -->
+      <rect width="880" height="500" rx="8" fill="white" stroke="#e0e0e0"/>
+      
+      <!-- Application Settings -->
+      <g transform="translate(40, 40)">
+        <text font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Application Settings</text>
+        
+        <!-- Site Name -->
+        <g transform="translate(0, 40)">
+          <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Site Name</text>
+          <rect y="20" width="400" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+          <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Pickleball Tournament Tracker</text>
+        </g>
+        
+        <!-- Site URL -->
+        <g transform="translate(0, 100)">
+          <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Site URL</text>
+          <rect y="20" width="400" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+          <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">https://pickleball-tracker.com</text>
+        </g>
+        
+        <!-- Maintenance Mode -->
+        <g transform="translate(0, 160)">
+          <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Maintenance Mode</text>
+          <rect y="20" width="60" height="30" rx="15" fill="#e0e0e0"/>
+          <circle cx="20" cy="35" r="10" fill="white"/>
+          <text x="80" y="37" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Disabled</text>
+        </g>
+        
+        <!-- Max Players Per Play Date -->
+        <g transform="translate(0, 220)">
+          <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Max Players Per Play Date</text>
+          <rect y="20" width="100" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+          <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">16</text>
+        </g>
+        
+        <!-- Max Courts Per Play Date -->
+        <g transform="translate(0, 280)">
+          <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Max Courts Per Play Date</text>
+          <rect y="20" width="100" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+          <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">4</text>
+        </g>
+        
+        <!-- Default Settings Section -->
+        <g transform="translate(450, 0)">
+          <text font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Default Tournament Settings</text>
+          
+          <!-- Default Win Condition -->
+          <g transform="translate(0, 40)">
+            <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Default Win Condition</text>
+            <rect y="20" width="200" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+            <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">First-to-Target ▼</text>
+          </g>
+          
+          <!-- Default Target Score -->
+          <g transform="translate(0, 100)">
+            <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Default Target Score</text>
+            <rect y="20" width="100" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+            <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">11</text>
+          </g>
+          
+          <!-- Default Court Names -->
+          <g transform="translate(0, 160)">
+            <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Default Court Names</text>
+            <rect y="20" width="200" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+            <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Court 1, Court 2, etc.</text>
+          </g>
+          
+          <!-- Auto-Generate Schedule -->
+          <g transform="translate(0, 220)">
+            <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Auto-Generate Schedule</text>
+            <rect y="20" width="60" height="30" rx="15" fill="#3498db"/>
+            <circle cx="40" cy="35" r="10" fill="white"/>
+            <text x="80" y="37" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Enabled</text>
+          </g>
+          
+          <!-- Allow Score Edits -->
+          <g transform="translate(0, 280)">
+            <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Allow Score Edits</text>
+            <rect y="20" width="60" height="30" rx="15" fill="#3498db"/>
+            <circle cx="40" cy="35" r="10" fill="white"/>
+            <text x="80" y="37" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Enabled</text>
+          </g>
+        </g>
+      </g>
+      
+      <!-- Project Owner Management -->
+      <g transform="translate(40, 380)">
+        <text font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Project Owner Management</text>
+        
+        <!-- Current Project Owners -->
+        <g transform="translate(0, 40)">
+          <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Current Project Owners</text>
+          <rect y="20" width="400" height="60" rx="4" fill="white" stroke="#e0e0e0"/>
+          <text x="15" y="40" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Sarah Johnson (sarah.johnson@email.com)</text>
+          <text x="15" y="60" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Mike Chen (mike.chen@email.com)</text>
+        </g>
+        
+        <!-- Add Project Owner -->
+        <g transform="translate(450, 40)">
+          <text font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Add Project Owner</text>
+          <rect y="20" width="200" height="40" rx="4" fill="white" stroke="#e0e0e0"/>
+          <text x="15" y="42" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Enter email address</text>
+          <rect x="210" y="20" width="80" height="40" rx="4" fill="#27ae60"/>
+          <text x="250" y="42" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Add</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Action Buttons -->
+    <g id="action-buttons" transform="translate(0, 660)">
+      <rect width="120" height="48" rx="4" fill="#27ae60"/>
+      <text x="60" y="30" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Save Changes</text>
+      
+      <rect x="140" width="120" height="48" rx="4" fill="white" stroke="#e0e0e0"/>
+      <text x="200" y="30" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50" text-anchor="middle">Cancel</text>
+      
+      <rect x="280" width="120" height="48" rx="4" fill="#e74c3c"/>
+      <text x="340" y="30" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Reset to Default</text>
+      
+    </g>
+  </g>
+  
+  <!-- Annotation -->
+  <text x="600" y="780" font-family="Arial, sans-serif" font-size="12" fill="#e74c3c" text-anchor="middle">Comprehensive admin settings with tabbed interface and live preview</text>
+</svg>

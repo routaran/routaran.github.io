@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+  
+  <!-- Sidebar -->
+  <rect width="240" height="800" fill="#2c3e50"/>
+  
+  <!-- Logo/Title in Sidebar -->
+  <text x="20" y="40" font-family="Arial, sans-serif" font-size="20" fill="white" font-weight="bold">Pickleball Admin</text>
+  
+  <!-- Sidebar Navigation -->
+  <g id="sidebar-nav">
+    <!-- Dashboard (Active) -->
+    <rect x="0" y="80" width="240" height="48" fill="#34495e"/>
+    <text x="20" y="108" font-family="Arial, sans-serif" font-size="16" fill="white">Dashboard</text>
+    
+    <!-- Play Dates -->
+    <text x="20" y="156" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Play Dates</text>
+    
+    <!-- Players -->
+    <text x="20" y="204" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Global Players</text>
+    
+    <!-- System Health -->
+    <text x="20" y="252" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">System Health</text>
+    
+    <!-- Audit Log -->
+    <text x="20" y="300" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Audit Log</text>
+    
+    <!-- Settings -->
+    <text x="20" y="348" font-family="Arial, sans-serif" font-size="16" fill="#ecf0f1">Settings</text>
+  </g>
+  
+  <!-- Main Content Area -->
+  <g id="main-content" transform="translate(280, 40)">
+    <!-- Header -->
+    <text font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#2c3e50">Admin Dashboard</text>
+    <text y="30" font-family="Arial, sans-serif" font-size="16" fill="#7f8c8d">System Overview</text>
+    
+    <!-- Stats Cards Row -->
+    <g id="stats-cards" transform="translate(0, 80)">
+      <!-- Active Users Card -->
+      <g id="active-users-card">
+        <rect width="210" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+        <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Active Users</text>
+        <text x="20" y="60" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#2c3e50">247</text>
+        <text x="20" y="90" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">↑ 12% from last week</text>
+      </g>
+      
+      <!-- Total Play Dates Card -->
+      <g id="play-dates-card" transform="translate(230, 0)">
+        <rect width="210" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+        <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Total Play Dates</text>
+        <text x="20" y="60" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#2c3e50">1,432</text>
+        <text x="20" y="90" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">↑ 8% from last month</text>
+      </g>
+      
+      <!-- Active Matches Card -->
+      <g id="active-matches-card" transform="translate(460, 0)">
+        <rect width="210" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+        <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">Active Matches</text>
+        <text x="20" y="60" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#2c3e50">82</text>
+        <text x="20" y="90" font-family="Arial, sans-serif" font-size="12" fill="#3498db">Live now</text>
+      </g>
+      
+      <!-- System Health Card -->
+      <g id="system-health-card" transform="translate(690, 0)">
+        <rect width="210" height="120" rx="8" fill="white" stroke="#e0e0e0"/>
+        <text x="20" y="30" font-family="Arial, sans-serif" font-size="14" fill="#7f8c8d">System Health</text>
+        <circle cx="40" cy="60" r="12" fill="#27ae60"/>
+        <text x="65" y="65" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">Healthy</text>
+        <text x="20" y="90" font-family="Arial, sans-serif" font-size="12" fill="#27ae60">All systems operational</text>
+      </g>
+    </g>
+    
+    <!-- Recent Activity Section -->
+    <g id="recent-activity" transform="translate(0, 240)">
+      <text font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#2c3e50">Recent Activity</text>
+      
+      <g id="activity-list" transform="translate(0, 40)">
+        <!-- Activity Item 1 -->
+        <rect y="0" width="900" height="60" rx="4" fill="white" stroke="#e0e0e0"/>
+        <circle cx="30" cy="30" r="16" fill="#3498db"/>
+        <text x="30" y="35" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">SE</text>
+        <text x="60" y="25" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Score Edit</text>
+        <text x="60" y="42" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Match #1234 updated by John Smith - Court 3</text>
+        <text x="850" y="35" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d" text-anchor="end">2 min ago</text>
+        
+        <!-- Activity Item 2 -->
+        <rect y="70" width="900" height="60" rx="4" fill="white" stroke="#e0e0e0"/>
+        <circle cx="30" cy="100" r="16" fill="#27ae60"/>
+        <text x="30" y="105" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">PD</text>
+        <text x="60" y="95" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">New Play Date</text>
+        <text x="60" y="112" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Created by Sarah Johnson for Dec 15, 2024</text>
+        <text x="850" y="105" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d" text-anchor="end">15 min ago</text>
+        
+        <!-- Activity Item 3 -->
+        <rect y="140" width="900" height="60" rx="4" fill="white" stroke="#e0e0e0"/>
+        <circle cx="30" cy="170" r="16" fill="#e74c3c"/>
+        <text x="30" y="175" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">ER</text>
+        <text x="60" y="165" font-family="Arial, sans-serif" font-size="14" fill="#2c3e50">Error Report</text>
+        <text x="60" y="182" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d">Authentication timeout for 3 users</text>
+        <text x="850" y="175" font-family="Arial, sans-serif" font-size="12" fill="#7f8c8d" text-anchor="end">1 hour ago</text>
+      </g>
+    </g>
+    
+    <!-- Quick Actions Panel -->
+    <g id="quick-actions" transform="translate(0, 480)">
+      <text font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#2c3e50">Quick Actions</text>
+      
+      <g id="action-buttons" transform="translate(0, 40)">
+        <!-- Create Play Date -->
+        <rect width="210" height="48" rx="4" fill="#27ae60"/>
+        <text x="105" y="30" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Create Play Date</text>
+        
+        <!-- Add Player -->
+        <rect x="220" width="210" height="48" rx="4" fill="#3498db"/>
+        <text x="325" y="30" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Add Player</text>
+        
+        <!-- Generate Report -->
+        <rect x="440" width="210" height="48" rx="4" fill="#9b59b6"/>
+        <text x="545" y="30" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Generate Report</text>
+        
+        <!-- System Backup -->
+        <rect x="660" width="210" height="48" rx="4" fill="#34495e"/>
+        <text x="765" y="30" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">System Backup</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Annotations -->
+  <g id="annotations" font-family="Arial, sans-serif" font-size="12" fill="#e74c3c">
+    <text x="300" y="780">Multi-panel dashboard shows system-wide metrics and real-time activity feed</text>
+  </g>
+</svg>
