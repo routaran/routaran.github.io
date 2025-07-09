@@ -1,16 +1,6 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
-// Mock environment variables
-vi.mock('import.meta', () => ({
-  env: {
-    VITE_SUPABASE_URL: 'https://test.supabase.co',
-    VITE_SUPABASE_ANON_KEY: 'test-anon-key',
-    VITE_APP_NAME: 'Pickleball Tracker',
-    VITE_APP_VERSION: '1.0.0',
-  },
-}));
-
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -66,20 +56,9 @@ Object.defineProperty(window, 'sessionStorage', {
 // Mock fetch
 global.fetch = vi.fn();
 
-// Setup fake timers
-vi.useFakeTimers();
-
 // Clean up after each test
 if (typeof beforeEach !== 'undefined') {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.clearAllTimers();
-  });
-}
-
-if (typeof afterEach !== 'undefined') {
-  afterEach(() => {
-    vi.runOnlyPendingTimers();
-    vi.useRealTimers();
   });
 }

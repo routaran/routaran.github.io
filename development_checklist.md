@@ -153,11 +153,11 @@ This comprehensive checklist covers all phases of the Pickleball Tracker develop
 - [ ] Add export functionality
 
 ### 3.7 Real-time Updates (Priority: High)
-- [ ] Set up Supabase Realtime subscriptions
+- [x] Set up Supabase Realtime subscriptions (foundation)
 - [ ] Implement score update broadcasts
 - [ ] Add schedule change notifications
-- [ ] Create connection status indicator
-- [ ] Handle reconnection gracefully
+- [x] Create connection status indicator
+- [x] Handle reconnection gracefully (with exponential backoff)
 - [ ] Test with multiple clients
 
 ## Phase 4: Testing & Quality Assurance
