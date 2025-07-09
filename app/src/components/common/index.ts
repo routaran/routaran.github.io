@@ -45,6 +45,18 @@ export {
 // Error handling
 export { ErrorBoundary } from './ErrorBoundary';
 
+// Badge component
+export { Badge } from './Badge';
+
+// Progress component
+export { Progress } from './Progress';
+
+// Alert components
+export { Alert, AlertTitle, AlertDescription } from './Alert';
+
+// Dropdown Select components
+export { DropdownSelect, SelectTrigger, SelectValue, SelectContent, SelectItem } from './Select';
+
 // Toast notifications
 export { useToast } from '../../contexts/ToastContext';
 

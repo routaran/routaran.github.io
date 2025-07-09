@@ -3,12 +3,12 @@ import { RootLayout } from './components/layout/RootLayout';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { LoginPage } from './pages/LoginPage';
 import { AuthCallbackPage } from './pages/AuthCallbackPage';
+import { PlayDateCreatePage } from './pages/PlayDateCreatePage';
+import { PlayDateDetailPage } from './pages/PlayDateDetailPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 // Page imports (these will be created in Phase 2)
 const DashboardPage = () => <div>Dashboard Page</div>;
-const PlayDateCreatePage = () => <div>Create Play Date Page</div>;
-const PlayDateDetailPage = () => <div>Play Date Detail Page</div>;
 const ScoreEntryPage = () => <div>Score Entry Page</div>;
 const RankingsPage = () => <div>Rankings Page</div>;
 const MatchDetailsPage = () => <div>Match Details Page</div>;
@@ -45,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: 'play-dates',
         children: [
+          {
+            index: true,
+            element: <Navigate to="/dashboard" replace />,
+          },
           {
             path: 'create',
             element: (
