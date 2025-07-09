@@ -70,12 +70,16 @@ global.fetch = vi.fn();
 vi.useFakeTimers();
 
 // Clean up after each test
-beforeEach(() => {
-  vi.clearAllMocks();
-  vi.clearAllTimers();
-});
+if (typeof beforeEach !== 'undefined') {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.clearAllTimers();
+  });
+}
 
-afterEach(() => {
-  vi.runOnlyPendingTimers();
-  vi.useRealTimers();
-});
+if (typeof afterEach !== 'undefined') {
+  afterEach(() => {
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+  });
+}

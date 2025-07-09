@@ -1,5 +1,6 @@
-import { render, RenderOptions } from '@testing-library/react';
-import { ReactElement } from 'react';
+import { render } from '@testing-library/react';
+import type { RenderOptions } from '@testing-library/react';
+import type { ReactElement } from 'react';
 
 // Custom render function for testing with providers
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
@@ -59,13 +60,13 @@ export const createMockMatch = (overrides = {}) => ({
 });
 
 // Mock API responses
-export const mockApiResponse = <T>(data: T, delay = 0) => {
+export const mockApiResponse = function <T>(data: T, delay = 0): Promise<T> {
   return new Promise<T>((resolve) => {
     setTimeout(() => resolve(data), delay);
   });
 };
 
-export const mockApiError = (message = 'API Error', delay = 0) => {
+export const mockApiError = (message = 'API Error', delay = 0): Promise<never> => {
   return new Promise<never>((_, reject) => {
     setTimeout(() => reject(new Error(message)), delay);
   });
