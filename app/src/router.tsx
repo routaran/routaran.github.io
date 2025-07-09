@@ -1,9 +1,11 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { RootLayout } from './components/layout/RootLayout';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { LoginPage } from './pages/LoginPage';
+import { AuthCallbackPage } from './pages/AuthCallbackPage';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 // Page imports (these will be created in Phase 2)
-const LoginPage = () => <div>Login Page</div>;
 const DashboardPage = () => <div>Dashboard Page</div>;
 const PlayDateCreatePage = () => <div>Create Play Date Page</div>;
 const PlayDateDetailPage = () => <div>Play Date Detail Page</div>;
@@ -29,44 +31,72 @@ export const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
+        path: 'auth/callback',
+        element: <AuthCallbackPage />,
+      },
+      {
         path: 'dashboard',
-        element: <DashboardPage />,
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'play-dates',
         children: [
           {
             path: 'create',
-            element: <PlayDateCreatePage />,
+            element: (
+              <ProtectedRoute>
+                <PlayDateCreatePage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: ':id',
-            element: <PlayDateDetailPage />,
+            element: (
+              <ProtectedRoute>
+                <PlayDateDetailPage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: ':id/score-entry',
-            element: <ScoreEntryPage />,
+            element: (
+              <ProtectedRoute>
+                <ScoreEntryPage />
+              </ProtectedRoute>
+            ),
           },
           {
             path: ':id/rankings',
-            element: <RankingsPage />,
+            element: <RankingsPage />, // Public access for visitors
           },
           {
             path: ':id/matches/:matchId',
-            element: <MatchDetailsPage />,
+            element: <MatchDetailsPage />, // Public access for visitors
           },
         ],
       },
       {
         path: 'profile',
-        element: <ProfilePage />,
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'admin',
         children: [
           {
             path: 'audit-log',
-            element: <AuditLogPage />,
+            element: (
+              <ProtectedRoute requiredRole="project_owner">
+                <AuditLogPage />
+              </ProtectedRoute>
+            ),
           },
         ],
       },
