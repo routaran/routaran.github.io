@@ -193,6 +193,48 @@ Includes error handling to prevent audit failures from blocking operations.';
 -- 5. UTILITY FUNCTIONS
 -- =====================================================
 
+-- Function to refresh the match_results materialized view
+-- This ensures the latest statistics are available for rankings
+CREATE OR REPLACE FUNCTION refresh_match_results_view()
+RETURNS void AS $$
+BEGIN
+  REFRESH MATERIALIZED VIEW CONCURRENTLY match_results;
+  RAISE NOTICE 'Match results materialized view refreshed successfully';
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE WARNING 'Failed to refresh match results view: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+COMMENT ON FUNCTION refresh_match_results_view() IS 
+'Refreshes the match_results materialized view to ensure rankings calculations
+use the latest match data. Uses CONCURRENTLY to allow concurrent access.';
+
+-- Function to auto-refresh materialized view when matches are updated
+CREATE OR REPLACE FUNCTION auto_refresh_match_results()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Only refresh if score data actually changed
+  IF (OLD.team1_score IS DISTINCT FROM NEW.team1_score) 
+     OR (OLD.team2_score IS DISTINCT FROM NEW.team2_score) 
+     OR (OLD.status IS DISTINCT FROM NEW.status) THEN
+    
+    -- Refresh the materialized view asynchronously
+    PERFORM pg_notify('refresh_match_results', NEW.play_date_id::text);
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+COMMENT ON FUNCTION auto_refresh_match_results() IS 
+'Trigger function that triggers materialized view refresh when match data changes.
+Uses pg_notify to allow asynchronous processing.';
+
+-- =====================================================
+-- 5. UTILITY FUNCTIONS (CONTINUED)
+-- =====================================================
+
 -- Function to check if a play date schedule is locked
 -- Schedule becomes locked after the first score is entered
 CREATE OR REPLACE FUNCTION is_schedule_locked(play_date_id uuid)
@@ -248,9 +290,11 @@ GRANT EXECUTE ON FUNCTION claim_player(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION is_schedule_locked(uuid) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION is_valid_score(integer) TO authenticated, anon;
 GRANT EXECUTE ON FUNCTION is_match_complete(integer, integer) TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION refresh_match_results_view() TO authenticated;
 
 -- Audit function should only be called by triggers
 GRANT EXECUTE ON FUNCTION audit_match_change() TO authenticated;
+GRANT EXECUTE ON FUNCTION auto_refresh_match_results() TO authenticated;
 
 -- =====================================================
 -- 7. TRIGGER SETUP
@@ -262,6 +306,13 @@ CREATE TRIGGER audit_match_update
   AFTER UPDATE ON matches
   FOR EACH ROW
   EXECUTE FUNCTION audit_match_change();
+
+-- Create trigger for automatic materialized view refresh
+DROP TRIGGER IF EXISTS auto_refresh_match_results_trigger ON matches;
+CREATE TRIGGER auto_refresh_match_results_trigger
+  AFTER UPDATE ON matches
+  FOR EACH ROW
+  EXECUTE FUNCTION auto_refresh_match_results();
 
 -- =====================================================
 -- 8. VALIDATION AND TESTING

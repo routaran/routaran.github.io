@@ -1,0 +1,359 @@
+/**
+ * PerformanceTrends Component
+ * 
+ * Displays player performance trends over time using charts and visualizations
+ * Shows historical performance, ranking changes, and trend analysis
+ */
+
+import React, { useMemo } from 'react'
+import { Card } from '@/components/common/Card'
+import { Badge } from '@/components/common/Badge'
+import { PlayerPerformanceTrend } from '@/hooks/usePlayerStats'
+import { 
+  TrendingUpIcon, 
+  TrendingDownIcon, 
+  ArrowRightIcon,
+  CalendarIcon,
+  ChartBarIcon
+} from '@heroicons/react/24/outline'
+
+interface PerformanceTrendsProps {
+  trends: PlayerPerformanceTrend[]
+  playerName: string
+  loading?: boolean
+  className?: string
+}
+
+export function PerformanceTrends({
+  trends,
+  playerName,
+  loading = false,
+  className = ''
+}: PerformanceTrendsProps) {
+  /**
+   * Calculate trend statistics
+   */
+  const trendStats = useMemo(() => {
+    if (trends.length === 0) return null
+
+    const winPercentages = trends.map(t => t.matchResult.win_percentage)
+    const pointDifferentials = trends.map(t => t.matchResult.point_differential)
+    
+    const avgWinPercentage = Math.round(
+      winPercentages.reduce((sum, wp) => sum + wp, 0) / winPercentages.length
+    )
+    
+    const avgPointDifferential = Math.round(
+      pointDifferentials.reduce((sum, pd) => sum + pd, 0) / pointDifferentials.length
+    )
+    
+    const bestPerformance = trends.reduce((best, current) => 
+      current.matchResult.win_percentage > best.matchResult.win_percentage ? current : best
+    )
+    
+    const worstPerformance = trends.reduce((worst, current) => 
+      current.matchResult.win_percentage < worst.matchResult.win_percentage ? current : worst
+    )
+    
+    // Calculate trend direction
+    const recentTrends = trends.slice(0, Math.min(3, trends.length))
+    const olderTrends = trends.slice(Math.min(3, trends.length))
+    
+    const recentAvg = recentTrends.length > 0 
+      ? recentTrends.reduce((sum, t) => sum + t.matchResult.win_percentage, 0) / recentTrends.length
+      : 0
+    
+    const olderAvg = olderTrends.length > 0 
+      ? olderTrends.reduce((sum, t) => sum + t.matchResult.win_percentage, 0) / olderTrends.length
+      : recentAvg
+    
+    const trendDirection = recentAvg > olderAvg + 5 ? 'improving' : 
+                          recentAvg < olderAvg - 5 ? 'declining' : 'stable'
+    
+    return {
+      avgWinPercentage,
+      avgPointDifferential,
+      bestPerformance,
+      worstPerformance,
+      trendDirection,
+      totalTournaments: trends.length
+    }
+  }, [trends])
+
+  /**
+   * Get trend icon
+   */
+  const getTrendIcon = (direction: 'improving' | 'declining' | 'stable') => {
+    switch (direction) {
+      case 'improving':
+        return <TrendingUpIcon className="w-5 h-5 text-green-600" />
+      case 'declining':
+        return <TrendingDownIcon className="w-5 h-5 text-red-600" />
+      default:
+        return <ArrowRightIcon className="w-5 h-5 text-gray-600" />
+    }
+  }
+
+  /**
+   * Get performance badge color
+   */
+  const getPerformanceBadgeColor = (winPercentage: number) => {
+    if (winPercentage >= 70) return 'success'
+    if (winPercentage >= 50) return 'warning'
+    return 'error'
+  }
+
+  if (loading) {
+    return (
+      <Card className={`p-6 ${className}`}>
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+          </div>
+        </div>
+      </Card>
+    )
+  }
+
+  if (trends.length === 0) {
+    return (
+      <Card className={`p-6 ${className}`}>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Trends</h3>
+        <div className="text-center py-8">
+          <ChartBarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-500">No historical data available</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Trends will appear after participating in multiple tournaments
+          </p>
+        </div>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className={`p-6 ${className}`}>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Performance Trends</h3>
+          <p className="text-sm text-gray-500 mt-1">
+            {playerName}'s performance across {trendStats?.totalTournaments} tournaments
+          </p>
+        </div>
+        
+        {trendStats && (
+          <div className="flex items-center space-x-2">
+            {getTrendIcon(trendStats.trendDirection)}
+            <span className="text-sm text-gray-600 capitalize">
+              {trendStats.trendDirection}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Trend Summary */}
+      {trendStats && (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <p className="text-xs text-blue-600 font-medium">Average Win Rate</p>
+            <p className="text-xl font-bold text-blue-900">{trendStats.avgWinPercentage}%</p>
+          </div>
+          
+          <div className="bg-purple-50 p-4 rounded-lg">
+            <p className="text-xs text-purple-600 font-medium">Avg Point Diff</p>
+            <p className={`text-xl font-bold ${
+              trendStats.avgPointDifferential > 0 ? 'text-green-600' : 
+              trendStats.avgPointDifferential < 0 ? 'text-red-600' : 'text-gray-600'
+            }`}>
+              {trendStats.avgPointDifferential > 0 ? '+' : ''}{trendStats.avgPointDifferential}
+            </p>
+          </div>
+          
+          <div className="bg-green-50 p-4 rounded-lg">
+            <p className="text-xs text-green-600 font-medium">Best Performance</p>
+            <p className="text-xl font-bold text-green-900">{trendStats.bestPerformance.matchResult.win_percentage}%</p>
+          </div>
+          
+          <div className="bg-orange-50 p-4 rounded-lg">
+            <p className="text-xs text-orange-600 font-medium">Tournaments</p>
+            <p className="text-xl font-bold text-orange-900">{trendStats.totalTournaments}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Performance History */}
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium text-gray-900">Tournament History</h4>
+        
+        <div className="space-y-3">
+          {trends.map((trend, index) => (
+            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center text-sm text-gray-600">
+                  <CalendarIcon className="w-4 h-4 mr-2" />
+                  {new Date(trend.playDate.date).toLocaleDateString()}
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Badge
+                    variant={getPerformanceBadgeColor(trend.matchResult.win_percentage)}
+                    className="text-xs"
+                  >
+                    {trend.matchResult.win_percentage}%
+                  </Badge>
+                  
+                  {trend.rank && (
+                    <Badge variant="default" className="text-xs">
+                      Rank #{trend.rank}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4 text-sm">
+                <div className="text-gray-600">
+                  <span className="font-medium text-green-600">{trend.matchResult.wins}</span>
+                  <span className="mx-1">-</span>
+                  <span className="font-medium text-red-600">{trend.matchResult.losses}</span>
+                </div>
+                
+                <div className={`font-medium ${
+                  trend.matchResult.point_differential > 0 ? 'text-green-600' : 
+                  trend.matchResult.point_differential < 0 ? 'text-red-600' : 'text-gray-600'
+                }`}>
+                  {trend.matchResult.point_differential > 0 ? '+' : ''}{trend.matchResult.point_differential}
+                </div>
+                
+                {trend.rankChange && (
+                  <div className="flex items-center">
+                    {trend.rankChange > 0 ? (
+                      <TrendingUpIcon className="w-4 h-4 text-green-600 mr-1" />
+                    ) : (
+                      <TrendingDownIcon className="w-4 h-4 text-red-600 mr-1" />
+                    )}
+                    <span className={`text-xs ${
+                      trend.rankChange > 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {Math.abs(trend.rankChange)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Visual Trend Indicator */}
+      <div className="mt-6 pt-6 border-t border-gray-200">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Performance Visualization</h4>
+        <div className="relative">
+          <div className="flex items-end space-x-2 h-16">
+            {trends.slice(0, 10).reverse().map((trend, index) => {
+              const height = Math.max(8, (trend.matchResult.win_percentage / 100) * 64)
+              return (
+                <div
+                  key={index}
+                  className={`rounded-t-sm transition-all duration-200 ${
+                    trend.matchResult.win_percentage >= 70 ? 'bg-green-500' :
+                    trend.matchResult.win_percentage >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                  }`}
+                  style={{ height: `${height}px`, minWidth: '20px' }}
+                  title={`${new Date(trend.playDate.date).toLocaleDateString()}: ${trend.matchResult.win_percentage}%`}
+                />
+              )
+            })}
+          </div>
+          <div className="flex justify-between text-xs text-gray-500 mt-2">
+            <span>Oldest</span>
+            <span>Most Recent</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Insights */}
+      {trendStats && (
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <h4 className="text-sm font-medium text-gray-900 mb-3">Performance Insights</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center space-x-2">
+              <div className={`w-2 h-2 rounded-full ${
+                trendStats.trendDirection === 'improving' ? 'bg-green-500' :
+                trendStats.trendDirection === 'declining' ? 'bg-red-500' : 'bg-gray-500'
+              }`} />
+              <span className="text-gray-700">
+                Performance is {trendStats.trendDirection} compared to earlier tournaments
+              </span>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 rounded-full bg-blue-500" />
+              <span className="text-gray-700">
+                Average win rate: {trendStats.avgWinPercentage}% across all tournaments
+              </span>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 rounded-full bg-purple-500" />
+              <span className="text-gray-700">
+                Best performance: {trendStats.bestPerformance.matchResult.win_percentage}% win rate 
+                on {new Date(trendStats.bestPerformance.playDate.date).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+    </Card>
+  )
+}
+
+/**
+ * Mini trends component for dashboard
+ */
+export function MiniPerformanceTrends({
+  trends,
+  playerName,
+  className = ''
+}: {
+  trends: PlayerPerformanceTrend[]
+  playerName: string
+  className?: string
+}) {
+  const recentTrends = trends.slice(0, 5)
+  
+  if (recentTrends.length === 0) {
+    return (
+      <Card className={`p-4 ${className}`}>
+        <h4 className="text-sm font-medium text-gray-900 mb-2">Recent Performance</h4>
+        <p className="text-xs text-gray-500">No recent data available</p>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className={`p-4 ${className}`}>
+      <h4 className="text-sm font-medium text-gray-900 mb-3">Recent Performance</h4>
+      
+      <div className="space-y-2">
+        {recentTrends.map((trend, index) => (
+          <div key={index} className="flex items-center justify-between text-xs">
+            <span className="text-gray-600">
+              {new Date(trend.playDate.date).toLocaleDateString()}
+            </span>
+            <div className="flex items-center space-x-2">
+              <Badge
+                variant={trend.matchResult.win_percentage >= 60 ? 'success' : 
+                        trend.matchResult.win_percentage >= 40 ? 'warning' : 'error'}
+                className="text-xs"
+              >
+                {trend.matchResult.win_percentage}%
+              </Badge>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  )
+}
