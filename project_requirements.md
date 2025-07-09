@@ -8,15 +8,15 @@ All persistence, authentication and live updates are provided by **Supabase**:
 * **Auth** – password‑less "magic‑link" e‑mail login.
 * **Database** – Postgres tables (`players`, `matches`, …) protected by Row‑Level‑Security.
 * **Realtime** – WebSocket channel that broadcasts row changes so every open browser sees new scores within one second.
-* **Optional archive** – The Organizer can still export a JSON snapshot of any Play Date and have the SPA (or a GitHub Action) commit it back to the repo for long‑term, version‑controlled history.
+* ~~**Optional archive** – The Organizer can still export a JSON snapshot of any Play Date and have the SPA (or a GitHub Action) commit it back to the repo for long‑term, version‑controlled history.~~ **OUT OF SCOPE**
 
 No player needs a GitHub account; the only requirement is an e‑mail address capable of receiving magic‑link messages.
 
 ## 2  Actors
 | Actor | Description |
 |-------|-------------|
-| **Organizer** | Creates a Play‑Date, enters courts and player names, regenerates schedules, exports archives. Must log in via magic link like any other player. |
-| **Project Owner** | Has the same rights as the Organizer for any Play Date - can modify player lists, regenerate schedules, and export archives. Must log in via magic link like any other player. |
+| **Organizer** | Creates a Play‑Date, enters courts and player names, regenerates schedules. Must log in via magic link like any other player. |
+| **Project Owner** | Has the same rights as the Organizer for any Play Date - can modify player lists, regenerate schedules. Must log in via magic link like any other player. |
 | **Player** | Logs in via magic link, claims their name once, enters scores for the matches they participated in, views live rankings. |
 | **Visitor** | Anyone who opens the URL without logging in. Can view schedules, results and rankings in real‑time but cannot modify data. |
 
@@ -36,8 +36,8 @@ No player needs a GitHub account; the only requirement is an e‑mail address ca
 | **FR‑10** | The system shall calculate *Rankings* with default algorithm **Win % → Point Differential → Head‑to‑Head**, selectable in settings. | Must |
 | **FR‑11** | Rankings shall appear in a sortable, responsive table and update automatically when the underlying data changes. | Must |
 | **FR‑12** | The system shall allow the Organizer and Project Owner to regenerate the schedule and modify the player list **only before** any scores have been recorded. | Must |
-| **FR‑13** | The system shall export any Play Date's full dataset as `YYYY‑MM‑DD.json` and (optionally) commit it to the repo via a service token or GitHub Action. | Should |
-| **FR‑14** | The system shall import a previously exported JSON file to restore or review historical data offline. | Should |
+| **FR‑13** | ~~The system shall export any Play Date's full dataset as `YYYY‑MM‑DD.json` and (optionally) commit it to the repo via a service token or GitHub Action.~~ | ~~Should~~ **OUT OF SCOPE** |
+| **FR‑14** | ~~The system shall import a previously exported JSON file to restore or review historical data offline.~~ | ~~Should~~ **OUT OF SCOPE** |
 | **FR‑15** | The UI shall provide *Dark Mode* and respect the user's OS color‑scheme preference. | Could |
 | **FR‑16** | The system shall let the Organizer choose per Play Date: <br> a. **First‑to‑Target** – first side reaching target **T** wins. <br> b. **Win‑by‑2** – play continues until a side has ≥ **T** and leads by ≥ 2. <br>Valid **T** range: 5 – 21 (default = 11). | Must |
 | **FR‑17** | The system shall expose a **password‑less login page** where a player selects their name and enters an e‑mail address. Supabase then sends a magic link that creates or resumes the user session. | Must |
@@ -57,10 +57,10 @@ No player needs a GitHub account; the only requirement is an e‑mail address ca
 | **NFR‑04** | UI meets WCAG 2.1 AA and is responsive from 320 px mobile to 1440 px desktop. | Usability |
 | **NFR‑05** | Codebase follows ESLint Recommended + Security; every exported function is documented with JSDoc/TSDoc. | Maintainability |
 | **NFR‑06** | Critical logic (schedule generation, ranking calculation, RLS helper RPCs) has ≥ 90 % unit‑test coverage, executed via GitHub Actions. | Reliability |
-| **NFR‑07** | Personal data (e‑mail) is stored only in Supabase; archives committed to GitHub contain names and scores but **not** e‑mail addresses. | Privacy |
+| **NFR‑07** | Personal data (e‑mail) is stored only in Supabase and is never exported from the system. | Privacy |
 | **NFR‑08** | **Realtime propagation** – Score or schedule changes must appear in other clients within ≤ 1 s 95 % of the time. | Performance |
 | **NFR‑09** | **Data integrity** – Once `completed = TRUE`, subsequent updates to that match are prevented by the database. | Reliability |
-| **NFR‑10** | **Audit logging** – The system shall maintain an audit trail of score edits (who edited, when, old/new values) to aid dispute resolution. Commits/archives provide long-term history. | Accountability |
+| **NFR‑10** | **Audit logging** – The system shall maintain an audit trail of score edits (who edited, when, old/new values) to aid dispute resolution. | Accountability |
 
 ## 5  Assumptions & Constraints
 
