@@ -75,14 +75,14 @@ This comprehensive checklist covers all phases of the Pickleball Tracker develop
 - [ ] Configure hot module replacement
 
 ### 2.2 Database Implementation (Priority: Critical)
-- [ ] Create Supabase migrations:
-  - [ ] Initial schema creation
-  - [ ] RLS policies implementation
-  - [ ] Helper functions/RPCs
-  - [ ] Indexes creation
-- [ ] Set up seed data for development
-- [ ] Test RLS policies with different roles
-- [ ] Verify optimistic locking works
+- [x] Create Supabase migrations:
+  - [x] Initial schema creation
+  - [x] RLS policies implementation
+  - [x] Helper functions/RPCs
+  - [x] Indexes creation
+- [x] Set up seed data for development
+- [x] Test RLS policies with different roles
+- [x] Verify optimistic locking works
 
 ### 2.3 Core Infrastructure (Priority: High)
 - [ ] Set up routing (React Router or similar)
