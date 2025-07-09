@@ -14,8 +14,8 @@ This comprehensive checklist covers all phases of the Pickleball Tracker develop
   - [x] **Visitor Role (2 screens):** Read-only rankings view (mobile & desktop)
 - [x] Design desktop responsive layouts (18 total screens)
 - [x] Design touch targets ≥44px for mobile
-- [ ] Document component selections from shadcn/ui
-- [ ] Create color scheme and typography decisions
+- [x] Document component selections from shadcn/ui
+- [x] Create color scheme and typography decisions
 
 ### 1.2 Database Schema Design (Priority: Critical)
 - [ ] Design complete database schema:
