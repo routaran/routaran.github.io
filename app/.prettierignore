@@ -1,0 +1,16 @@
+dist
+node_modules
+.env
+.env.local
+.env.production.local
+.env.test.local
+.env.development.local
+coverage
+*.log
+*.tgz
+*.tar.gz
+.DS_Store
+Thumbs.db
+public/sw.js
+public/workbox-*.js
+public/manifest.json
