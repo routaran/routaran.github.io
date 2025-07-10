@@ -164,7 +164,7 @@ export function useAuth() {
         userId: authUser.id,
         metadata: {
           playerName: data.name,
-          isProjectOwner: data.project_owner,
+          isProjectOwner: data.is_project_owner,
         },
       });
 

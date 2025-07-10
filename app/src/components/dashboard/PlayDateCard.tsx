@@ -19,7 +19,7 @@ export function PlayDateCard({ playDate, onEdit }: PlayDateCardProps) {
   const { player } = useAuth();
   const canEdit =
     player &&
-    canEditPlayDate(playDate, player.id, player.project_owner || false);
+    canEditPlayDate(playDate, player.id, player.is_project_owner || false);
 
   // Format date for display
   const formattedDate = React.useMemo(() => {

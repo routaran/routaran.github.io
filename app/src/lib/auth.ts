@@ -260,27 +260,27 @@ export const authService = {
       switch (action) {
         case "create_play_date":
           // Only project owners and organizers can create play dates
-          return player.project_owner === true;
+          return player.is_project_owner === true;
 
         case "manage_play_date":
           // Project owners can manage any play date
-          if (player.project_owner) return true;
+          if (player.is_project_owner) return true;
 
           // Organizers can only manage their own play dates
           if (context?.playDateId) {
             const { data } = await supabase
               .from("play_dates")
-              .select("created_by")
+              .select("organizer_id")
               .eq("id", context.playDateId)
               .single();
 
-            return data?.created_by === user.id;
+            return data?.organizer_id === user.id;
           }
           return false;
 
         case "update_score":
           // Project owners can update any score
-          if (player.project_owner) return true;
+          if (player.is_project_owner) return true;
 
           // Players can only update scores for matches they're in
           if (context?.matchId) {

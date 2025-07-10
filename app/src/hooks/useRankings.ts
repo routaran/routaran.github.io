@@ -17,10 +17,10 @@ import {
   calculateRankings,
   calculateTournamentSummary,
   calculateRankingChanges,
-  PlayerRanking,
-  TournamentSummary,
-} from "@/lib/calculations/rankings";
-import { MatchResult } from "@/types/database";
+  type PlayerRanking,
+  type TournamentSummary,
+} from "../lib/calculations/rankings";
+import type { MatchResult } from "../types/database";
 
 export interface UseRankingsReturn {
   // Data

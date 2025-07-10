@@ -253,11 +253,11 @@ export function RankingsTable({
 
                 <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                   <span className="font-medium text-green-600">
-                    {player.games_won}
+                    {player.wins}
                   </span>
                   <span className="mx-1">-</span>
                   <span className="font-medium text-red-600">
-                    {player.games_lost}
+                    {player.losses}
                   </span>
                 </td>
 

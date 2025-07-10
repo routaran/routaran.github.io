@@ -101,12 +101,12 @@ export function validateWinCondition(
     return { isValid: false, errors, warnings };
   }
 
-  if (winCondition === "first-to-target") {
+  if (winCondition === "first_to_target") {
     // First-to-target: winner must reach target score
     if (maxScore < targetScore) {
       errors.push(`Winning team must reach ${targetScore} points`);
     }
-  } else if (winCondition === "win-by-2") {
+  } else if (winCondition === "win_by_2") {
     // Win-by-2: winner must reach target and win by at least 2
     if (maxScore < targetScore) {
       errors.push(`Winning team must reach ${targetScore} points`);
@@ -228,7 +228,7 @@ export function parseScore(scoreStr: string): number | null {
  * Default validation configuration
  */
 export const DEFAULT_SCORE_CONFIG: ScoreValidationConfig = {
-  winCondition: "first-to-target",
+  winCondition: "first_to_target",
   targetScore: 11,
   minScore: 0,
   maxScore: 21,

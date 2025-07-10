@@ -376,7 +376,7 @@ export const db = {
       .from("match_results")
       .select("*")
       .eq("play_date_id", playDateId)
-      .order("games_won", { ascending: false })
+      .order("wins", { ascending: false })
       .order("points_for", { ascending: false });
 
     if (error) throw new Error(`Failed to fetch rankings: ${error.message}`);

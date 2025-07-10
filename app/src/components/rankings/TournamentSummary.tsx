@@ -192,7 +192,7 @@ export function TournamentSummaryCard({
                   </div>
                 </div>
                 <Badge variant="warning" className="text-xs">
-                  {summary.most_wins.games_won} wins
+                  {summary.most_wins.wins} wins
                 </Badge>
               </div>
             )}
@@ -359,8 +359,7 @@ export function CompactTournamentSummary({
           <div className="pt-2 border-t border-gray-200">
             <p className="text-xs text-gray-600">Leading</p>
             <p className="text-sm font-medium text-gray-900">
-              {summary.most_wins.player_name} ({summary.most_wins.games_won}{" "}
-              wins)
+              {summary.most_wins.player_name} ({summary.most_wins.wins} wins)
             </p>
           </div>
         )}

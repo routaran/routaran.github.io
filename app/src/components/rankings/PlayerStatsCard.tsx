@@ -333,8 +333,8 @@ export function PlayerStatsCard({
                   {playerStats.bestPartnership.player2_name}
                 </p>
                 <p className="text-xs text-green-600 mt-1">
-                  {playerStats.bestPartnership.games_won}-
-                  {playerStats.bestPartnership.games_lost} record
+                  {playerStats.bestPartnership.wins}-
+                  {playerStats.bestPartnership.losses} record
                 </p>
               </div>
             )}
@@ -353,7 +353,7 @@ export function PlayerStatsCard({
                           {partnership.player2_name}
                         </p>
                         <p className="text-xs text-gray-600">
-                          {partnership.games_won}-{partnership.games_lost}(
+                          {partnership.wins}-{partnership.losses}(
                           {partnership.win_percentage}% wins)
                         </p>
                       </div>
@@ -400,8 +400,8 @@ export function PlayerStatsCard({
                           {new Date(trend.playDate.date).toLocaleDateString()}
                         </p>
                         <p className="text-xs text-gray-600">
-                          {trend.matchResult.games_won}-
-                          {trend.matchResult.games_lost} record
+                          {trend.matchResult.wins}-{trend.matchResult.losses}{" "}
+                          record
                         </p>
                       </div>
                       <div className="text-right">

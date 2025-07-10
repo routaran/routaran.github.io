@@ -4,12 +4,13 @@ import { useToast } from "../contexts/ToastContext";
 import { useRealtimeSubscription } from "./useRealtimeSubscription";
 import type { PlayDate } from "../types/database";
 import * as playDatesApi from "../lib/supabase/playDates";
+import type { PlayDateWithStats } from "../lib/supabase/playDates";
 
 export function usePlayDates() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [playDates, setPlayDates] = useState<PlayDate[]>([]);
+  const [playDates, setPlayDates] = useState<PlayDateWithStats[]>([]);
 
   // Subscribe to real-time updates for play dates
   useRealtimeSubscription({
@@ -22,14 +23,20 @@ export function usePlayDates() {
   const loadPlayDates = useCallback(async () => {
     try {
       setLoading(true);
-      let data: PlayDate[];
+      let data: PlayDateWithStats[] = [];
 
       if (user) {
         // Get play dates where user is involved (organizer or player)
-        data = await playDatesApi.getUserPlayDates(user.id);
+        const result = await playDatesApi.getUserPlayDates(user.id);
+        if (result.data && !result.error) {
+          data = result.data;
+        }
       } else {
         // Get all play dates for visitors
-        data = await playDatesApi.getPlayDates();
+        const result = await playDatesApi.getPlayDates();
+        if (result.data && !result.error) {
+          data = result.data;
+        }
       }
 
       setPlayDates(data);

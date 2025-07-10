@@ -118,7 +118,7 @@ export async function getProjectOwner() {
   const { data, error } = await supabase
     .from("players")
     .select("*")
-    .eq("project_owner", true)
+    .eq("is_project_owner", true)
     .single();
 
   if (error && error.code !== "PGRST116") throw error;

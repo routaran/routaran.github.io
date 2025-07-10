@@ -61,14 +61,14 @@ export const useAuthStore = create<AuthState>()(
             metadata: {
               hasPlayer: !!player,
               playerName: player?.name,
-              isProjectOwner: player?.project_owner,
+              isProjectOwner: player?.is_project_owner,
             },
           });
           set({ player }, false, "setPlayer");
 
           // Update role based on player data
           if (player) {
-            const role: UserRole = player.project_owner
+            const role: UserRole = player.is_project_owner
               ? "project_owner"
               : "player";
             get().setRole(role);

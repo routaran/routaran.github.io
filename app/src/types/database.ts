@@ -12,85 +12,85 @@ export interface Database {
       play_dates: {
         Row: {
           id: string;
-          name: string;
           date: string;
-          win_condition: "first-to-target" | "win-by-2";
+          organizer_id: string;
+          num_courts: number;
+          win_condition: "first_to_target" | "win_by_2";
           target_score: number;
-          court_count: number;
+          status: "scheduled" | "active" | "completed" | "cancelled";
+          schedule_locked: boolean;
           created_at: string;
           updated_at: string;
-          created_by: string;
+          version: number;
         };
         Insert: {
           id?: string;
-          name: string;
           date: string;
-          win_condition?: "first-to-target" | "win-by-2";
+          organizer_id: string;
+          num_courts?: number;
+          win_condition?: "first_to_target" | "win_by_2";
           target_score?: number;
-          court_count?: number;
+          status?: "scheduled" | "active" | "completed" | "cancelled";
+          schedule_locked?: boolean;
           created_at?: string;
           updated_at?: string;
-          created_by: string;
+          version?: number;
         };
         Update: {
           id?: string;
-          name?: string;
           date?: string;
-          win_condition?: "first-to-target" | "win-by-2";
+          organizer_id?: string;
+          num_courts?: number;
+          win_condition?: "first_to_target" | "win_by_2";
           target_score?: number;
-          court_count?: number;
+          status?: "scheduled" | "active" | "completed" | "cancelled";
+          schedule_locked?: boolean;
           created_at?: string;
           updated_at?: string;
-          created_by?: string;
+          version?: number;
         };
       };
       players: {
         Row: {
           id: string;
-          play_date_id: string;
           name: string;
           email: string;
-          project_owner: boolean;
+          is_project_owner: boolean;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
-          play_date_id: string;
           name: string;
           email: string;
-          project_owner?: boolean;
+          is_project_owner?: boolean;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
-          play_date_id?: string;
           name?: string;
           email?: string;
-          project_owner?: boolean;
+          is_project_owner?: boolean;
           created_at?: string;
           updated_at?: string;
         };
       };
       player_claims: {
         Row: {
-          id: string;
           player_id: string;
           auth_user_id: string;
-          created_at: string;
+          claimed_at: string;
         };
         Insert: {
-          id?: string;
           player_id: string;
           auth_user_id: string;
-          created_at?: string;
+          claimed_at?: string;
         };
         Update: {
-          id?: string;
           player_id?: string;
           auth_user_id?: string;
-          created_at?: string;
+          claimed_at?: string;
         };
       };
       partnerships: {
@@ -99,6 +99,7 @@ export interface Database {
           play_date_id: string;
           player1_id: string;
           player2_id: string;
+          partnership_name: string;
           created_at: string;
         };
         Insert: {
@@ -106,6 +107,7 @@ export interface Database {
           play_date_id: string;
           player1_id: string;
           player2_id: string;
+          partnership_name?: string;
           created_at?: string;
         };
         Update: {
@@ -113,6 +115,7 @@ export interface Database {
           play_date_id?: string;
           player1_id?: string;
           player2_id?: string;
+          partnership_name?: string;
           created_at?: string;
         };
       };
@@ -120,122 +123,129 @@ export interface Database {
         Row: {
           id: string;
           play_date_id: string;
+          court_id: string;
+          round_number: number;
           partnership1_id: string;
           partnership2_id: string;
           team1_score: number | null;
           team2_score: number | null;
-          court_number: number;
-          round_number: number;
-          scheduled_at: string | null;
-          version: number;
+          winning_partnership_id: string | null;
+          status: "waiting" | "in_progress" | "completed" | "disputed";
+          recorded_by: string | null;
+          recorded_at: string | null;
           created_at: string;
           updated_at: string;
-          updated_by: string | null;
+          version: number;
         };
         Insert: {
           id?: string;
           play_date_id: string;
+          court_id: string;
+          round_number: number;
           partnership1_id: string;
           partnership2_id: string;
           team1_score?: number | null;
           team2_score?: number | null;
-          court_number: number;
-          round_number: number;
-          scheduled_at?: string | null;
-          version?: number;
+          winning_partnership_id?: string | null;
+          status?: "waiting" | "in_progress" | "completed" | "disputed";
+          recorded_by?: string | null;
+          recorded_at?: string | null;
           created_at?: string;
           updated_at?: string;
-          updated_by?: string | null;
+          version?: number;
         };
         Update: {
           id?: string;
           play_date_id?: string;
+          court_id?: string;
+          round_number?: number;
           partnership1_id?: string;
           partnership2_id?: string;
           team1_score?: number | null;
           team2_score?: number | null;
-          court_number?: number;
-          round_number?: number;
-          scheduled_at?: string | null;
-          version?: number;
+          winning_partnership_id?: string | null;
+          status?: "waiting" | "in_progress" | "completed" | "disputed";
+          recorded_by?: string | null;
+          recorded_at?: string | null;
           created_at?: string;
           updated_at?: string;
-          updated_by?: string | null;
+          version?: number;
         };
       };
       courts: {
         Row: {
           id: string;
           play_date_id: string;
-          number: number;
-          name: string;
+          court_number: number;
+          court_name: string;
           created_at: string;
         };
         Insert: {
           id?: string;
           play_date_id: string;
-          number: number;
-          name: string;
+          court_number: number;
+          court_name: string;
           created_at?: string;
         };
         Update: {
           id?: string;
           play_date_id?: string;
-          number?: number;
-          name?: string;
+          court_number?: number;
+          court_name?: string;
           created_at?: string;
         };
       };
       audit_log: {
         Row: {
           id: string;
+          play_date_id: string;
           match_id: string;
-          change_type: string;
+          player_id: string;
+          action_type: string;
           old_values: Json;
           new_values: Json;
-          changed_by: string;
-          changed_at: string;
-          ip_address: string | null;
-          user_agent: string | null;
-          reason: string | null;
+          metadata: Json;
+          created_at: string;
         };
         Insert: {
           id?: string;
+          play_date_id: string;
           match_id: string;
-          change_type: string;
+          player_id: string;
+          action_type: string;
           old_values: Json;
           new_values: Json;
-          changed_by: string;
-          changed_at?: string;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          reason?: string | null;
+          metadata?: Json;
+          created_at?: string;
         };
         Update: {
           id?: string;
+          play_date_id?: string;
           match_id?: string;
-          change_type?: string;
+          player_id?: string;
+          action_type?: string;
           old_values?: Json;
           new_values?: Json;
-          changed_by?: string;
-          changed_at?: string;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          reason?: string | null;
+          metadata?: Json;
+          created_at?: string;
         };
       };
     };
     Views: {
       match_results: {
         Row: {
-          play_date_id: string;
           player_id: string;
           player_name: string;
+          play_date_id: string;
+          play_date: string;
+          play_date_status: string;
           games_played: number;
-          games_won: number;
-          games_lost: number;
+          wins: number;
+          losses: number;
           points_for: number;
           points_against: number;
+          win_percentage: number;
+          point_differential: number;
         };
       };
     };
@@ -262,10 +272,7 @@ export type AuditLog = Database["public"]["Tables"]["audit_log"]["Row"];
 export type MatchResult = Database["public"]["Views"]["match_results"]["Row"];
 
 // Extended match result with calculated fields
-export type MatchResultWithCalculations = MatchResult & {
-  win_percentage: number;
-  point_differential: number;
-};
+export type MatchResultWithCalculations = MatchResult;
 
 // Insert types
 export type PlayDateInsert =
@@ -285,10 +292,10 @@ export type MatchUpdate = Database["public"]["Tables"]["matches"]["Update"];
 export type UserRole = "project_owner" | "organizer" | "player" | "visitor";
 
 // Win condition types
-export type WinCondition = "first-to-target" | "win-by-2";
+export type WinCondition = "first_to_target" | "win_by_2";
 
 // Match status
-export type MatchStatus = "pending" | "in_progress" | "completed";
+export type MatchStatus = "waiting" | "in_progress" | "completed" | "disputed";
 
 // Partnership with player details
 export type PartnershipWithPlayers = Partnership & {
@@ -308,13 +315,3 @@ export type PlayDateWithDetails = PlayDate & {
   partnerships: Partnership[];
   matches: Match[];
 };
-// Additional type exports
-export interface MatchResult {
-  match_id: string;
-  play_date_id: string;
-  winning_partnership_id: string | null;
-  player_id: string;
-  team_number: number;
-  team_score: number | null;
-  opponent_score: number | null;
-}

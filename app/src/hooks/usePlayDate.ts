@@ -72,7 +72,7 @@ export function usePlayDate(playDateId?: string) {
 
       // Check permissions
       if (user) {
-        setIsOrganizer(data.created_by === user.id);
+        setIsOrganizer(data.organizer_id === user.id);
 
         // Check if user is project owner
         const projectOwner = await playersApi.getProjectOwner();
@@ -115,7 +115,7 @@ export function usePlayDate(playDateId?: string) {
       // Create play date
       const newPlayDate = await playDatesApi.createPlayDate({
         ...data,
-        created_by: user.id,
+        organizer_id: user.id,
       });
 
       // Create players

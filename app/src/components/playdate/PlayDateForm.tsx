@@ -32,10 +32,10 @@ export function PlayDateForm({
   const [formData, setFormData] = useState<PlayDateInsert>({
     name: initialData?.name || "",
     date: initialData?.date || "",
-    win_condition: initialData?.win_condition || "first-to-target",
+    win_condition: initialData?.win_condition || "first_to_target",
     target_score: initialData?.target_score || 11,
-    court_count: initialData?.court_count || 1,
-    created_by: "", // Will be set by the parent
+    num_courts: initialData?.num_courts || 1,
+    organizer_id: "", // Will be set by the parent
   });
 
   const [players, setPlayers] = useState<PlayerInsert[]>([]);
@@ -171,8 +171,8 @@ export function PlayDateForm({
       />
 
       <CourtSelector
-        courtCount={formData.court_count || 1}
-        onChange={(value) => handleFieldChange("court_count", value)}
+        courtCount={formData.num_courts || 1}
+        onChange={(value) => handleFieldChange("num_courts", value)}
         disabled={loading}
       />
 

@@ -27,11 +27,11 @@ export function WinConditionSelector({
           disabled={disabled}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white sm:text-sm"
         >
-          <option value="first-to-target">First to Target Score</option>
-          <option value="win-by-2">Win by 2</option>
+          <option value="first_to_target">First to Target Score</option>
+          <option value="win_by_2">Win by 2</option>
         </select>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          {winCondition === "first-to-target"
+          {winCondition === "first_to_target"
             ? "First team to reach the target score wins"
             : "Must reach target score and lead by at least 2 points"}
         </p>

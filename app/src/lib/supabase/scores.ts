@@ -156,7 +156,7 @@ export async function updateMatchScore(
           team2_score: team2Score,
           version: currentVersion + 1,
           updated_at: new Date().toISOString(),
-          updated_by: user.id,
+          recorded_by: user.id,
         })
         .eq("id", matchId)
         .eq("version", currentVersion)

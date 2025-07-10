@@ -41,8 +41,8 @@ export function exportRankingsToCSV(
     "Rank",
     "Player Name",
     "Games Played",
-    "Games Won",
-    "Games Lost",
+    "Wins",
+    "Losses",
     "Win Percentage",
     "Points For",
     "Points Against",
@@ -60,8 +60,8 @@ export function exportRankingsToCSV(
         player.rank.toString(),
         `"${player.player_name}"`,
         player.games_played.toString(),
-        player.games_won.toString(),
-        player.games_lost.toString(),
+        player.wins.toString(),
+        player.losses.toString(),
         player.win_percentage.toString(),
         player.points_for.toString(),
         player.points_against.toString(),
@@ -169,8 +169,8 @@ export function exportPartnershipStatsToCSV(
     "Player 1",
     "Player 2",
     "Games Played",
-    "Games Won",
-    "Games Lost",
+    "Wins",
+    "Losses",
     "Win Percentage",
     "Points For",
     "Points Against",
@@ -189,8 +189,8 @@ export function exportPartnershipStatsToCSV(
         `"${partnership.player1_name}"`,
         `"${partnership.player2_name}"`,
         partnership.games_played.toString(),
-        partnership.games_won.toString(),
-        partnership.games_lost.toString(),
+        partnership.wins.toString(),
+        partnership.losses.toString(),
         partnership.win_percentage.toString(),
         partnership.points_for.toString(),
         partnership.points_against.toString(),
@@ -419,8 +419,8 @@ export function validateExportData(
   const hasNegativeValues = rankings.some(
     (r) =>
       r.games_played < 0 ||
-      r.games_won < 0 ||
-      r.games_lost < 0 ||
+      r.wins < 0 ||
+      r.losses < 0 ||
       r.points_for < 0 ||
       r.points_against < 0
   );

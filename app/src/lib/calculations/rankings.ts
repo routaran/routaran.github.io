@@ -16,8 +16,8 @@ export interface PlayerRanking {
   player_name: string;
   rank: number;
   games_played: number;
-  games_won: number;
-  games_lost: number;
+  wins: number;
+  losses: number;
   win_percentage: number;
   points_for: number;
   points_against: number;
@@ -54,8 +54,8 @@ export interface PartnershipStats {
   player1_name: string;
   player2_name: string;
   games_played: number;
-  games_won: number;
-  games_lost: number;
+  wins: number;
+  losses: number;
   win_percentage: number;
   points_for: number;
   points_against: number;
@@ -88,9 +88,7 @@ export function calculateRankings(
   // Convert match results to player rankings
   const rankings: PlayerRanking[] = playDateResults.map((result) => {
     const winPercentage =
-      result.games_played > 0
-        ? (result.games_won / result.games_played) * 100
-        : 0;
+      result.games_played > 0 ? (result.wins / result.games_played) * 100 : 0;
     const pointDifferential = result.points_for - result.points_against;
 
     return {
@@ -98,8 +96,8 @@ export function calculateRankings(
       player_name: result.player_name,
       rank: 0, // Will be set after sorting
       games_played: result.games_played,
-      games_won: result.games_won,
-      games_lost: result.games_lost,
+      wins: result.wins,
+      losses: result.losses,
       win_percentage: winPercentage,
       points_for: result.points_for,
       points_against: result.points_against,
@@ -307,7 +305,7 @@ export function calculateTournamentSummary(
   const mostWins =
     rankings.length > 0
       ? rankings.reduce((prev, current) =>
-          prev.games_won > current.games_won ? prev : current
+          prev.wins > current.wins ? prev : current
         )
       : null;
 
@@ -381,8 +379,8 @@ export function calculatePartnershipStats(
       player1_name: "", // Will be filled in by caller
       player2_name: "", // Will be filled in by caller
       games_played: gamesPlayed,
-      games_won: gamesWon,
-      games_lost: gamesLost,
+      wins: gamesWon,
+      losses: gamesLost,
       win_percentage: winPercentage,
       points_for: pointsFor,
       points_against: pointsAgainst,
@@ -465,26 +463,4 @@ export function calculateWinningStreak(
   }
 
   return streak;
-}
-// Type exports for build
-export interface PlayerRanking {
-  playerId: string;
-  playerName: string;
-  wins: number;
-  losses: number;
-  winPercentage: number;
-  pointDifferential: number;
-  totalMatches: number;
-}
-export interface TournamentSummary {
-  totalMatches: number;
-  completedMatches: number;
-  totalPlayers: number;
-}
-export interface PartnershipStats {
-  partnerId: string;
-  partnerName: string;
-  wins: number;
-  losses: number;
-  winPercentage: number;
 }

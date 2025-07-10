@@ -29,7 +29,7 @@ const getWinPercentage = (
   matchResult: PlayerPerformanceTrend["matchResult"]
 ) => {
   return matchResult.games_played > 0
-    ? (matchResult.games_won / matchResult.games_played) * 100
+    ? (matchResult.wins / matchResult.games_played) * 100
     : 0;
 };
 
@@ -54,7 +54,7 @@ export function PerformanceTrends({
 
     const winPercentages = trends.map((t) =>
       t.matchResult.games_played > 0
-        ? (t.matchResult.games_won / t.matchResult.games_played) * 100
+        ? (t.matchResult.wins / t.matchResult.games_played) * 100
         : 0
     );
     const pointDifferentials = trends.map(
@@ -288,11 +288,11 @@ export function PerformanceTrends({
               <div className="flex items-center space-x-4 text-sm">
                 <div className="text-gray-600">
                   <span className="font-medium text-green-600">
-                    {trend.matchResult.games_won}
+                    {trend.matchResult.wins}
                   </span>
                   <span className="mx-1">-</span>
                   <span className="font-medium text-red-600">
-                    {trend.matchResult.games_lost}
+                    {trend.matchResult.losses}
                   </span>
                 </div>
 

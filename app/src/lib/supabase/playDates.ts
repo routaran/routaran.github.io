@@ -420,6 +420,8 @@ export async function generateScheduleForPlayDate(id: string) {
 export async function exportPlayDateToJson(id: string) {
   return { data: null, error: new Error("Not implemented") };
 }
-export async function getUserPlayDates() {
-  return { data: [], error: null };
+export async function getUserPlayDates(userId: string) {
+  // For now, just return all play dates
+  // In the future, this could filter by organizer or participant
+  return getPlayDates();
 }

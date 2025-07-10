@@ -70,7 +70,7 @@ export function Navigation() {
   ];
 
   // Add admin items for project owners
-  if (player?.project_owner) {
+  if (player?.is_project_owner) {
     navItems.push({
       href: "/admin",
       label: "Admin",
@@ -162,12 +162,12 @@ export function Navigation() {
                   <span
                     className={cn(
                       "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
-                      player.project_owner
+                      player.is_project_owner
                         ? "bg-purple-100 text-purple-800"
                         : "bg-blue-100 text-blue-800"
                     )}
                   >
-                    {player.project_owner ? (
+                    {player.is_project_owner ? (
                       <>
                         <Crown className="w-3 h-3" />
                         Owner
@@ -281,12 +281,12 @@ export function Navigation() {
                       <div
                         className={cn(
                           "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
-                          player.project_owner
+                          player.is_project_owner
                             ? "bg-purple-100 text-purple-800"
                             : "bg-blue-100 text-blue-800"
                         )}
                       >
-                        {player.project_owner ? (
+                        {player.is_project_owner ? (
                           <>
                             <Crown className="w-3 h-3" />
                             Owner

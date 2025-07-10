@@ -15,9 +15,9 @@ import {
 import {
   calculatePartnershipStats,
   calculateWinningStreak,
-  PlayerRanking,
-  PartnershipStats,
-} from "@/lib/calculations/rankings";
+  type PlayerRanking,
+  type PartnershipStats,
+} from "../lib/calculations/rankings";
 import type {
   MatchResult,
   PlayDate,
@@ -104,7 +104,7 @@ export function usePlayerStats(
           ...result,
           win_percentage:
             result.games_played > 0
-              ? Math.round((result.games_won / result.games_played) * 100)
+              ? Math.round((result.wins / result.games_played) * 100)
               : 0,
           point_differential: result.points_for - result.points_against,
         }));

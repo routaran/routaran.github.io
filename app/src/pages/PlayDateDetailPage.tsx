@@ -253,8 +253,8 @@ export function PlayDateDetailPage() {
                   Courts
                 </p>
                 <p className="font-medium text-gray-900 dark:text-white">
-                  {playDate.court_count} court
-                  {playDate.court_count !== 1 ? "s" : ""}
+                  {playDate.num_courts} court
+                  {playDate.num_courts !== 1 ? "s" : ""}
                 </p>
               </div>
 
