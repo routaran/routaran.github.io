@@ -469,7 +469,7 @@ BEGIN
     FROM matches m
     JOIN partnerships part ON m.partnership1_id = part.id OR m.partnership2_id = part.id
     JOIN players p ON part.player1_id = p.id OR part.player2_id = p.id
-    WHERE m.team1_score = 0 AND m.team2_score = 0
+    WHERE m.status = 'waiting' OR m.status = 'in_progress'
     LIMIT 1;
     
     -- Simulate complete score update workflow
