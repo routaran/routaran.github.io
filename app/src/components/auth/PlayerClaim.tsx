@@ -42,6 +42,9 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
         },
       });
 
+      // Debug: Log the request we're about to make
+      console.log("About to query players table...");
+
       // Get all players without a claim
       // First get all players
       const { data: allPlayers, error: playersError } = await supabase
