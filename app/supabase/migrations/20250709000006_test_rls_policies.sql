@@ -105,7 +105,7 @@ BEGIN
 
     -- Test 2: current_player_id() with valid auth
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         SELECT current_player_id()::TEXT INTO test_result;
         PERFORM log_test_result(
             'current_player_id() with admin auth',
@@ -130,7 +130,7 @@ BEGIN
 
     -- Test 3: is_project_owner() with admin
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         SELECT is_project_owner()::TEXT INTO test_result;
         PERFORM log_test_result(
             'is_project_owner() with admin',
@@ -155,7 +155,7 @@ BEGIN
 
     -- Test 4: is_project_owner() with regular player
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT is_project_owner()::TEXT INTO test_result;
         PERFORM log_test_result(
             'is_project_owner() with player',
@@ -180,7 +180,7 @@ BEGIN
 
     -- Test 5: is_organizer_of() with correct organizer
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         SELECT is_organizer_of('02234567-0123-4567-8901-123456789001')::TEXT INTO test_result;
         PERFORM log_test_result(
             'is_organizer_of() with correct organizer',
@@ -205,7 +205,7 @@ BEGIN
 
     -- Test 6: is_organizer_of() with wrong organizer
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000003');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789003');
         SELECT is_organizer_of('02234567-0123-4567-8901-123456789001')::TEXT INTO test_result;
         PERFORM log_test_result(
             'is_organizer_of() with wrong organizer',
@@ -230,7 +230,7 @@ BEGIN
 
     -- Test 7: is_player_in_match() with correct player
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT is_player_in_match('05234567-0123-4567-8901-123456789001')::TEXT INTO test_result;
         PERFORM log_test_result(
             'is_player_in_match() with correct player',
@@ -255,7 +255,7 @@ BEGIN
 
     -- Test 8: is_player_in_match() with wrong player
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000006');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789006');
         SELECT is_player_in_match('05234567-0123-4567-8901-123456789001')::TEXT INTO test_result;
         PERFORM log_test_result(
             'is_player_in_match() with wrong player',
@@ -342,7 +342,7 @@ BEGIN
 
     -- Test 11: Authenticated user can read all players
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT COUNT(*) INTO player_count FROM players;
         PERFORM log_test_result(
             'Authenticated user read all players',
@@ -367,7 +367,7 @@ BEGIN
 
     -- Test 12: Regular player cannot insert players
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         INSERT INTO players (name, email) VALUES ('Test Player 2', 'test2@example.com');
         PERFORM log_test_result(
             'Regular player insert player',
@@ -392,7 +392,7 @@ BEGIN
 
     -- Test 13: Project owner can insert players
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         INSERT INTO players (name, email) VALUES ('Test Admin Player', 'testadmin@example.com');
         PERFORM log_test_result(
             'Project owner insert player',
@@ -419,7 +419,7 @@ BEGIN
 
     -- Test 14: Project owner can update players
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         UPDATE players SET name = 'Updated Name' WHERE email = 'emma.wilson@email.com';
         PERFORM log_test_result(
             'Project owner update player',
@@ -446,7 +446,7 @@ BEGIN
 
     -- Test 15: Regular player cannot update players
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         UPDATE players SET name = 'Hacked Name' WHERE email = 'emma.wilson@email.com';
         PERFORM log_test_result(
             'Regular player update player',
@@ -482,8 +482,8 @@ DECLARE
 BEGIN
     -- Test 16: User can view only their own claim
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
-        SELECT COUNT(*) INTO claim_count FROM player_claims WHERE supabase_uid = 'auth-uuid-player-0000000005';
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
+        SELECT COUNT(*) INTO claim_count FROM player_claims WHERE supabase_uid = 'a1234567-0123-4567-8901-123456789005';
         PERFORM log_test_result(
             'User view own claim',
             'Table Access',
@@ -507,7 +507,7 @@ BEGIN
 
     -- Test 17: User cannot view other claims
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT COUNT(*) INTO claim_count FROM player_claims;
         PERFORM log_test_result(
             'User view all claims',
@@ -532,9 +532,9 @@ BEGIN
 
     -- Test 18: User cannot create duplicate claims
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         INSERT INTO player_claims (player_id, supabase_uid) 
-        VALUES ('01234567-0123-4567-8901-123456789016', 'auth-uuid-player-0000000005');
+        VALUES ('01234567-0123-4567-8901-123456789016', 'a1234567-0123-4567-8901-123456789005');
         PERFORM log_test_result(
             'User create duplicate claim',
             'Table Access',
@@ -649,7 +649,7 @@ BEGIN
 
     -- Test 22: Authenticated user can create play date (becomes organizer)
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         INSERT INTO play_dates (date, organizer_id, num_courts, win_condition, target_score) 
         VALUES ('2025-05-01', '01234567-0123-4567-8901-123456789005', 2, 'first_to_target', 11)
         RETURNING id INTO test_play_date_id;
@@ -678,7 +678,7 @@ BEGIN
 
     -- Test 23: User cannot create play date with wrong organizer_id
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         INSERT INTO play_dates (date, organizer_id, num_courts, win_condition, target_score) 
         VALUES ('2025-05-01', '01234567-0123-4567-8901-123456789006', 2, 'first_to_target', 11);
         PERFORM log_test_result(
@@ -704,7 +704,7 @@ BEGIN
 
     -- Test 24: Organizer can update their own play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         UPDATE play_dates SET num_courts = 3 WHERE id = '02234567-0123-4567-8901-123456789001';
         PERFORM log_test_result(
             'Organizer update own play date',
@@ -731,7 +731,7 @@ BEGIN
 
     -- Test 25: Organizer cannot update other's play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         UPDATE play_dates SET num_courts = 3 WHERE id = '02234567-0123-4567-8901-123456789002';
         PERFORM log_test_result(
             'Organizer update other play date',
@@ -756,7 +756,7 @@ BEGIN
 
     -- Test 26: Project owner can update any play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         UPDATE play_dates SET num_courts = 3 WHERE id = '02234567-0123-4567-8901-123456789002';
         PERFORM log_test_result(
             'Project owner update any play date',
@@ -783,7 +783,7 @@ BEGIN
 
     -- Test 27: Schedule locked play date prevents certain updates
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         UPDATE play_dates SET date = '2025-02-01' WHERE id = '02234567-0123-4567-8901-123456789001';
         PERFORM log_test_result(
             'Update locked schedule date',
@@ -872,7 +872,7 @@ BEGIN
 
     -- Test 30: Organizer can insert matches for their play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         INSERT INTO matches (play_date_id, court_id, round_number, partnership1_id, partnership2_id) 
         VALUES ('02234567-0123-4567-8901-123456789001', '03234567-0123-4567-8901-123456789001', 
                 4, '04234567-0123-4567-8901-123456789001', '04234567-0123-4567-8901-123456789002')
@@ -902,7 +902,7 @@ BEGIN
 
     -- Test 31: Organizer cannot insert matches for other's play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         INSERT INTO matches (play_date_id, court_id, round_number, partnership1_id, partnership2_id) 
         VALUES ('02234567-0123-4567-8901-123456789002', '03234567-0123-4567-8901-123456789005', 
                 4, '04234567-0123-4567-8901-123456789005', '04234567-0123-4567-8901-123456789006');
@@ -929,7 +929,7 @@ BEGIN
 
     -- Test 32: Player can update scores for their own match
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         UPDATE matches SET 
             team1_score = 11, 
             team2_score = 9, 
@@ -972,7 +972,7 @@ BEGIN
 
     -- Test 33: Player cannot update scores for other's match
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         UPDATE matches SET 
             team1_score = 11, 
             team2_score = 9, 
@@ -1005,7 +1005,7 @@ BEGIN
 
     -- Test 34: Player cannot update completed match
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         UPDATE matches SET 
             team1_score = 15, 
             team2_score = 13, 
@@ -1038,7 +1038,7 @@ BEGIN
 
     -- Test 35: Organizer can update any match in their play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000003');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789003');
         UPDATE matches SET 
             team1_score = 15, 
             team2_score = 13, 
@@ -1081,7 +1081,7 @@ BEGIN
 
     -- Test 36: Optimistic locking prevents stale updates
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         UPDATE matches SET 
             team1_score = 11, 
             team2_score = 9, 
@@ -1151,7 +1151,7 @@ BEGIN
 
     -- Test 38: Organizer can insert partnerships for their play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         INSERT INTO partnerships (play_date_id, player1_id, player2_id, partnership_name) 
         VALUES ('02234567-0123-4567-8901-123456789001', 
                 '01234567-0123-4567-8901-123456789010', 
@@ -1183,7 +1183,7 @@ BEGIN
 
     -- Test 39: Organizer cannot insert partnerships for other's play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         INSERT INTO partnerships (play_date_id, player1_id, player2_id, partnership_name) 
         VALUES ('02234567-0123-4567-8901-123456789002', 
                 '01234567-0123-4567-8901-123456789010', 
@@ -1212,7 +1212,7 @@ BEGIN
 
     -- Test 40: Regular player cannot insert partnerships
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         INSERT INTO partnerships (play_date_id, player1_id, player2_id, partnership_name) 
         VALUES ('02234567-0123-4567-8901-123456789001', 
                 '01234567-0123-4567-8901-123456789010', 
@@ -1278,7 +1278,7 @@ BEGIN
 
     -- Test 42: Organizer can insert courts for their play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000004');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789004');
         INSERT INTO courts (play_date_id, court_number, court_name) 
         VALUES ('02234567-0123-4567-8901-123456789003', 3, 'Test Court')
         RETURNING id INTO test_court_id;
@@ -1307,7 +1307,7 @@ BEGIN
 
     -- Test 43: Organizer cannot insert courts for other's play date
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000004');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789004');
         INSERT INTO courts (play_date_id, court_number, court_name) 
         VALUES ('02234567-0123-4567-8901-123456789001', 5, 'Test Court 2');
         PERFORM log_test_result(
@@ -1369,7 +1369,7 @@ BEGIN
 
     -- Test 45: Organizer can read audit logs for their play dates
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         SELECT COUNT(*) INTO audit_count FROM audit_log 
         WHERE play_date_id = '02234567-0123-4567-8901-123456789001';
         PERFORM log_test_result(
@@ -1395,7 +1395,7 @@ BEGIN
 
     -- Test 46: Organizer cannot read audit logs for other's play dates
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         SELECT COUNT(*) INTO audit_count FROM audit_log 
         WHERE play_date_id = '02234567-0123-4567-8901-123456789002';
         PERFORM log_test_result(
@@ -1421,7 +1421,7 @@ BEGIN
 
     -- Test 47: Project owner can read all audit logs
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         SELECT COUNT(*) INTO audit_count FROM audit_log;
         PERFORM log_test_result(
             'Project owner read all audit logs',
@@ -1446,7 +1446,7 @@ BEGIN
 
     -- Test 48: Regular player cannot read audit logs
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT COUNT(*) INTO audit_count FROM audit_log;
         PERFORM log_test_result(
             'Player read audit logs',
@@ -1507,7 +1507,7 @@ BEGIN
 
     -- Test 50: Authenticated user can read match results
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT COUNT(*) INTO results_count FROM match_results;
         PERFORM log_test_result(
             'Authenticated user read match results',
@@ -1532,7 +1532,7 @@ BEGIN
 
     -- Test 51: User cannot insert into match results
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         INSERT INTO match_results (player_id, play_date_id, games_played, wins, losses) 
         VALUES ('01234567-0123-4567-8901-123456789005', '02234567-0123-4567-8901-123456789001', 1, 1, 0);
         PERFORM log_test_result(
@@ -1569,9 +1569,9 @@ DECLARE
 BEGIN
     -- Test 52: Player cannot access other player's private data
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT COUNT(*) INTO test_result FROM player_claims 
-        WHERE supabase_uid != 'auth-uuid-player-0000000005';
+        WHERE supabase_uid != 'a1234567-0123-4567-8901-123456789005';
         PERFORM log_test_result(
             'Player access other player claims',
             'Security Boundary',
@@ -1595,7 +1595,7 @@ BEGIN
 
     -- Test 53: Organizer cannot modify other organizer's tournaments
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         UPDATE play_dates SET status = 'cancelled' 
         WHERE organizer_id != '01234567-0123-4567-8901-123456789002';
         PERFORM log_test_result(
@@ -1621,7 +1621,7 @@ BEGIN
 
     -- Test 54: Player cannot modify matches they're not part of
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         UPDATE matches SET team1_score = 999 
         WHERE id IN (
             SELECT m.id FROM matches m
@@ -1691,7 +1691,7 @@ DECLARE
 BEGIN
     -- Test 56: validate_user_permissions() for project owner
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         SELECT validate_user_permissions('project_owner') INTO test_result;
         PERFORM log_test_result(
             'Validate project owner permissions',
@@ -1716,7 +1716,7 @@ BEGIN
 
     -- Test 57: validate_user_permissions() for organizer with context
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000002');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789002');
         SELECT validate_user_permissions('organizer', '02234567-0123-4567-8901-123456789001') INTO test_result;
         PERFORM log_test_result(
             'Validate organizer permissions with context',
@@ -1741,7 +1741,7 @@ BEGIN
 
     -- Test 58: validate_user_permissions() for player with match context
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT validate_user_permissions('player', NULL, '05234567-0123-4567-8901-123456789001') INTO test_result;
         PERFORM log_test_result(
             'Validate player permissions with match context',
@@ -1791,7 +1791,7 @@ BEGIN
 
     -- Test 60: validate_user_permissions() with invalid role
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT validate_user_permissions('invalid_role') INTO test_result;
         PERFORM log_test_result(
             'Validate invalid role permissions',
@@ -1877,7 +1877,7 @@ BEGIN
 
     -- Test 63: Empty UUID parameters
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         SELECT is_organizer_of(NULL)::TEXT INTO test_result;
         PERFORM log_test_result(
             'NULL UUID parameter',
@@ -1902,7 +1902,7 @@ BEGIN
 
     -- Test 64: Extremely long text inputs (should be blocked by constraints)
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         INSERT INTO players (name, email) VALUES 
         (REPEAT('x', 200), 'test@example.com');
         PERFORM log_test_result(
@@ -1928,7 +1928,7 @@ BEGIN
 
     -- Test 65: Invalid email format
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-admin-000000000001');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789001');
         INSERT INTO players (name, email) VALUES 
         ('Test User', 'invalid-email');
         PERFORM log_test_result(
@@ -1968,7 +1968,7 @@ BEGIN
     -- Test 66: Performance of permission checks
     BEGIN
         start_time := NOW();
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         
         FOR i IN 1..1000 LOOP
             PERFORM current_player_id();
@@ -2051,7 +2051,7 @@ DECLARE
 BEGIN
     -- Test 68: Concurrent score update scenario
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-player-0000000005');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789005');
         
         -- Get current version
         SELECT version INTO match_version FROM matches 
@@ -2103,7 +2103,7 @@ BEGIN
 
     -- Test 69: Tournament completion workflow
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000004');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789004');
         
         -- Update play date status
         UPDATE play_dates SET status = 'active' 
@@ -2161,7 +2161,7 @@ BEGIN
 
     -- Test 70: Dispute resolution scenario
     BEGIN
-        PERFORM simulate_user_auth('auth-uuid-organizer-000000003');
+        PERFORM simulate_user_auth('a1234567-0123-4567-8901-123456789003');
         
         -- Mark match as disputed
         UPDATE matches SET status = 'disputed' 
@@ -2218,7 +2218,7 @@ $$;
 -- ============================================================================
 
 -- Clear any remaining auth state
-PERFORM clear_auth();
+SELECT clear_auth();
 
 -- Generate comprehensive test report
 DO $$
@@ -2328,7 +2328,7 @@ BEGIN
     ELSE
         final_report := final_report || '✗ Significant RLS policy issues detected' || E'\n';
         final_report := final_report || '✗ Security vulnerabilities may exist' || E'\n';
-        final_report := final_result || '✗ Review and fix all failed tests before deployment' || E'\n';
+        final_report := final_report || '✗ Review and fix all failed tests before deployment' || E'\n';
     END IF;
     
     final_report := final_report || E'\n' ||
@@ -2346,10 +2346,10 @@ BEGIN
     RAISE NOTICE '%', final_report;
     
     -- Store summary in a comment for reference
-    COMMENT ON SCHEMA public IS 
-    'RLS Policy Test Results: ' || total_tests || ' tests, ' || 
-    passed_tests || ' passed, ' || failed_tests || ' failed, ' ||
-    pass_rate || '% pass rate. Last tested: ' || NOW();
+    EXECUTE format('COMMENT ON SCHEMA public IS %L',
+        'RLS Policy Test Results: ' || total_tests || ' tests, ' || 
+        passed_tests || ' passed, ' || failed_tests || ' failed, ' ||
+        pass_rate || '% pass rate. Last tested: ' || NOW());
 END;
 $$;
 
@@ -2391,19 +2391,19 @@ MANUAL TESTING INSTRUCTIONS:
 KEY TEST SCENARIOS TO VERIFY:
 
 A. PROJECT OWNER TESTS:
-   - Set JWT: SELECT set_config('request.jwt.claims', '{"sub": "auth-uuid-admin-000000000001"}', true);
+   - Set JWT: SELECT set_config('request.jwt.claims', '{"sub": "a1234567-0123-4567-8901-123456789001"}', true);
    - Verify: SELECT is_project_owner(); -- Should return true
    - Test: SELECT COUNT(*) FROM players; -- Should return 16
    - Test: UPDATE players SET name = 'Test' WHERE id = '01234567-0123-4567-8901-123456789005'; -- Should work
 
 B. ORGANIZER TESTS:
-   - Set JWT: SELECT set_config('request.jwt.claims', '{"sub": "auth-uuid-organizer-000000002"}', true);
+   - Set JWT: SELECT set_config('request.jwt.claims', '{"sub": "a1234567-0123-4567-8901-123456789002"}', true);
    - Verify: SELECT is_organizer_of('02234567-0123-4567-8901-123456789001'); -- Should return true
    - Test: UPDATE play_dates SET num_courts = 2 WHERE id = '02234567-0123-4567-8901-123456789001'; -- Should work
    - Test: UPDATE play_dates SET num_courts = 2 WHERE id = '02234567-0123-4567-8901-123456789002'; -- Should fail
 
 C. PLAYER TESTS:
-   - Set JWT: SELECT set_config('request.jwt.claims', '{"sub": "auth-uuid-player-0000000005"}', true);
+   - Set JWT: SELECT set_config('request.jwt.claims', '{"sub": "a1234567-0123-4567-8901-123456789005"}', true);
    - Verify: SELECT is_player_in_match('05234567-0123-4567-8901-123456789001'); -- Should return true
    - Test: UPDATE matches SET team1_score = 11, team2_score = 9 WHERE id = '05234567-0123-4567-8901-123456789010'; -- Should work
    - Test: UPDATE matches SET team1_score = 11, team2_score = 9 WHERE id = '05234567-0123-4567-8901-123456789009'; -- Should fail

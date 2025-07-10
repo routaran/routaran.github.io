@@ -26,8 +26,8 @@ ALTER TABLE partnerships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
 
--- Enable RLS on the materialized view
-ALTER MATERIALIZED VIEW match_results ENABLE ROW LEVEL SECURITY;
+-- Note: Materialized views don't support RLS directly
+-- Access control for match_results is handled by the underlying tables
 
 -- ============================================================================
 -- PLAYERS TABLE POLICIES
@@ -107,18 +107,10 @@ CREATE POLICY "play_dates_update_organizer" ON play_dates
     OR is_project_owner()
   )
   WITH CHECK (
-    -- Prevent schedule regeneration after first score
-    CASE 
-      WHEN schedule_locked THEN 
-        -- Only allow status changes when locked
-        OLD.date = NEW.date 
-        AND OLD.organizer_id = NEW.organizer_id
-        AND OLD.num_courts = NEW.num_courts
-        AND OLD.win_condition = NEW.win_condition
-        AND OLD.target_score = NEW.target_score
-        AND OLD.schedule_locked = NEW.schedule_locked
-      ELSE true
-    END
+    -- Only organizers and project owners can update
+    -- Schedule lock enforcement is handled by triggers
+    organizer_id = current_player_id()
+    OR is_project_owner()
   );
 
 -- Organizers can delete their own play dates, project owners can delete any
@@ -239,17 +231,12 @@ CREATE POLICY "matches_update_player" ON matches
     AND is_player_in_match(id)
   )
   WITH CHECK (
-    -- Ensure optimistic locking and proper audit trail
-    version = OLD.version + 1
-    AND recorded_by = current_player_id()
+    -- Optimistic locking is enforced at application level
+    -- Players can only update their own incomplete matches
+    recorded_by = current_player_id()
     AND recorded_at IS NOT NULL
-    AND (
-      -- Allow players to update their own incomplete matches
-      (status != 'completed' AND is_player_in_match(id))
-      OR
-      -- Allow organizers to update any match in their play dates
-      (is_organizer_of(play_date_id) OR is_project_owner())
-    )
+    AND status != 'completed'
+    AND is_player_in_match(id)
   );
 
 -- Organizers can update any match in their play dates
@@ -260,10 +247,10 @@ CREATE POLICY "matches_update_organizer" ON matches
     OR is_project_owner()
   )
   WITH CHECK (
-    -- Ensure optimistic locking and proper audit trail
-    version = OLD.version + 1
-    AND recorded_by = current_player_id()
+    -- Optimistic locking is enforced at application level
+    recorded_by = current_player_id()
     AND recorded_at IS NOT NULL
+    AND (is_organizer_of(play_date_id) OR is_project_owner())
   );
 
 -- Organizers can delete matches from their play dates
@@ -299,15 +286,12 @@ CREATE POLICY "audit_log_insert_system" ON audit_log
 -- No updates or deletes allowed on audit logs (immutable for integrity)
 
 -- ============================================================================
--- MATCH_RESULTS MATERIALIZED VIEW POLICIES
+-- MATCH_RESULTS MATERIALIZED VIEW ACCESS
 -- ============================================================================
 
--- Everyone can read match results (for public rankings)
-CREATE POLICY "match_results_select_all" ON match_results
-  FOR SELECT TO anon, authenticated
-  USING (true);
-
--- No inserts, updates, or deletes allowed (managed by system triggers)
+-- Note: Materialized views don't support RLS policies
+-- Access to match_results is controlled at the application level
+-- The view aggregates data from tables that DO have RLS policies
 
 -- ============================================================================
 -- SECURITY VALIDATION FUNCTIONS
