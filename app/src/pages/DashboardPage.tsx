@@ -21,7 +21,7 @@ export function DashboardPage() {
   const canCreatePlayDate = isAuthenticated && player;
 
   const handleCreateNew = () => {
-    navigate("/play-dates/new");
+    navigate("/play-dates/create");
   };
 
   const handleEdit = (playDate: any) => {
