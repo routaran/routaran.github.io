@@ -26,8 +26,8 @@ ALTER TABLE partnerships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
 
--- Enable RLS on the materialized view
-ALTER MATERIALIZED VIEW match_results ENABLE ROW LEVEL SECURITY;
+-- Note: Materialized views don't support RLS directly
+-- Access control for match_results is handled by the underlying tables
 
 -- ============================================================================
 -- PLAYERS TABLE POLICIES
@@ -299,15 +299,12 @@ CREATE POLICY "audit_log_insert_system" ON audit_log
 -- No updates or deletes allowed on audit logs (immutable for integrity)
 
 -- ============================================================================
--- MATCH_RESULTS MATERIALIZED VIEW POLICIES
+-- MATCH_RESULTS MATERIALIZED VIEW ACCESS
 -- ============================================================================
 
--- Everyone can read match results (for public rankings)
-CREATE POLICY "match_results_select_all" ON match_results
-  FOR SELECT TO anon, authenticated
-  USING (true);
-
--- No inserts, updates, or deletes allowed (managed by system triggers)
+-- Note: Materialized views don't support RLS policies
+-- Access to match_results is controlled at the application level
+-- The view aggregates data from tables that DO have RLS policies
 
 -- ============================================================================
 -- SECURITY VALIDATION FUNCTIONS
