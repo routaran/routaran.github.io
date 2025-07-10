@@ -14,10 +14,18 @@ export function LoginPage() {
   const { user, player, isLoading } = useAuthStore();
   const { checkPlayerClaim } = useAuth();
   const [showPlayerClaim, setShowPlayerClaim] = useState(false);
-  const [checkingClaim, setCheckingClaim] = useState(false);
+  const [hasCheckedClaim, setHasCheckedClaim] = useState(false);
 
   // Get redirect path from location state
   const from = (location.state as any)?.from?.pathname || "/";
+
+  // Reset hasCheckedClaim when user changes
+  useEffect(() => {
+    if (!user) {
+      setHasCheckedClaim(false);
+      setShowPlayerClaim(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     logger.info("Login page mounted", {
@@ -52,8 +60,8 @@ export function LoginPage() {
     });
 
     // Check if user is already authenticated
-    if (user && !checkingClaim) {
-      setCheckingClaim(true);
+    if (user && !hasCheckedClaim) {
+      setHasCheckedClaim(true);
       checkPlayerClaim()
         .then((hasClaim) => {
           console.log("checkPlayerClaim result:", hasClaim);
@@ -73,7 +81,6 @@ export function LoginPage() {
             });
             setShowPlayerClaim(true);
           }
-          setCheckingClaim(false);
         })
         .catch((error) => {
           console.error("Error checking player claim:", error);
@@ -88,10 +95,9 @@ export function LoginPage() {
           );
           // Show player claim screen anyway
           setShowPlayerClaim(true);
-          setCheckingClaim(false);
         });
     }
-  }, [user, navigate, from, checkPlayerClaim, checkingClaim]);
+  }, [user, navigate, from, checkPlayerClaim]);
 
   const handleLoginSuccess = () => {
     logger.info("Login successful, checking for player claim", {
@@ -113,7 +119,7 @@ export function LoginPage() {
     navigate(from, { replace: true });
   };
 
-  if (isLoading || checkingClaim) {
+  if (isLoading || (user && !hasCheckedClaim)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <LoadingSpinner size="lg" />
