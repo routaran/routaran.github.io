@@ -2,7 +2,8 @@
 
 ## Critical Type Updates Needed
 
-These are the minimal changes needed to get the application working with the current database schema:
+These are the minimal changes needed to get the application working with the current database
+schema:
 
 ### 1. Update src/types/database.ts
 
@@ -25,8 +26,8 @@ play_dates: {
     updated_at: string;
     version: number;
     // REMOVE: name field doesn't exist in database
-  };
-};
+  }
+}
 
 // Update players table (remove play_date_id)
 players: {
@@ -38,8 +39,8 @@ players: {
     created_at: string;
     updated_at: string;
     // REMOVE: play_date_id
-  };
-};
+  }
+}
 
 // Update player_claims table
 player_claims: {
@@ -48,8 +49,8 @@ player_claims: {
     auth_user_id: string;
     claimed_at: string; // was: created_at
     // REMOVE: id field
-  };
-};
+  }
+}
 
 // Update matches table
 matches: {
@@ -70,8 +71,8 @@ matches: {
     updated_at: string;
     version: number;
     // REMOVE: scheduled_at
-  };
-};
+  }
+}
 
 // Update courts table
 courts: {
@@ -81,8 +82,8 @@ courts: {
     court_number: number; // was: number
     court_name: string; // was: name
     created_at: string;
-  };
-};
+  }
+}
 
 // Update match_results view
 match_results: {
@@ -99,8 +100,8 @@ match_results: {
     points_against: number;
     win_percentage: number;
     point_differential: number;
-  };
-};
+  }
+}
 ```
 
 ### 2. Update Component Imports
@@ -127,26 +128,23 @@ Example query updates needed:
 
 ```typescript
 // Before
-const { data } = await supabase
-  .from('play_dates')
-  .select('*, created_by')
-  .eq('created_by', userId);
+const { data } = await supabase.from("play_dates").select("*, created_by").eq("created_by", userId);
 
 // After
 const { data } = await supabase
-  .from('play_dates')
-  .select('*, organizer_id')
-  .eq('organizer_id', userId);
+  .from("play_dates")
+  .select("*, organizer_id")
+  .eq("organizer_id", userId);
 ```
 
 ### 4. Update Form Validations
 
 ```typescript
 // Before
-win_condition: z.enum(['first-to-target', 'win-by-2'])
+win_condition: z.enum(["first-to-target", "win-by-2"]);
 
 // After
-win_condition: z.enum(['first_to_target', 'win_by_2'])
+win_condition: z.enum(["first_to_target", "win_by_2"]);
 ```
 
 ## Files That Need Updates
@@ -165,11 +163,13 @@ Based on the codebase analysis, these files likely need updates:
 ## Testing After Updates
 
 1. Run TypeScript compiler to check for type errors:
+
    ```bash
    npm run type-check
    ```
 
 2. Run tests to ensure nothing breaks:
+
    ```bash
    npm test
    ```

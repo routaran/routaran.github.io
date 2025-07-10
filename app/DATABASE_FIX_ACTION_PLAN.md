@@ -4,17 +4,20 @@
 
 ### Step 1: Update Frontend Types (Priority: CRITICAL)
 
-The frontend types in `src/types/database.ts` need to be updated to match the actual database schema. This is the fastest way to get the application working.
+The frontend types in `src/types/database.ts` need to be updated to match the actual database
+schema. This is the fastest way to get the application working.
 
 ### Step 2: Fix Win Condition Format (Priority: HIGH)
 
 Update all frontend code that uses win conditions to use underscores instead of hyphens:
+
 - Change `"first-to-target"` to `"first_to_target"`
 - Change `"win-by-2"` to `"win_by_2"`
 
 ### Step 3: Update Component Queries (Priority: HIGH)
 
 Update all queries and components that reference the old column names:
+
 - `created_by` → `organizer_id`
 - `court_count` → `num_courts`
 - `project_owner` → `is_project_owner`
@@ -26,11 +29,13 @@ Update all queries and components that reference the old column names:
 
 ### Option A: Update Database to Match Frontend (Recommended)
 
-Run the migration script provided in the report to align the database with frontend expectations. This maintains consistency with the original design.
+Run the migration script provided in the report to align the database with frontend expectations.
+This maintains consistency with the original design.
 
 ### Option B: Fully Update Frontend to Match Database
 
-Complete overhaul of frontend to match the current database design. This is more work but avoids database migrations.
+Complete overhaul of frontend to match the current database design. This is more work but avoids
+database migrations.
 
 ## Testing Checklist
 

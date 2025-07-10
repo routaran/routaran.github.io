@@ -1,7 +1,9 @@
 # Frontend Fixes Summary
 
 ## Overview
-This document summarizes the Phase 1 fixes applied to align the frontend with the current database schema, allowing the application to work without requiring database migrations.
+
+This document summarizes the Phase 1 fixes applied to align the frontend with the current database
+schema, allowing the application to work without requiring database migrations.
 
 ## Changes Made
 
@@ -47,7 +49,8 @@ Updated all type definitions to match the actual database schema:
 
 Updated all components to use the new column names:
 
-- **Win Conditions**: Changed all references from `"first-to-target"` and `"win-by-2"` to `"first_to_target"` and `"win_by_2"`
+- **Win Conditions**: Changed all references from `"first-to-target"` and `"win-by-2"` to
+  `"first_to_target"` and `"win_by_2"`
 - **Column References**: Updated throughout the codebase:
   - `created_by` → `organizer_id`
   - `court_count` → `num_courts`
@@ -84,6 +87,7 @@ Updated all components to use the new column names:
 ### 4. Build Status
 
 After applying all fixes:
+
 - ✅ TypeScript compilation passes with no errors
 - ✅ Build completes successfully
 - ⚠️ Tests need updating to reflect new column names
@@ -91,13 +95,16 @@ After applying all fixes:
 
 ## Next Steps
 
-1. **Update Tests**: The test files need to be updated to use the new column names and type definitions
-2. **Optional Database Migration**: If you want to align the database with the original frontend design, use the migration in `supabase/migrations/20250710000008_optional_frontend_alignment.sql`
+1. **Update Tests**: The test files need to be updated to use the new column names and type
+   definitions
+2. **Optional Database Migration**: If you want to align the database with the original frontend
+   design, use the migration in `supabase/migrations/20250710000008_optional_frontend_alignment.sql`
 3. **Test Deployment**: Deploy and test all functionality to ensure everything works correctly
 
 ## Important Notes
 
 - The application now works with the current database schema
-- Players are global (not per-play-date) - this is a fundamental architectural difference from the original design
+- Players are global (not per-play-date) - this is a fundamental architectural difference from the
+  original design
 - All authentication and player claim issues should be resolved
 - Real-time updates should work correctly with the new column names
