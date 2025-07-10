@@ -81,7 +81,6 @@ export function PlayerSelector({
     const newPlayer: PlayerInsert = {
       name: newPlayerName.trim(),
       email: newPlayerEmail.trim().toLowerCase(),
-      play_date_id: "", // Will be set when creating the play date
     };
 
     onChange([...players, newPlayer]);
