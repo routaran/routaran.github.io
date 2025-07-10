@@ -207,7 +207,7 @@ BEGIN
     LIMIT 1;
     
     -- Clear existing audit entries for this match
-    DELETE FROM audit_log WHERE match_id = match_id;
+    DELETE FROM audit_log WHERE audit_log.match_id = match_id;
     
     -- Update match with audit logging
     UPDATE matches 
@@ -222,7 +222,7 @@ BEGIN
             NOW());
     
     -- Check audit trail
-    SELECT COUNT(*) INTO audit_count FROM audit_log WHERE match_id = match_id;
+    SELECT COUNT(*) INTO audit_count FROM audit_log WHERE audit_log.match_id = match_id;
     
     IF audit_count > 0 THEN
         RAISE NOTICE 'PASS: Audit trail created for version change';
@@ -506,7 +506,7 @@ BEGIN
         
         -- 4. Verify final state
         SELECT version INTO final_version FROM matches WHERE id = match_id;
-        SELECT COUNT(*) INTO audit_count FROM audit_log WHERE match_id = match_id;
+        SELECT COUNT(*) INTO audit_count FROM audit_log WHERE audit_log.match_id = match_id;
         
         IF final_version = initial_version + 1 AND audit_count > 0 THEN
             RAISE NOTICE 'PASS: Complete score update workflow succeeded';
