@@ -157,7 +157,7 @@ BEGIN
     SELECT version INTO initial_version FROM matches WHERE id = match_id;
     
     -- Simulate concurrent session 1
-    SAVEPOINT concurrent_test;
+    -- Note: Cannot use SAVEPOINT in DO block
     
     -- Session 1: Read current version and prepare update
     UPDATE matches 
@@ -182,7 +182,7 @@ BEGIN
             update1_count, update2_count, final_version;
     END IF;
     
-    ROLLBACK TO concurrent_test;
+    -- Note: Cannot use SAVEPOINT/ROLLBACK in DO block - changes will persist
 END $$;
 
 -- =====================================================================================
