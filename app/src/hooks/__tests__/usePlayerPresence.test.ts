@@ -148,7 +148,7 @@ describe('usePlayerPresence', () => {
         }],
       };
 
-      let syncCallback: Function;
+      let syncCallback: () => void;
       mockChannel.on = vi.fn((event, options, callback) => {
         if (event === 'presence' && options.event === 'sync') {
           syncCallback = callback;
@@ -241,7 +241,7 @@ describe('usePlayerPresence', () => {
 
   describe('connection state management', () => {
     it('should update connection state based on subscription status', async () => {
-      let subscriptionCallback: Function;
+      let subscriptionCallback: (event: any) => void;
       const mockSubscribe = vi.fn((callback) => {
         subscriptionCallback = callback;
         return 'success';
@@ -285,7 +285,7 @@ describe('usePlayerPresence', () => {
         }],
       };
 
-      let syncCallback: Function;
+      let syncCallback: () => void;
       mockChannel.on = vi.fn((event, options, callback) => {
         if (event === 'presence' && options.event === 'sync') {
           syncCallback = callback;

@@ -29,22 +29,15 @@ export function CourtGrid({
     return rounds.find(r => r.number === selectedRound);
   }, [rounds, selectedRound]);
 
-  if (!round) {
-    return (
-      <Card className="p-6 text-center">
-        <p className="text-muted-foreground">No round data available</p>
-      </Card>
-    );
-  }
-
   // Group matches by court
   const matchesByCourt = useMemo(() => {
+    if (!round) return {} as Record<number, ScheduleMatchWithScores[]>;
     const grouped: Record<number, ScheduleMatchWithScores[]> = {};
     
     // Initialize all courts
     const maxCourt = Math.max(
       4, // Default max courts
-      ...round.matches.map(m => m.court || 0),
+      ...(round?.matches.map(m => m.court || 0) || []),
       courts.length
     );
     
@@ -53,7 +46,7 @@ export function CourtGrid({
     }
     
     // Assign matches to courts
-    round.matches.forEach(match => {
+    round?.matches.forEach(match => {
       const court = match.court || 0;
       if (court > 0) {
         grouped[court].push(match);
@@ -64,7 +57,7 @@ export function CourtGrid({
   }, [round, courts]);
 
   // Unassigned matches
-  const unassignedMatches = round.matches.filter(m => !m.court || m.court === 0);
+  const unassignedMatches = round?.matches.filter(m => !m.court || m.court === 0) || [];
 
   const getCourtName = (courtNumber: number) => {
     const court = courts.find(c => c.number === courtNumber);
@@ -82,6 +75,14 @@ export function CourtGrid({
     // TODO: Implement court assignment update
     console.log('Assigning match', matchId, 'to court', courtNumber);
   };
+
+  if (!round) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-muted-foreground">No round data available</p>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-4">

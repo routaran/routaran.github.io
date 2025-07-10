@@ -51,10 +51,10 @@ export function ConnectionStatusBar({
     enabled: true,
     autoReconnect: true,
     onConnectionLost: showToastNotifications ? 
-      (metrics) => showToast('Connection lost. Attempting to reconnect...', 'warning') : 
+      (_metrics) => showToast('Connection lost. Attempting to reconnect...', 'warning') : 
       undefined,
     onConnectionRestored: showToastNotifications ? 
-      (metrics) => showToast('Connection restored!', 'success') : 
+      (_metrics) => showToast('Connection restored!', 'success') : 
       undefined,
   });
 

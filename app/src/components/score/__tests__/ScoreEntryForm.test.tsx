@@ -1,13 +1,15 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { ScoreEntryForm } from '../ScoreEntryForm';
 import { TestWrapper } from '../../../test/utils';
 import type { Match } from '../../../types/database';
 
 // Mock the hooks
+const mockUseScoreEntry = vi.fn();
+
 vi.mock('../../../hooks/useScoreEntry', () => ({
-  useScoreEntry: vi.fn(),
+  useScoreEntry: mockUseScoreEntry,
   useCommonScores: vi.fn(() => [
     { team1: 11, team2: 0, label: '11-0' },
     { team1: 11, team2: 9, label: '11-9' },
@@ -109,8 +111,7 @@ const mockScoreEntry = {
 describe('ScoreEntryForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue(mockScoreEntry);
+    mockUseScoreEntry.mockReturnValue(mockScoreEntry);
   });
 
   const defaultProps = {
@@ -207,8 +208,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('calls increment functions when buttons clicked', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       team1Score: 5,
       team2Score: 7,
@@ -255,8 +255,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('renders error messages', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       errors: ['Winning team must reach 11 points'],
     });
@@ -272,8 +271,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('renders warning messages', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       warnings: ['Score of 25 is unusually high'],
     });
@@ -289,8 +287,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('shows winner indicator', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       winner: 1,
     });
@@ -305,8 +302,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('renders save and reset buttons', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       hasChanges: true,
     });
@@ -322,8 +318,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('calls submitScore when save button clicked', async () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       hasChanges: true,
     });
@@ -341,8 +336,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('calls resetScore when reset button clicked', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       hasChanges: true,
     });
@@ -360,8 +354,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('disables save button when invalid', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       hasChanges: true,
       isValid: false,
@@ -378,8 +371,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('shows permission denied message when cannot edit', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       canEdit: false,
     });
@@ -426,8 +418,7 @@ describe('ScoreEntryForm', () => {
   });
 
   it('shows modified badge when changes exist', () => {
-    const { useScoreEntry } = require('../../../hooks/useScoreEntry');
-    useScoreEntry.mockReturnValue({
+    mockUseScoreEntry.mockReturnValue({
       ...mockScoreEntry,
       hasChanges: true,
     });

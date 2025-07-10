@@ -332,7 +332,7 @@ export function PerformanceTrends({
  */
 export function MiniPerformanceTrends({
   trends,
-  playerName,
+  playerName: _playerName,
   className = ''
 }: {
   trends: PlayerPerformanceTrend[]

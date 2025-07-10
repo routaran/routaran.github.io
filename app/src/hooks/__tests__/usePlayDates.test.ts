@@ -236,7 +236,7 @@ describe('usePlayDates', () => {
   });
 
   it('handles realtime updates', async () => {
-    let onUpdate: Function;
+    let onUpdate: (data: any) => void;
     mockSubscribeToTable.mockImplementation((config) => {
       if (config.table === 'play_dates') {
         onUpdate = config.onUpdate!;
@@ -263,7 +263,7 @@ describe('usePlayDates', () => {
   });
 
   it('handles realtime deletes', async () => {
-    let onDelete: Function;
+    let onDelete: (data: any) => void;
     mockSubscribeToTable.mockImplementation((config) => {
       if (config.table === 'play_dates') {
         onDelete = config.onDelete!;

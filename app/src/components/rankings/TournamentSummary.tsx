@@ -27,7 +27,7 @@ interface TournamentSummaryProps {
 
 export function TournamentSummaryCard({
   summary,
-  loading = false,
+  loading: _loading = false,
   className = ''
 }: TournamentSummaryProps) {
   /**

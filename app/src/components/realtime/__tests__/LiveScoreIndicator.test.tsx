@@ -104,7 +104,7 @@ describe('LiveScoreIndicator', () => {
 
   describe('real-time updates', () => {
     it('should show live indicator when receiving updates', async () => {
-      let subscriptionCallback: Function;
+      let subscriptionCallback: (event: any) => void;
       mockUseRealtimeSubscription.mockImplementation((options, callback) => {
         subscriptionCallback = callback;
       });
@@ -128,7 +128,7 @@ describe('LiveScoreIndicator', () => {
     });
 
     it('should trigger score animations on score changes', async () => {
-      let subscriptionCallback: Function;
+      let subscriptionCallback: (event: any) => void;
       mockUseRealtimeSubscription.mockImplementation((options, callback) => {
         subscriptionCallback = callback;
       });
@@ -165,7 +165,7 @@ describe('LiveScoreIndicator', () => {
     });
 
     it('should show notifications when enabled', async () => {
-      let subscriptionCallback: Function;
+      let subscriptionCallback: (event: any) => void;
       mockUseRealtimeSubscription.mockImplementation((options, callback) => {
         subscriptionCallback = callback;
       });
@@ -200,7 +200,7 @@ describe('LiveScoreIndicator', () => {
 
     it('should call onScoreUpdate callback', async () => {
       const mockOnScoreUpdate = vi.fn();
-      let subscriptionCallback: Function;
+      let subscriptionCallback: (event: any) => void;
       mockUseRealtimeSubscription.mockImplementation((options, callback) => {
         subscriptionCallback = callback;
       });

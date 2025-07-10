@@ -275,7 +275,7 @@ export function PlayerStatsCard({
 
             {playerStats.partnershipStats.length > 0 ? (
               <div className="space-y-3">
-                {playerStats.partnershipStats.map((partnership, index) => (
+                {playerStats.partnershipStats.map((partnership, _index) => (
                   <div key={partnership.partnership_id} className="p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>

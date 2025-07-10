@@ -75,18 +75,10 @@ vi.mock('../lib/logger', () => ({
     debug: vi.fn(),
     performance: vi.fn(),
     time: vi.fn(async (name, fn) => {
-      try {
-        return await fn();
-      } catch (error) {
-        throw error;
-      }
+      return await fn();
     }),
     timeSync: vi.fn((name, fn) => {
-      try {
-        return fn();
-      } catch (error) {
-        throw error;
-      }
+      return fn();
     }),
     getLogs: vi.fn(() => []),
     getErrors: vi.fn(() => []),
@@ -108,11 +100,7 @@ vi.mock('../lib/monitoring', () => ({
     })),
     onConnectionStatusChange: vi.fn(() => vi.fn()),
     measureApiCall: vi.fn(async (name, fn) => {
-      try {
-        return await fn();
-      } catch (error) {
-        throw error;
-      }
+      return await fn();
     }),
   },
 }));

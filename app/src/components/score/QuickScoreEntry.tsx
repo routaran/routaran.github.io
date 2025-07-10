@@ -51,7 +51,7 @@ export function QuickScoreEntry({
       await scoreEntry.submitScore();
       setIsConfirming(false);
       setSelectedScore(null);
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the hook
       setIsConfirming(false);
     }
@@ -200,7 +200,7 @@ export function QuickScoreEntry({
               variant="ghost"
               size="sm"
               onClick={() => {
-                const swappedScores = commonScores.map(score => ({
+                const _swappedScores = commonScores.map(score => ({
                   ...score,
                   team1: score.team2,
                   team2: score.team1,

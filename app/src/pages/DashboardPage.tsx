@@ -17,7 +17,6 @@ export function DashboardPage() {
   const {
     playDates,
     loading,
-    reload,
   } = usePlayDates();
 
   const canCreatePlayDate = isAuthenticated && player;

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { User, Clock, Trophy, AlertCircle, Calendar } from 'lucide-react';
+import { User, Clock, AlertCircle, Calendar } from 'lucide-react';
 import { Card, Badge, Alert, AlertDescription, AlertTitle } from '../common';
 import { MatchCard } from './MatchCard';
 import { cn } from '../../lib/utils';
@@ -63,7 +63,7 @@ export function PlayerSchedule({
 
   // Get next match
   const nextMatch = useMemo(() => {
-    return playerMatches.find(({ match, round, isBye }) => {
+    return playerMatches.find(({ match, round: _round, isBye }) => {
       if (isBye) return false;
       if (!match) return false;
       return match.team1_score === null || match.team2_score === null;

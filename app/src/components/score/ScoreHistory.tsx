@@ -29,7 +29,7 @@ export function ScoreHistory({
   showStats = true,
   maxHeight = 'max-h-96',
 }: ScoreHistoryProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [_isExpanded, _setIsExpanded] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   
   const { 

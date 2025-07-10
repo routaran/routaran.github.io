@@ -65,7 +65,7 @@ describe('useConnectionState', () => {
 
   describe('connection state changes', () => {
     it('should update state and metrics on connection state change', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -96,7 +96,7 @@ describe('useConnectionState', () => {
 
     it('should call onStateChange callback', () => {
       const mockOnStateChange = vi.fn();
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -116,7 +116,7 @@ describe('useConnectionState', () => {
 
     it('should call onConnectionLost callback', () => {
       const mockOnConnectionLost = vi.fn();
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -142,7 +142,7 @@ describe('useConnectionState', () => {
 
     it('should call onConnectionRestored callback', () => {
       const mockOnConnectionRestored = vi.fn();
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -169,7 +169,7 @@ describe('useConnectionState', () => {
 
   describe('auto-reconnect functionality', () => {
     it('should schedule auto-reconnect on disconnect', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -191,7 +191,7 @@ describe('useConnectionState', () => {
     });
 
     it('should not auto-reconnect when disabled', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -212,7 +212,7 @@ describe('useConnectionState', () => {
     });
 
     it('should respect max auto-reconnect attempts', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -253,7 +253,7 @@ describe('useConnectionState', () => {
 
   describe('connection quality calculation', () => {
     it('should calculate connection quality based on metrics', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -293,7 +293,7 @@ describe('useConnectionState', () => {
 
   describe('metrics tracking', () => {
     it('should track connection attempts correctly', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -313,7 +313,7 @@ describe('useConnectionState', () => {
     });
 
     it('should track successful connections', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -333,7 +333,7 @@ describe('useConnectionState', () => {
     });
 
     it('should track failed connections', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -353,7 +353,7 @@ describe('useConnectionState', () => {
     });
 
     it('should track disconnection time', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -393,7 +393,7 @@ describe('useConnectionState', () => {
     });
 
     it('should clear auto-reconnect timer on manual reconnect', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -423,7 +423,7 @@ describe('useConnectionState', () => {
 
   describe('reset metrics', () => {
     it('should reset all metrics and history', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -464,7 +464,7 @@ describe('useConnectionState', () => {
 
   describe('history management', () => {
     it('should maintain connection history with timestamps', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();
@@ -487,7 +487,7 @@ describe('useConnectionState', () => {
     });
 
     it('should limit history to 10 entries', () => {
-      let stateChangeCallback: Function;
+      let stateChangeCallback: (state: string) => void;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
         return vi.fn();

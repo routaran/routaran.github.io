@@ -425,10 +425,10 @@ export function useConnectionStateWithToasts(
   return useConnectionState({
     enabled: true,
     autoReconnect: true,
-    onConnectionLost: (metrics) => {
+    onConnectionLost: (_metrics) => {
       showToast('Connection lost. Attempting to reconnect...', 'warning');
     },
-    onConnectionRestored: (metrics) => {
+    onConnectionRestored: (_metrics) => {
       showToast('Connection restored!', 'success');
     },
   });
