@@ -2,6 +2,7 @@
  * Tests for rankings export functionality
  */
 
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   exportRankingsToCSV,
   exportRankingsToJSON,
@@ -342,49 +343,49 @@ describe('Rankings Export', () => {
 
 describe('Export Integration', () => {
   // Mock DOM methods for download tests
-  const mockCreateElement = jest.fn()
-  const mockClick = jest.fn()
-  const mockCreateObjectURL = jest.fn()
-  const mockRevokeObjectURL = jest.fn()
+  const mockCreateElement = vi.fn();
+  const mockClick = vi.fn();
+  const mockCreateObjectURL = vi.fn();
+  const mockRevokeObjectURL = vi.fn();
 
   beforeEach(() => {
     const mockElement = {
       click: mockClick,
       href: '',
       download: ''
-    }
+    };
     
-    mockCreateElement.mockReturnValue(mockElement)
+    mockCreateElement.mockReturnValue(mockElement);
     
     Object.defineProperty(document, 'createElement', {
       value: mockCreateElement,
       writable: true
-    })
+    });
     
     Object.defineProperty(document.body, 'appendChild', {
-      value: jest.fn(),
+      value: vi.fn(),
       writable: true
-    })
+    });
     
     Object.defineProperty(document.body, 'removeChild', {
-      value: jest.fn(),
+      value: vi.fn(),
       writable: true
-    })
+    });
     
     Object.defineProperty(URL, 'createObjectURL', {
       value: mockCreateObjectURL,
       writable: true
-    })
+    });
     
     Object.defineProperty(URL, 'revokeObjectURL', {
       value: mockRevokeObjectURL,
       writable: true
-    })
+    });
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   it('should handle CSV export format correctly', () => {
     const csv = exportRankingsToCSV(mockRankings, mockPlayDate)

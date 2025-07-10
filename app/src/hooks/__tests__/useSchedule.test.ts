@@ -15,9 +15,9 @@ vi.mock('../../lib/logger', () => ({
   },
 }));
 
-const mockDb = db as jest.Mocked<typeof db>;
-const mockRealtime = realtime as jest.Mocked<typeof realtime>;
-const mockGenerateSchedule = generateRoundRobinSchedule as jest.MockedFunction<typeof generateRoundRobinSchedule>;
+const mockDb = db as vi.Mocked<typeof db>;
+const mockRealtime = realtime as vi.Mocked<typeof realtime>;
+const mockGenerateSchedule = generateRoundRobinSchedule as vi.MockedFunction<typeof generateRoundRobinSchedule>;
 
 const mockPlayDateData = {
   id: 'play-date-1',

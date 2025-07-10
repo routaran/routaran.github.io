@@ -1,30 +1,31 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { ConnectionStatusBar, SimpleConnectionStatusBar, InlineConnectionStatus } from '../ConnectionStatusBar';
 import { useConnectionState } from '../../../hooks/useConnectionState';
 import { useToast } from '../../../hooks/useToast';
 import { TestProvider } from '../../../test/utils';
 
 // Mock dependencies
-jest.mock('../../../hooks/useConnectionState');
-jest.mock('../../../hooks/useToast');
+vi.mock('../../../hooks/useConnectionState');
+vi.mock('../../../hooks/useToast');
 
-const mockUseConnectionState = useConnectionState as jest.MockedFunction<typeof useConnectionState>;
-const mockUseToast = useToast as jest.MockedFunction<typeof useToast>;
+const mockUseConnectionState = useConnectionState as vi.MockedFunction<typeof useConnectionState>;
+const mockUseToast = useToast as vi.MockedFunction<typeof useToast>;
 
-const mockShowToast = jest.fn();
+const mockShowToast = vi.fn();
 
 describe('ConnectionStatusBar', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
     mockUseToast.mockReturnValue({
       showToast: mockShowToast,
     } as any);
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   const mockConnectionState = {
@@ -50,9 +51,9 @@ describe('ConnectionStatusBar', () => {
         duration: 2000,
       },
     ],
-    reconnect: jest.fn(),
-    resetMetrics: jest.fn(),
-    getConnectionQuality: jest.fn(() => 85),
+    reconnect: vi.fn(),
+    resetMetrics: vi.fn(),
+    getConnectionQuality: vi.fn(() => 85),
   };
 
   describe('basic rendering', () => {
@@ -185,7 +186,7 @@ describe('ConnectionStatusBar', () => {
       expect(container.firstChild).toHaveClass('opacity-100');
 
       // Fast-forward time
-      jest.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(5000);
 
       waitFor(() => {
         expect(container.firstChild).toHaveClass('opacity-0');
@@ -204,7 +205,7 @@ describe('ConnectionStatusBar', () => {
       expect(container.firstChild).toHaveClass('opacity-100');
 
       // Fast-forward time
-      jest.advanceTimersByTime(10000);
+      vi.advanceTimersByTime(10000);
 
       expect(container.firstChild).toHaveClass('opacity-100');
     });
@@ -221,11 +222,11 @@ describe('ConnectionStatusBar', () => {
       expect(container.firstChild).toHaveClass('opacity-100');
 
       // Fast-forward less than delay
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       expect(container.firstChild).toHaveClass('opacity-100');
 
       // Fast-forward past delay
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       
       waitFor(() => {
         expect(container.firstChild).toHaveClass('opacity-0');
@@ -248,7 +249,7 @@ describe('ConnectionStatusBar', () => {
       expect(container.firstChild).toHaveClass('opacity-100');
 
       // Fast-forward time
-      jest.advanceTimersByTime(10000);
+      vi.advanceTimersByTime(10000);
 
       expect(container.firstChild).toHaveClass('opacity-100');
     });
@@ -379,7 +380,7 @@ describe('ConnectionStatusBar', () => {
     });
 
     it('should call reconnect function when clicked', () => {
-      const mockReconnect = jest.fn();
+      const mockReconnect = vi.fn();
       mockUseConnectionState.mockReturnValue({
         ...mockConnectionState,
         connectionState: 'disconnected',
@@ -520,7 +521,7 @@ describe('ConnectionStatusBar', () => {
     });
 
     it('should call reset metrics function when clicked', () => {
-      const mockResetMetrics = jest.fn();
+      const mockResetMetrics = vi.fn();
       mockUseConnectionState.mockReturnValue({
         ...mockConnectionState,
         resetMetrics: mockResetMetrics,

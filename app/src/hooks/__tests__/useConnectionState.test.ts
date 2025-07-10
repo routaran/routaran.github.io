@@ -1,23 +1,24 @@
 import { renderHook, act } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { useConnectionState, useSimpleConnectionState } from '../useConnectionState';
 import { onConnectionStateChange } from '../../lib/supabase/realtime';
 
 // Mock dependencies
-jest.mock('../../lib/supabase/realtime');
-jest.mock('../../lib/logger');
-jest.mock('../../lib/monitoring');
+vi.mock('../../lib/supabase/realtime');
+vi.mock('../../lib/logger');
+vi.mock('../../lib/monitoring');
 
-const mockOnConnectionStateChange = onConnectionStateChange as jest.MockedFunction<typeof onConnectionStateChange>;
+const mockOnConnectionStateChange = onConnectionStateChange as vi.MockedFunction<typeof onConnectionStateChange>;
 
 describe('useConnectionState', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   describe('basic functionality', () => {
@@ -37,7 +38,7 @@ describe('useConnectionState', () => {
     });
 
     it('should set up connection state monitoring when enabled', () => {
-      const mockUnsubscribe = jest.fn();
+      const mockUnsubscribe = vi.fn();
       mockOnConnectionStateChange.mockReturnValue(mockUnsubscribe);
 
       renderHook(() => useConnectionState({ enabled: true }));
@@ -52,7 +53,7 @@ describe('useConnectionState', () => {
     });
 
     it('should clean up on unmount', () => {
-      const mockUnsubscribe = jest.fn();
+      const mockUnsubscribe = vi.fn();
       mockOnConnectionStateChange.mockReturnValue(mockUnsubscribe);
 
       const { unmount } = renderHook(() => useConnectionState({ enabled: true }));
@@ -67,7 +68,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -94,11 +95,11 @@ describe('useConnectionState', () => {
     });
 
     it('should call onStateChange callback', () => {
-      const mockOnStateChange = jest.fn();
+      const mockOnStateChange = vi.fn();
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       renderHook(() => useConnectionState({ 
@@ -114,11 +115,11 @@ describe('useConnectionState', () => {
     });
 
     it('should call onConnectionLost callback', () => {
-      const mockOnConnectionLost = jest.fn();
+      const mockOnConnectionLost = vi.fn();
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       renderHook(() => useConnectionState({ 
@@ -140,11 +141,11 @@ describe('useConnectionState', () => {
     });
 
     it('should call onConnectionRestored callback', () => {
-      const mockOnConnectionRestored = jest.fn();
+      const mockOnConnectionRestored = vi.fn();
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       renderHook(() => useConnectionState({ 
@@ -171,7 +172,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       renderHook(() => useConnectionState({ 
@@ -186,14 +187,14 @@ describe('useConnectionState', () => {
       });
 
       // Check that timer was set
-      expect(jest.getTimerCount()).toBe(1);
+      expect(vi.getTimerCount()).toBe(1);
     });
 
     it('should not auto-reconnect when disabled', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       renderHook(() => useConnectionState({ 
@@ -207,14 +208,14 @@ describe('useConnectionState', () => {
       });
 
       // Check that no timer was set
-      expect(jest.getTimerCount()).toBe(0);
+      expect(vi.getTimerCount()).toBe(0);
     });
 
     it('should respect max auto-reconnect attempts', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       renderHook(() => useConnectionState({ 
@@ -230,7 +231,7 @@ describe('useConnectionState', () => {
       });
       
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       act(() => {
@@ -238,7 +239,7 @@ describe('useConnectionState', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       // Third disconnect should not schedule reconnect
@@ -246,7 +247,7 @@ describe('useConnectionState', () => {
         stateChangeCallback('disconnected');
       });
 
-      expect(jest.getTimerCount()).toBe(0);
+      expect(vi.getTimerCount()).toBe(0);
     });
   });
 
@@ -255,7 +256,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -295,7 +296,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -315,7 +316,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -335,7 +336,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -355,7 +356,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -372,7 +373,7 @@ describe('useConnectionState', () => {
 
       // Advance time
       act(() => {
-        jest.advanceTimersByTime(5000);
+        vi.advanceTimersByTime(5000);
       });
 
       // Reconnect
@@ -395,7 +396,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ 
@@ -409,14 +410,14 @@ describe('useConnectionState', () => {
         stateChangeCallback('disconnected');
       });
 
-      expect(jest.getTimerCount()).toBe(1);
+      expect(vi.getTimerCount()).toBe(1);
 
       // Manual reconnect should clear timer
       act(() => {
         result.current.reconnect();
       });
 
-      expect(jest.getTimerCount()).toBe(0);
+      expect(vi.getTimerCount()).toBe(0);
     });
   });
 
@@ -425,7 +426,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -466,7 +467,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -489,7 +490,7 @@ describe('useConnectionState', () => {
       let stateChangeCallback: Function;
       mockOnConnectionStateChange.mockImplementation((callback) => {
         stateChangeCallback = callback;
-        return jest.fn();
+        return vi.fn();
       });
 
       const { result } = renderHook(() => useConnectionState({ enabled: true }));
@@ -508,7 +509,7 @@ describe('useConnectionState', () => {
 
 describe('useSimpleConnectionState', () => {
   it('should provide simplified interface', () => {
-    const mockUnsubscribe = jest.fn();
+    const mockUnsubscribe = vi.fn();
     mockOnConnectionStateChange.mockReturnValue(mockUnsubscribe);
 
     const { result } = renderHook(() => useSimpleConnectionState());

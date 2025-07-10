@@ -1,22 +1,23 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { LiveScoreIndicator, LiveScoreBadge, LiveScoreGrid } from '../LiveScoreIndicator';
 import { useRealtimeSubscription } from '../../../hooks/useRealtimeSubscription';
 import { useToast } from '../../../hooks/useToast';
 import { TestProvider } from '../../../test/utils';
 
 // Mock dependencies
-jest.mock('../../../hooks/useRealtimeSubscription');
-jest.mock('../../../hooks/useToast');
+vi.mock('../../../hooks/useRealtimeSubscription');
+vi.mock('../../../hooks/useToast');
 
-const mockUseRealtimeSubscription = useRealtimeSubscription as jest.MockedFunction<typeof useRealtimeSubscription>;
-const mockUseToast = useToast as jest.MockedFunction<typeof useToast>;
+const mockUseRealtimeSubscription = useRealtimeSubscription as vi.MockedFunction<typeof useRealtimeSubscription>;
+const mockUseToast = useToast as vi.MockedFunction<typeof useToast>;
 
-const mockShowToast = jest.fn();
+const mockShowToast = vi.fn();
 
 describe('LiveScoreIndicator', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseToast.mockReturnValue({
       showToast: mockShowToast,
     } as any);
@@ -198,7 +199,7 @@ describe('LiveScoreIndicator', () => {
     });
 
     it('should call onScoreUpdate callback', async () => {
-      const mockOnScoreUpdate = jest.fn();
+      const mockOnScoreUpdate = vi.fn();
       let subscriptionCallback: Function;
       mockUseRealtimeSubscription.mockImplementation((options, callback) => {
         subscriptionCallback = callback;

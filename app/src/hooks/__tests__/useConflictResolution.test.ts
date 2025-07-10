@@ -1,17 +1,18 @@
 import { renderHook, act } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useConflictResolution, useOptimisticMatchUpdate } from '../useConflictResolution';
 import { supabase } from '../../lib/supabase';
 
 // Mock dependencies
-jest.mock('../../lib/supabase');
-jest.mock('../../lib/logger');
-jest.mock('../../lib/monitoring');
+vi.mock('../../lib/supabase');
+vi.mock('../../lib/logger');
+vi.mock('../../lib/monitoring');
 
 const mockSupabase = supabase as any;
 
 describe('useConflictResolution', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('basic functionality', () => {
@@ -49,20 +50,20 @@ describe('useConflictResolution', () => {
       };
 
       // Mock successful fetch and update
-      mockSupabase.from = jest.fn(() => ({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+      mockSupabase.from = vi.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: mockCurrentMatch,
               error: null,
             })),
           })),
         })),
-        update: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              select: jest.fn(() => ({
-                single: jest.fn(() => ({
+        update: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              select: vi.fn(() => ({
+                single: vi.fn(() => ({
                   data: mockUpdatedMatch,
                   error: null,
                 })),
@@ -101,11 +102,11 @@ describe('useConflictResolution', () => {
       };
 
       // Mock initial fetch
-      mockSupabase.from = jest.fn()
+      mockSupabase.from = vi.fn()
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockCurrentMatch,
                 error: null,
               })),
@@ -114,11 +115,11 @@ describe('useConflictResolution', () => {
         })
         // Mock failed update due to version conflict
         .mockReturnValueOnce({
-          update: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                select: jest.fn(() => ({
-                  single: jest.fn(() => ({
+          update: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                select: vi.fn(() => ({
+                  single: vi.fn(() => ({
                     data: null,
                     error: { message: 'version conflict', code: '23505' },
                   })),
@@ -129,9 +130,9 @@ describe('useConflictResolution', () => {
         })
         // Mock latest fetch
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockLatestMatch,
                 error: null,
               })),
@@ -158,10 +159,10 @@ describe('useConflictResolution', () => {
 
     it('should handle database errors', async () => {
       // Mock failed fetch
-      mockSupabase.from = jest.fn(() => ({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+      mockSupabase.from = vi.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: null,
               error: { message: 'Match not found' },
             })),
@@ -205,11 +206,11 @@ describe('useConflictResolution', () => {
       };
 
       // Mock successful resolution
-      mockSupabase.from = jest.fn()
+      mockSupabase.from = vi.fn()
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockCurrentMatch,
                 error: null,
               })),
@@ -217,11 +218,11 @@ describe('useConflictResolution', () => {
           })),
         })
         .mockReturnValueOnce({
-          update: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                select: jest.fn(() => ({
-                  single: jest.fn(() => ({
+          update: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                select: vi.fn(() => ({
+                  single: vi.fn(() => ({
                     data: mockUpdatedMatch,
                     error: null,
                   })),
@@ -271,11 +272,11 @@ describe('useConflictResolution', () => {
         team2_score: 10,
       };
 
-      mockSupabase.from = jest.fn()
+      mockSupabase.from = vi.fn()
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockCurrentMatch,
                 error: null,
               })),
@@ -283,11 +284,11 @@ describe('useConflictResolution', () => {
           })),
         })
         .mockReturnValueOnce({
-          update: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                select: jest.fn(() => ({
-                  single: jest.fn(() => ({
+          update: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                select: vi.fn(() => ({
+                  single: vi.fn(() => ({
                     data: mockUpdatedMatch,
                     error: null,
                   })),
@@ -336,11 +337,11 @@ describe('useConflictResolution', () => {
         team2_score: 15,
       };
 
-      mockSupabase.from = jest.fn()
+      mockSupabase.from = vi.fn()
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockCurrentMatch,
                 error: null,
               })),
@@ -348,11 +349,11 @@ describe('useConflictResolution', () => {
           })),
         })
         .mockReturnValueOnce({
-          update: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                select: jest.fn(() => ({
-                  single: jest.fn(() => ({
+          update: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                select: vi.fn(() => ({
+                  single: vi.fn(() => ({
                     data: mockUpdatedMatch,
                     error: null,
                   })),
@@ -397,10 +398,10 @@ describe('useConflictResolution', () => {
       };
 
       // Mock failed resolution
-      mockSupabase.from = jest.fn(() => ({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+      mockSupabase.from = vi.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: null,
               error: { message: 'Database error' },
             })),
@@ -434,13 +435,13 @@ describe('useConflictResolution', () => {
         timestamp: new Date(),
       };
 
-      const mockOnResolutionFailed = jest.fn();
+      const mockOnResolutionFailed = vi.fn();
 
       // Mock failed resolution
-      mockSupabase.from = jest.fn(() => ({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+      mockSupabase.from = vi.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: null,
               error: { message: 'Database error' },
             })),
@@ -551,7 +552,7 @@ describe('useConflictResolution', () => {
 
   describe('callbacks', () => {
     it('should call onConflictDetected callback', async () => {
-      const mockOnConflictDetected = jest.fn();
+      const mockOnConflictDetected = vi.fn();
 
       const mockCurrentMatch = {
         id: 'match-123',
@@ -567,11 +568,11 @@ describe('useConflictResolution', () => {
         team2_score: 11,
       };
 
-      mockSupabase.from = jest.fn()
+      mockSupabase.from = vi.fn()
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockCurrentMatch,
                 error: null,
               })),
@@ -579,11 +580,11 @@ describe('useConflictResolution', () => {
           })),
         })
         .mockReturnValueOnce({
-          update: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                select: jest.fn(() => ({
-                  single: jest.fn(() => ({
+          update: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                select: vi.fn(() => ({
+                  single: vi.fn(() => ({
                     data: null,
                     error: { message: 'version conflict', code: '23505' },
                   })),
@@ -593,9 +594,9 @@ describe('useConflictResolution', () => {
           })),
         })
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockLatestMatch,
                 error: null,
               })),
@@ -624,7 +625,7 @@ describe('useConflictResolution', () => {
     });
 
     it('should call onConflictResolved callback', async () => {
-      const mockOnConflictResolved = jest.fn();
+      const mockOnConflictResolved = vi.fn();
 
       const mockConflict = {
         conflictId: 'conflict-123',
@@ -648,11 +649,11 @@ describe('useConflictResolution', () => {
         version: 3,
       };
 
-      mockSupabase.from = jest.fn()
+      mockSupabase.from = vi.fn()
         .mockReturnValueOnce({
-          select: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              single: jest.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() => ({
                 data: mockCurrentMatch,
                 error: null,
               })),
@@ -660,11 +661,11 @@ describe('useConflictResolution', () => {
           })),
         })
         .mockReturnValueOnce({
-          update: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              eq: jest.fn(() => ({
-                select: jest.fn(() => ({
-                  single: jest.fn(() => ({
+          update: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                select: vi.fn(() => ({
+                  single: vi.fn(() => ({
                     data: mockUpdatedMatch,
                     error: null,
                   })),
@@ -726,11 +727,11 @@ describe('useOptimisticMatchUpdate', () => {
       team2_score: 11,
     };
 
-    mockSupabase.from = jest.fn()
+    mockSupabase.from = vi.fn()
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: mockCurrentMatch,
               error: null,
             })),
@@ -738,11 +739,11 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       })
       .mockReturnValueOnce({
-        update: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              select: jest.fn(() => ({
-                single: jest.fn(() => ({
+        update: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              select: vi.fn(() => ({
+                single: vi.fn(() => ({
                   data: null,
                   error: { message: 'version conflict', code: '23505' },
                 })),
@@ -752,9 +753,9 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       })
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: mockLatestMatch,
               error: null,
             })),
@@ -762,9 +763,9 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       })
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: mockLatestMatch,
               error: null,
             })),
@@ -772,11 +773,11 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       })
       .mockReturnValueOnce({
-        update: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              select: jest.fn(() => ({
-                single: jest.fn(() => ({
+        update: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              select: vi.fn(() => ({
+                single: vi.fn(() => ({
                   data: mockFinalMatch,
                   error: null,
                 })),
@@ -813,11 +814,11 @@ describe('useOptimisticMatchUpdate', () => {
       team2_score: 11,
     };
 
-    mockSupabase.from = jest.fn()
+    mockSupabase.from = vi.fn()
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: mockCurrentMatch,
               error: null,
             })),
@@ -825,11 +826,11 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       })
       .mockReturnValueOnce({
-        update: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              select: jest.fn(() => ({
-                single: jest.fn(() => ({
+        update: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              select: vi.fn(() => ({
+                single: vi.fn(() => ({
                   data: null,
                   error: { message: 'version conflict', code: '23505' },
                 })),
@@ -839,9 +840,9 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       })
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            single: jest.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => ({
               data: mockLatestMatch,
               error: null,
             })),

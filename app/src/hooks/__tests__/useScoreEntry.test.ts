@@ -2,6 +2,8 @@ import { renderHook, act } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useScoreEntry } from '../useScoreEntry';
 import type { Match } from '../../types/database';
+import { updateMatchScore, canUpdateMatchScore, validateScoreUpdate } from '../../lib/supabase/scores';
+import { validateMatchScore, determineWinner, getCommonScores } from '../../lib/validation/scoreValidation';
 
 // Mock dependencies
 vi.mock('../useToast', () => ({
@@ -28,9 +30,8 @@ vi.mock('../../lib/validation/scoreValidation', () => ({
   getCommonScores: vi.fn(),
   DEFAULT_SCORE_CONFIG: {
     winCondition: 'first-to-target',
-    targetScore: 11,
-    minScore: 0,
-    maxScore: 21,
+    targetScore: 15,
+    minWinDifference: 2,
   },
 }));
 
@@ -39,11 +40,10 @@ const mockMatch: Match = {
   play_date_id: 'playdate-1',
   partnership1_id: 'partnership-1',
   partnership2_id: 'partnership-2',
-  team1_score: null,
-  team2_score: null,
+  team1_score: 10,
+  team2_score: 8,
   court_number: 1,
   round_number: 1,
-  scheduled_at: null,
   version: 1,
   created_at: '2023-01-01T00:00:00Z',
   updated_at: '2023-01-01T00:00:00Z',
@@ -55,40 +55,34 @@ describe('useScoreEntry', () => {
     vi.clearAllMocks();
     
     // Setup default mock implementations
-    const { canUpdateMatchScore, validateScoreUpdate } = require('../../lib/supabase/scores');
-    const { validateMatchScore, determineWinner } = require('../../lib/validation/scoreValidation');
-    
-    canUpdateMatchScore.mockResolvedValue({ canUpdate: true });
-    validateScoreUpdate.mockReturnValue({ isValid: true, errors: [], warnings: [] });
-    validateMatchScore.mockReturnValue({ isValid: true, errors: [], warnings: [] });
-    determineWinner.mockReturnValue(null);
+    vi.mocked(canUpdateMatchScore).mockResolvedValue({ canUpdate: true });
+    vi.mocked(validateScoreUpdate).mockReturnValue({ isValid: true, errors: [], warnings: [] });
+    vi.mocked(validateMatchScore).mockReturnValue({ isValid: true, errors: [], warnings: [] });
+    vi.mocked(determineWinner).mockReturnValue(null);
   });
 
   const defaultProps = {
     match: mockMatch,
     playDateId: 'playdate-1',
-    winCondition: 'first-to-target' as const,
-    targetScore: 11,
+    winCondition: 'first_to_target' as const,
+    targetScore: 15,
+    onScoreUpdated: vi.fn(),
   };
 
   it('initializes with match scores', () => {
-    const matchWithScores = {
-      ...mockMatch,
-      team1_score: 11,
-      team2_score: 9,
-    };
+    const { result } = renderHook(() => useScoreEntry(defaultProps));
 
-    const { result } = renderHook(() => useScoreEntry({
-      ...defaultProps,
-      match: matchWithScores,
-    }));
-
-    expect(result.current.team1Score).toBe(11);
-    expect(result.current.team2Score).toBe(9);
+    expect(result.current.team1Score).toBe(10);
+    expect(result.current.team2Score).toBe(8);
+    expect(result.current.hasChanges).toBe(false);
+    expect(result.current.isValid).toBe(true);
   });
 
   it('initializes with zero scores when match has no scores', () => {
-    const { result } = renderHook(() => useScoreEntry(defaultProps));
+    const matchWithoutScores = { ...mockMatch, team1_score: null, team2_score: null };
+    const { result } = renderHook(() =>
+      useScoreEntry({ ...defaultProps, match: matchWithoutScores })
+    );
 
     expect(result.current.team1Score).toBe(0);
     expect(result.current.team2Score).toBe(0);
@@ -98,20 +92,22 @@ describe('useScoreEntry', () => {
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(11);
+      result.current.setTeam1Score(15);
     });
 
-    expect(result.current.team1Score).toBe(11);
+    expect(result.current.team1Score).toBe(15);
+    expect(result.current.hasChanges).toBe(true);
   });
 
   it('updates team2Score', () => {
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam2Score(9);
+      result.current.setTeam2Score(12);
     });
 
-    expect(result.current.team2Score).toBe(9);
+    expect(result.current.team2Score).toBe(12);
+    expect(result.current.hasChanges).toBe(true);
   });
 
   it('constrains scores to valid range', () => {
@@ -123,14 +119,9 @@ describe('useScoreEntry', () => {
     expect(result.current.team1Score).toBe(0);
 
     act(() => {
-      result.current.setTeam1Score(35);
+      result.current.setTeam2Score(100);
     });
-    expect(result.current.team1Score).toBe(0);
-
-    act(() => {
-      result.current.setTeam1Score(15);
-    });
-    expect(result.current.team1Score).toBe(15);
+    expect(result.current.team2Score).toBe(50);
   });
 
   it('sets both scores at once', () => {
@@ -142,6 +133,7 @@ describe('useScoreEntry', () => {
 
     expect(result.current.team1Score).toBe(11);
     expect(result.current.team2Score).toBe(9);
+    expect(result.current.hasChanges).toBe(true);
   });
 
   it('detects changes correctly', () => {
@@ -152,40 +144,33 @@ describe('useScoreEntry', () => {
     act(() => {
       result.current.setTeam1Score(11);
     });
-
     expect(result.current.hasChanges).toBe(true);
+
+    act(() => {
+      result.current.setTeam1Score(10); // Back to original
+    });
+    expect(result.current.hasChanges).toBe(false);
   });
 
   it('resets to original scores', () => {
-    const matchWithScores = {
-      ...mockMatch,
-      team1_score: 11,
-      team2_score: 9,
-    };
-
-    const { result } = renderHook(() => useScoreEntry({
-      ...defaultProps,
-      match: matchWithScores,
-    }));
+    const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(15);
+      result.current.setScores(15, 13);
     });
-
-    expect(result.current.team1Score).toBe(15);
     expect(result.current.hasChanges).toBe(true);
 
     act(() => {
       result.current.resetScore();
     });
 
-    expect(result.current.team1Score).toBe(11);
+    expect(result.current.team1Score).toBe(10);
+    expect(result.current.team2Score).toBe(8);
     expect(result.current.hasChanges).toBe(false);
   });
 
-  it('validates scores on change', async () => {
-    const { validateScoreUpdate } = require('../../lib/supabase/scores');
-    validateScoreUpdate.mockReturnValue({
+  it('validates scores on change', () => {
+    vi.mocked(validateMatchScore).mockReturnValue({
       isValid: false,
       errors: ['Invalid score'],
       warnings: [],
@@ -194,39 +179,20 @@ describe('useScoreEntry', () => {
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(11);
+      result.current.setTeam1Score(15);
     });
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
-    });
-
-    expect(result.current.errors).toContain('Invalid score');
     expect(result.current.isValid).toBe(false);
+    expect(result.current.errors).toEqual(['Invalid score']);
   });
 
   it('submits score successfully', async () => {
-    const { updateMatchScore } = require('../../lib/supabase/scores');
-    const { useToast } = require('../useToast');
-    const mockShowToast = vi.fn();
-    const mockOnScoreUpdated = vi.fn();
-    const mockOnClose = vi.fn();
+    vi.mocked(updateMatchScore).mockResolvedValue({ success: true });
 
-    useToast.mockReturnValue({ showToast: mockShowToast });
-    updateMatchScore.mockResolvedValue({
-      match: { ...mockMatch, team1_score: 11, team2_score: 9 },
-      warnings: [],
-    });
-
-    const { result } = renderHook(() => useScoreEntry({
-      ...defaultProps,
-      onScoreUpdated: mockOnScoreUpdated,
-      onClose: mockOnClose,
-    }));
+    const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(11);
-      result.current.setTeam2Score(9);
+      result.current.setScores(15, 10);
     });
 
     await act(async () => {
@@ -234,66 +200,45 @@ describe('useScoreEntry', () => {
     });
 
     expect(updateMatchScore).toHaveBeenCalledWith(
-      {
-        matchId: 'match-1',
-        team1Score: 11,
-        team2Score: 9,
-        currentVersion: 1,
-        playDateId: 'playdate-1',
-      },
-      expect.any(Object)
+      'match-1',
+      { team1_score: 15, team2_score: 10 },
+      1
     );
-
-    expect(mockShowToast).toHaveBeenCalledWith({
-      title: 'Score Updated',
-      description: 'Match score has been saved successfully',
-      variant: 'success',
+    expect(defaultProps.onScoreUpdated).toHaveBeenCalledWith({
+      ...mockMatch,
+      team1_score: 15,
+      team2_score: 10,
     });
-
-    expect(mockOnScoreUpdated).toHaveBeenCalled();
-    expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('handles submission errors', async () => {
-    const { updateMatchScore } = require('../../lib/supabase/scores');
-    const { useToast } = require('../useToast');
-    const mockShowToast = vi.fn();
-
-    useToast.mockReturnValue({ showToast: mockShowToast });
-    updateMatchScore.mockRejectedValue(new Error('Update failed'));
+    vi.mocked(updateMatchScore).mockRejectedValue(new Error('Update failed'));
 
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(11);
-      result.current.setTeam2Score(9);
+      result.current.setScores(15, 10);
     });
 
     await act(async () => {
       await result.current.submitScore();
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
-      title: 'Update Failed',
-      description: 'Update failed',
-      variant: 'destructive',
-    });
+    expect(result.current.errors).toContain('Failed to update score');
   });
 
   it('prevents submission when invalid', async () => {
-    const { updateMatchScore } = require('../../lib/supabase/scores');
-    const { validateScoreUpdate } = require('../../lib/supabase/scores');
-    
-    validateScoreUpdate.mockReturnValue({
+    const { result } = renderHook(() => useScoreEntry(defaultProps));
+
+    // Make invalid
+    vi.mocked(validateMatchScore).mockReturnValue({
       isValid: false,
       errors: ['Invalid score'],
       warnings: [],
     });
 
-    const { result } = renderHook(() => useScoreEntry(defaultProps));
-
     act(() => {
-      result.current.setTeam1Score(11);
+      result.current.setTeam1Score(15);
     });
 
     await act(async () => {
@@ -304,19 +249,11 @@ describe('useScoreEntry', () => {
   });
 
   it('prevents submission when cannot edit', async () => {
-    const { canUpdateMatchScore, updateMatchScore } = require('../../lib/supabase/scores');
-    canUpdateMatchScore.mockResolvedValue({ canUpdate: false });
+    vi.mocked(canUpdateMatchScore).mockResolvedValue({ canUpdate: false });
 
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
-    // Wait for permission check
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
-    });
-
-    act(() => {
-      result.current.setTeam1Score(11);
-    });
+    expect(result.current.canEdit).toBe(false);
 
     await act(async () => {
       await result.current.submitScore();
@@ -326,73 +263,66 @@ describe('useScoreEntry', () => {
   });
 
   it('applies common score', () => {
+    vi.mocked(getCommonScores).mockReturnValue([11, 15, 21]);
+
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.applyCommonScore({ team1: 11, team2: 0 });
+      result.current.applyCommonScore({ team1: 15, team2: 13 });
     });
 
-    expect(result.current.team1Score).toBe(11);
-    expect(result.current.team2Score).toBe(0);
+    expect(result.current.team1Score).toBe(15);
+    expect(result.current.team2Score).toBe(13); // Win by 2
   });
 
   it('shows warnings on successful submission', async () => {
-    const { updateMatchScore } = require('../../lib/supabase/scores');
-    const { useToast } = require('../useToast');
-    const mockShowToast = vi.fn();
-
-    useToast.mockReturnValue({ showToast: mockShowToast });
-    updateMatchScore.mockResolvedValue({
-      match: { ...mockMatch, team1_score: 11, team2_score: 9 },
-      warnings: ['Score of 25 is unusually high'],
+    vi.mocked(validateScoreUpdate).mockReturnValue({
+      isValid: true,
+      errors: [],
+      warnings: ['Score is unusually high'],
     });
+    vi.mocked(updateMatchScore).mockResolvedValue({ success: true });
 
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(11);
-      result.current.setTeam2Score(9);
+      result.current.setScores(50, 48);
     });
 
     await act(async () => {
       await result.current.submitScore();
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
-      title: 'Score Updated',
-      description: 'Score saved with warnings: Score of 25 is unusually high',
-      variant: 'warning',
-    });
+    expect(result.current.warnings).toContain('Score is unusually high');
   });
 
   it('determines winner correctly', () => {
-    const { determineWinner } = require('../../lib/validation/scoreValidation');
-    determineWinner.mockReturnValue(1);
+    vi.mocked(determineWinner).mockReturnValue(1);
 
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(11);
-      result.current.setTeam2Score(9);
+      result.current.setScores(15, 10);
     });
 
     expect(result.current.winner).toBe(1);
   });
 
   it('handles isSubmitting state', async () => {
-    const { updateMatchScore } = require('../../lib/supabase/scores');
     let resolvePromise: (value: any) => void;
-    const promise = new Promise(resolve => {
+    const promise = new Promise((resolve) => {
       resolvePromise = resolve;
     });
-    updateMatchScore.mockReturnValue(promise);
+    
+    vi.mocked(updateMatchScore).mockReturnValue(promise as any);
 
     const { result } = renderHook(() => useScoreEntry(defaultProps));
 
     act(() => {
-      result.current.setTeam1Score(11);
-      result.current.setTeam2Score(9);
+      result.current.setScores(15, 10);
     });
+
+    expect(result.current.isSubmitting).toBe(false);
 
     // Start submission
     act(() => {
@@ -401,12 +331,9 @@ describe('useScoreEntry', () => {
 
     expect(result.current.isSubmitting).toBe(true);
 
-    // Complete submission
+    // Resolve the promise
     await act(async () => {
-      resolvePromise({
-        match: { ...mockMatch, team1_score: 11, team2_score: 9 },
-        warnings: [],
-      });
+      resolvePromise!({ success: true });
       await promise;
     });
 

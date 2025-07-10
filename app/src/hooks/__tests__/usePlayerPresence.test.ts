@@ -1,34 +1,35 @@
 import { renderHook, act } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { usePlayerPresence, usePlayerPresenceStatus, useOnlinePlayersCount } from '../usePlayerPresence';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../useAuth';
 
 // Mock dependencies
-jest.mock('../../lib/supabase');
-jest.mock('../useAuth');
-jest.mock('../../lib/logger');
-jest.mock('../../lib/monitoring');
+vi.mock('../../lib/supabase');
+vi.mock('../useAuth');
+vi.mock('../../lib/logger');
+vi.mock('../../lib/monitoring');
 
 // Mock Supabase channel
 const mockChannel = {
-  on: jest.fn(),
-  track: jest.fn(),
-  subscribe: jest.fn(),
-  presenceState: jest.fn(),
+  on: vi.fn(),
+  track: vi.fn(),
+  subscribe: vi.fn(),
+  presenceState: vi.fn(),
   state: 'subscribed',
 };
 
-const mockSupabaseChannel = jest.fn(() => mockChannel);
-const mockRemoveChannel = jest.fn();
+const mockSupabaseChannel = vi.fn(() => mockChannel);
+const mockRemoveChannel = vi.fn();
 
 (supabase as any).channel = mockSupabaseChannel;
 (supabase as any).removeChannel = mockRemoveChannel;
 
-const mockAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+const mockAuth = useAuth as vi.MockedFunction<typeof useAuth>;
 
 describe('usePlayerPresence', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockAuth.mockReturnValue({
       user: { id: 'user-123', email: 'test@example.com' },
       currentPlayerId: 'player-123',
@@ -37,8 +38,8 @@ describe('usePlayerPresence', () => {
   });
 
   afterEach(() => {
-    jest.clearAllTimers();
-    jest.useRealTimers();
+    vi.clearAllTimers();
+    vi.useRealTimers();
   });
 
   describe('basic functionality', () => {
@@ -89,10 +90,10 @@ describe('usePlayerPresence', () => {
 
   describe('presence tracking', () => {
     it('should track initial presence on subscription', async () => {
-      const mockTrack = jest.fn().mockResolvedValue(undefined);
+      const mockTrack = vi.fn().mockResolvedValue(undefined);
       mockChannel.track = mockTrack;
 
-      const mockSubscribe = jest.fn((callback) => {
+      const mockSubscribe = vi.fn((callback) => {
         callback('SUBSCRIBED');
         return 'success';
       });
@@ -117,7 +118,7 @@ describe('usePlayerPresence', () => {
     });
 
     it('should update playing status', async () => {
-      const mockTrack = jest.fn().mockResolvedValue(undefined);
+      const mockTrack = vi.fn().mockResolvedValue(undefined);
       mockChannel.track = mockTrack;
 
       const { result } = renderHook(() => 
@@ -148,13 +149,13 @@ describe('usePlayerPresence', () => {
       };
 
       let syncCallback: Function;
-      mockChannel.on = jest.fn((event, options, callback) => {
+      mockChannel.on = vi.fn((event, options, callback) => {
         if (event === 'presence' && options.event === 'sync') {
           syncCallback = callback;
         }
       });
 
-      mockChannel.presenceState = jest.fn(() => mockPresenceState);
+      mockChannel.presenceState = vi.fn(() => mockPresenceState);
 
       const { result } = renderHook(() => 
         usePlayerPresence({ playDateId: 'play-date-123', enabled: true })
@@ -180,14 +181,14 @@ describe('usePlayerPresence', () => {
 
   describe('heartbeat functionality', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
     });
 
     it('should start heartbeat on successful subscription', async () => {
-      const mockTrack = jest.fn().mockResolvedValue(undefined);
+      const mockTrack = vi.fn().mockResolvedValue(undefined);
       mockChannel.track = mockTrack;
 
-      const mockSubscribe = jest.fn((callback) => {
+      const mockSubscribe = vi.fn((callback) => {
         callback('SUBSCRIBED');
         return 'success';
       });
@@ -211,7 +212,7 @@ describe('usePlayerPresence', () => {
 
       // Advance timer for heartbeat
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       expect(mockTrack).toHaveBeenCalledWith({
@@ -241,7 +242,7 @@ describe('usePlayerPresence', () => {
   describe('connection state management', () => {
     it('should update connection state based on subscription status', async () => {
       let subscriptionCallback: Function;
-      const mockSubscribe = jest.fn((callback) => {
+      const mockSubscribe = vi.fn((callback) => {
         subscriptionCallback = callback;
         return 'success';
       });
@@ -285,13 +286,13 @@ describe('usePlayerPresence', () => {
       };
 
       let syncCallback: Function;
-      mockChannel.on = jest.fn((event, options, callback) => {
+      mockChannel.on = vi.fn((event, options, callback) => {
         if (event === 'presence' && options.event === 'sync') {
           syncCallback = callback;
         }
       });
 
-      mockChannel.presenceState = jest.fn(() => mockPresenceState);
+      mockChannel.presenceState = vi.fn(() => mockPresenceState);
 
       const { result } = renderHook(() => 
         usePlayerPresence({ 
@@ -325,7 +326,7 @@ describe('usePlayerPresenceStatus', () => {
       },
     };
 
-    jest.doMock('../usePlayerPresence', () => ({
+    vi.doMock('../usePlayerPresence', () => ({
       usePlayerPresence: () => ({
         playerPresence: mockPlayerPresence,
       }),
@@ -342,7 +343,7 @@ describe('usePlayerPresenceStatus', () => {
   });
 
   it('should return false values for non-existent player', () => {
-    jest.doMock('../usePlayerPresence', () => ({
+    vi.doMock('../usePlayerPresence', () => ({
       usePlayerPresence: () => ({
         playerPresence: {},
       }),
@@ -388,7 +389,7 @@ describe('useOnlinePlayersCount', () => {
       },
     };
 
-    jest.doMock('../usePlayerPresence', () => ({
+    vi.doMock('../usePlayerPresence', () => ({
       usePlayerPresence: () => ({
         playerPresence: mockPlayerPresence,
       }),
