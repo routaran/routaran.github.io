@@ -26,6 +26,11 @@ export function LoginPage() {
       metadata: { redirectPath: from },
     });
 
+    console.log(
+      "LoginPage useEffect running - showPlayerClaim:",
+      showPlayerClaim
+    );
+
     // Debug: Check environment variables
     console.log("Environment check:", {
       VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
@@ -86,7 +91,7 @@ export function LoginPage() {
           setCheckingClaim(false);
         });
     }
-  }, [user, player, navigate, from, checkPlayerClaim, checkingClaim]);
+  }, [user, navigate, from, checkPlayerClaim, checkingClaim]);
 
   const handleLoginSuccess = () => {
     logger.info("Login successful, checking for player claim", {

@@ -23,11 +23,20 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
   const loadAttemptedRef = useRef(false);
 
   useEffect(() => {
+    console.log(
+      "PlayerClaim mounted, loadAttemptedRef:",
+      loadAttemptedRef.current
+    );
+
     // Prevent multiple load attempts
     if (!loadAttemptedRef.current) {
       loadAttemptedRef.current = true;
       loadUnclaimedPlayers();
     }
+
+    return () => {
+      console.log("PlayerClaim unmounting!");
+    };
   }, []);
 
   const loadUnclaimedPlayers = async () => {
