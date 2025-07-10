@@ -1,7 +1,7 @@
 import { supabase } from "../supabase";
 import { logger } from "../logger";
 import type { SupabaseError } from "./errors";
-import type { PlayDateWithDetails } from "../../types/database";
+import type { PlayDateWithDetails, Player } from "../../types/database";
 
 // Types
 export interface PlayDate {
@@ -448,9 +448,29 @@ export function formatPlayDateStatus(status: PlayDateStatus): string {
 
   return statusMap[status] || status;
 }
-// Stub functions for build
-export async function generateScheduleForPlayDate(id: string) {
-  return { data: null, error: new Error("Not implemented") };
+// Temporary implementation - actual schedule generation to be implemented
+export async function generateScheduleForPlayDate(
+  id: string,
+  players: Player[]
+) {
+  // TODO: Implement actual schedule generation
+  // This should:
+  // 1. Create partnerships (pairs of players)
+  // 2. Create courts for the play date
+  // 3. Generate round-robin matches
+  // 4. Assign matches to courts and rounds
+
+  logger.info("Schedule generation requested", {
+    component: "playDates",
+    action: "generateSchedule",
+    metadata: { playDateId: id, playerCount: players.length },
+  });
+
+  // For now, just return success
+  return {
+    data: { message: "Schedule generation not yet implemented" },
+    error: null,
+  };
 }
 export async function exportPlayDateToJson(id: string) {
   return { data: null, error: new Error("Not implemented") };

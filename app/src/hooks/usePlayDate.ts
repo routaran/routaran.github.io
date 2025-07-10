@@ -118,15 +118,14 @@ export function usePlayDate(playDateId?: string) {
         organizer_id: user.id,
       });
 
-      // Create players
-      const playersWithPlayDateId = players.map((p) => ({
-        ...p,
-        play_date_id: newPlayDate.id,
-      }));
-      await playersApi.createPlayers(playersWithPlayDateId);
+      // Create or find players (players are global, not tied to play dates)
+      const createdPlayers = await playersApi.createPlayers(players);
 
-      // Generate schedule
-      await playDatesApi.generateScheduleForPlayDate(newPlayDate.id);
+      // Generate schedule (this should create partnerships and matches)
+      await playDatesApi.generateScheduleForPlayDate(
+        newPlayDate.id,
+        createdPlayers
+      );
 
       showToast("Play date created successfully", "success");
       navigate(`/play-dates/${newPlayDate.id}`);
