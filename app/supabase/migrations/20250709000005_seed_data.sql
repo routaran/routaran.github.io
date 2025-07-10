@@ -266,8 +266,8 @@ BEGIN
     
     -- Check matches count
     SELECT COUNT(*) INTO error_count FROM matches;
-    IF error_count != 12 THEN
-        RAISE EXCEPTION 'Expected 12 matches, found %', error_count;
+    IF error_count != 14 THEN
+        RAISE EXCEPTION 'Expected 14 matches, found %', error_count;
     END IF;
     
     -- Check audit log count
