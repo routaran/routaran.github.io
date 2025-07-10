@@ -89,10 +89,26 @@ export const authService = {
         userId,
       });
 
+      // First find the player claim for this auth user
+      const { data: claim, error: claimError } = await supabase
+        .from("player_claims")
+        .select("player_id")
+        .eq("auth_user_id", userId)
+        .single();
+
+      if (claimError) {
+        if (claimError.code === "PGRST116") {
+          // No rows found
+          return null;
+        }
+        throw claimError;
+      }
+
+      // Now get the player data
       const { data, error } = await supabase
         .from("players")
         .select("*")
-        .eq("claim_user_id", userId)
+        .eq("id", claim.player_id)
         .single();
 
       if (error) {
@@ -128,13 +144,24 @@ export const authService = {
         action: "getUnclaimedPlayers",
       });
 
-      const { data, error } = await supabase
+      // First get all players
+      const { data: allPlayers, error: playersError } = await supabase
         .from("players")
         .select("*")
-        .is("claim_user_id", null)
         .order("name");
 
-      if (error) throw error;
+      if (playersError) throw playersError;
+
+      // Then get all claimed player IDs
+      const { data: claims, error: claimsError } = await supabase
+        .from("player_claims")
+        .select("player_id");
+
+      if (claimsError) throw claimsError;
+
+      // Filter out claimed players
+      const claimedPlayerIds = new Set(claims?.map((c) => c.player_id) || []);
+      const data = allPlayers?.filter((p) => !claimedPlayerIds.has(p.id)) || [];
 
       logger.info("Fetched unclaimed players", {
         component: "authService",

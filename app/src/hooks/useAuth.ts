@@ -225,7 +225,10 @@ export function useAuth() {
       });
 
       // Call the RPC function to safely claim a player
-      const { data, error } = await db.supabase.rpc("claim_player", playerId);
+      const { data, error } = await db.supabase.rpc("claim_player", {
+        p_player_id: playerId,
+        p_user_id: user.id,
+      });
 
       if (error) {
         if (error.code === "P0001") {
