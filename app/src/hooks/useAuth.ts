@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { useAuthStore } from "../stores/authStore";
-import { auth, db } from "../lib/supabase";
+import { auth, db, supabase } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import type { User } from "@supabase/supabase-js";
 
@@ -116,7 +116,7 @@ export function useAuth() {
       });
 
       // First find the player claim for this auth user
-      const { data: claim, error: claimError } = await db.supabase
+      const { data: claim, error: claimError } = await supabase
         .from("player_claims")
         .select("player_id")
         .eq("auth_user_id", authUser.id)
@@ -137,7 +137,7 @@ export function useAuth() {
       }
 
       // Now get the player data
-      const { data, error } = await db.supabase
+      const { data, error } = await supabase
         .from("players")
         .select("*")
         .eq("id", claim.player_id)
@@ -187,7 +187,7 @@ export function useAuth() {
     if (!user) return false;
 
     try {
-      const { data, error } = await db.supabase
+      const { data, error } = await supabase
         .from("player_claims")
         .select("id")
         .eq("auth_user_id", user.id)
@@ -225,7 +225,7 @@ export function useAuth() {
       });
 
       // Call the RPC function to safely claim a player
-      const { data, error } = await db.supabase.rpc("claim_player", {
+      const { data, error } = await supabase.rpc("claim_player", {
         p_player_id: playerId,
         p_user_id: user.id,
       });
