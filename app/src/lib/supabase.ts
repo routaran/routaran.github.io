@@ -17,7 +17,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    flowType: "pkce", // Use PKCE flow for better security
+    flowType: "implicit", // Use implicit flow for magic links (PKCE doesn't work well with SPA redirects)
   },
   realtime: {
     params: {
