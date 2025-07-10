@@ -56,11 +56,17 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
       let claimedPlayerIds = new Set<string>();
 
       if (claimsError) {
-        // Check if it's a permission error
+        // Check if it's a permission error or 406 Not Acceptable
         if (
           claimsError.code === "42501" ||
-          claimsError.message?.includes("permission")
+          claimsError.code === "PGRST301" || // 406 error code
+          claimsError.message?.includes("permission") ||
+          claimsError.message?.includes("Not Acceptable")
         ) {
+          console.warn(
+            "Permission/Accept error for player_claims, showing all players:",
+            claimsError
+          );
           // Continue with empty set
         } else {
           // Other errors should still be thrown
