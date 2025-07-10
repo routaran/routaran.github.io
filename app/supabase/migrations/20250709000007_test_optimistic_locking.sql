@@ -407,7 +407,7 @@ BEGIN
     SELECT m.id, m.version, m.play_date_id, p.id 
     INTO match_id, match_version, play_date_id, player_id
     FROM matches m
-    JOIN partnerships part ON m.team1_partnership_id = part.id
+    JOIN partnerships part ON m.partnership1_id = part.id
     JOIN players p ON part.player1_id = p.id
     LIMIT 1;
     
@@ -417,8 +417,8 @@ BEGIN
     BEGIN
         -- Update match
         UPDATE matches 
-        SET updated_at = NOW(), version = version + 1,
-            updated_at = NOW()        WHERE id = match_id AND version = match_version;
+        SET updated_at = NOW(), version = version + 1
+        WHERE id = match_id AND version = match_version;
         
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Match version conflict';
