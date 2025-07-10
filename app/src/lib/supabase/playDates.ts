@@ -1,6 +1,7 @@
 import { supabase } from "../supabase";
 import { logger } from "../logger";
 import type { SupabaseError } from "./errors";
+import type { PlayDateWithDetails } from "../../types/database";
 
 // Types
 export interface PlayDate {
@@ -168,7 +169,7 @@ export async function getPlayDates(options?: {
 
 export async function getPlayDateById(
   id: string
-): Promise<{ data: PlayDateWithStats | null; error: SupabaseError | null }> {
+): Promise<{ data: PlayDateWithDetails | null; error: SupabaseError | null }> {
   try {
     logger.info("Fetching play date by ID", {
       component: "playDates",
@@ -195,27 +196,61 @@ export async function getPlayDateById(
       throw error;
     }
 
-    // Get player count
-    const { count: playerCount } = await supabase
+    // Get all players for this play date
+    const { data: partnerships, error: partnershipsError } = await supabase
       .from("partnerships")
-      .select("*", { count: "exact", head: true })
+      .select(
+        `
+        *,
+        player1:players!partnerships_player1_id_fkey (
+          id,
+          name,
+          email,
+          is_project_owner
+        ),
+        player2:players!partnerships_player2_id_fkey (
+          id,
+          name,
+          email,
+          is_project_owner
+        )
+      `
+      )
       .eq("play_date_id", id);
 
-    // Get match stats
-    const { data: matchData } = await supabase
+    if (partnershipsError) {
+      throw partnershipsError;
+    }
+
+    // Extract unique players from partnerships
+    const playersMap = new Map();
+    partnerships?.forEach((partnership) => {
+      if (partnership.player1) {
+        playersMap.set(partnership.player1.id, partnership.player1);
+      }
+      if (partnership.player2) {
+        playersMap.set(partnership.player2.id, partnership.player2);
+      }
+    });
+    const players = Array.from(playersMap.values());
+
+    // Get all matches
+    const { data: matches, error: matchesError } = await supabase
       .from("matches")
-      .select("status")
-      .eq("play_date_id", id);
+      .select("*")
+      .eq("play_date_id", id)
+      .order("round_number", { ascending: true })
+      .order("court_id", { ascending: true });
 
-    const matchCount = matchData?.length || 0;
-    const completedMatches =
-      matchData?.filter((m) => m.status === "completed").length || 0;
+    if (matchesError) {
+      throw matchesError;
+    }
 
-    const playDateWithStats = {
+    const playDateWithDetails: PlayDateWithDetails = {
       ...data,
-      player_count: (playerCount || 0) * 2,
-      match_count: matchCount,
-      completed_matches: completedMatches,
+      players,
+      partnerships: partnerships || [],
+      matches: matches || [],
     };
 
     logger.info("Play date fetched successfully", {
@@ -224,7 +259,7 @@ export async function getPlayDateById(
       metadata: { id },
     });
 
-    return { data: playDateWithStats, error: null };
+    return { data: playDateWithDetails, error: null };
   } catch (error) {
     logger.error(
       "Failed to fetch play date",

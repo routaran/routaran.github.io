@@ -141,7 +141,12 @@ export function PlayDateDetailPage() {
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {playDate.name}
+                {new Date(playDate.date).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </h1>
               <div className="mt-2 flex items-center gap-4 text-gray-600 dark:text-gray-400">
                 <span className="flex items-center gap-1">
@@ -341,7 +346,8 @@ export function PlayDateDetailPage() {
                 Delete Play Date?
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                This will permanently delete "{playDate.name}" and all
+                This will permanently delete the play date for{" "}
+                {new Date(playDate.date).toLocaleDateString()} and all
                 associated data including players, matches, and scores. This
                 action cannot be undone.
               </p>
