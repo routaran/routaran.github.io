@@ -2346,10 +2346,10 @@ BEGIN
     RAISE NOTICE '%', final_report;
     
     -- Store summary in a comment for reference
-    COMMENT ON SCHEMA public IS 
-    'RLS Policy Test Results: ' || total_tests || ' tests, ' || 
-    passed_tests || ' passed, ' || failed_tests || ' failed, ' ||
-    pass_rate || '% pass rate. Last tested: ' || NOW();
+    EXECUTE format('COMMENT ON SCHEMA public IS %L',
+        'RLS Policy Test Results: ' || total_tests || ' tests, ' || 
+        passed_tests || ' passed, ' || failed_tests || ' failed, ' ||
+        pass_rate || '% pass rate. Last tested: ' || NOW());
 END;
 $$;
 
