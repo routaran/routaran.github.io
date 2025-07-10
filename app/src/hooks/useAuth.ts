@@ -120,20 +120,21 @@ export function useAuth() {
         .from("player_claims")
         .select("player_id")
         .eq("auth_user_id", authUser.id)
-        .single();
+        .maybeSingle();
 
       if (claimError) {
-        if (claimError.code === "PGRST116") {
-          // No player claimed yet
-          logger.info("No player claimed for user", {
-            component: "useAuth",
-            action: "loadPlayerData",
-            userId: authUser.id,
-          });
-          setPlayer(null);
-          return;
-        }
         throw claimError;
+      }
+
+      if (!claim) {
+        // No player claimed yet
+        logger.info("No player claimed for user", {
+          component: "useAuth",
+          action: "loadPlayerData",
+          userId: authUser.id,
+        });
+        setPlayer(null);
+        return;
       }
 
       // Now get the player data
