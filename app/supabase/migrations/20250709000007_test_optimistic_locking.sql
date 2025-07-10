@@ -251,7 +251,7 @@ BEGIN
     
     -- Update play date settings
     UPDATE play_dates 
-    SET target_score = 15, win_by_two = FALSE, version = version + 1
+    SET target_score = 15, win_condition = 'first_to_target', version = version + 1
     WHERE id = play_date_id AND version = initial_version;
     
     GET DIAGNOSTICS update_count = ROW_COUNT;
