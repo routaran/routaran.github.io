@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
 
   // GitHub Pages configuration
-  base: process.env.NODE_ENV === "production" ? "/routaran.github.io/" : "/",
+  base: "/",
 
   // Path aliases
   resolve: {
