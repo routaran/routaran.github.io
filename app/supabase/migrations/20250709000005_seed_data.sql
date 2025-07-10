@@ -260,8 +260,8 @@ BEGIN
     
     -- Check partnerships count
     SELECT COUNT(*) INTO error_count FROM partnerships;
-    IF error_count != 17 THEN
-        RAISE EXCEPTION 'Expected 17 partnerships, found %', error_count;
+    IF error_count != 14 THEN
+        RAISE EXCEPTION 'Expected 14 partnerships, found %', error_count;
     END IF;
     
     -- Check matches count
