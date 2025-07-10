@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { PlayDateForm } from '../PlayDateForm'
-import type { PlayDate, PlayerInsert } from '../../../types/database'
+import type { PlayDate } from '../../../types/database'
 
 describe('PlayDateForm', () => {
   const mockOnSubmit = vi.fn()

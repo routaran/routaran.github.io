@@ -6,7 +6,7 @@
  */
 
 import { supabase } from '@/lib/supabase'
-import { MatchResult, Match, Partnership, Player, PlayDate } from '@/types/database'
+import type { MatchResult, Match, Partnership, Player, PlayDate } from '@/types/database'
 
 export interface RankingsData {
   matchResults: MatchResult[]

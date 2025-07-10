@@ -9,13 +9,13 @@ import React from 'react'
 import { Card } from '@/components/common/Card'
 import { Badge } from '@/components/common/Badge'
 import { Progress } from '@/components/common/Progress'
-import { TournamentSummary } from '@/lib/calculations/rankings'
+import type { TournamentSummary } from '@/lib/calculations/rankings'
 import { 
   TrophyIcon, 
   ChartBarIcon, 
   UsersIcon, 
   ClockIcon,
-  TargetIcon,
+  FlagIcon,
   CheckCircleIcon
 } from '@heroicons/react/24/outline'
 
@@ -105,7 +105,7 @@ export function TournamentSummaryCard({
 
           <div className="bg-purple-50 p-4 rounded-lg">
             <div className="flex items-center">
-              <TargetIcon className="w-5 h-5 text-purple-600 mr-2" />
+              <FlagIcon className="w-5 h-5 text-purple-600 mr-2" />
               <div>
                 <p className="text-xs text-purple-600 font-medium">Avg Score</p>
                 <p className="text-lg font-semibold text-purple-900">{summary.average_match_score}</p>

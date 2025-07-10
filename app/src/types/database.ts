@@ -261,6 +261,12 @@ export type Court = Database['public']['Tables']['courts']['Row']
 export type AuditLog = Database['public']['Tables']['audit_log']['Row']
 export type MatchResult = Database['public']['Views']['match_results']['Row']
 
+// Extended match result with calculated fields
+export type MatchResultWithCalculations = MatchResult & {
+  win_percentage: number
+  point_differential: number
+}
+
 // Insert types
 export type PlayDateInsert = Database['public']['Tables']['play_dates']['Insert']
 export type PlayerInsert = Database['public']['Tables']['players']['Insert']
@@ -298,4 +304,14 @@ export type PlayDateWithDetails = PlayDate & {
   players: Player[]
   partnerships: Partnership[]
   matches: Match[]
+}
+// Additional type exports
+export interface MatchResult { 
+  match_id: string; 
+  play_date_id: string; 
+  winning_partnership_id: string | null; 
+  player_id: string; 
+  team_number: number; 
+  team_score: number | null; 
+  opponent_score: number | null; 
 }

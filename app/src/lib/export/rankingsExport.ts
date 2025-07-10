@@ -5,9 +5,9 @@
  * player statistics, and tournament summaries
  */
 
-import { PlayerRanking, TournamentSummary, PartnershipStats } from '@/lib/calculations/rankings'
-import { PlayerStatistics } from '@/hooks/usePlayerStats'
-import { PlayDate } from '@/types/database'
+import type { PlayerRanking, TournamentSummary, PartnershipStats } from '@/lib/calculations/rankings'
+import type { PlayerStatistics } from '@/hooks/usePlayerStats'
+import type { PlayDate } from '@/types/database'
 
 export interface ExportOptions {
   includePersonalData?: boolean

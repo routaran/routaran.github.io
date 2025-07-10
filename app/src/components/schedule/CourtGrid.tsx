@@ -3,12 +3,12 @@ import { Trophy, Users, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { Card, Button, Badge, DropdownSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../common';
 import { cn } from '../../lib/utils';
 import { useAuthStore } from '../../stores/authStore';
-import type { Round, Match } from '../../lib/algorithms/scheduling';
+import type { RoundWithScores, ScheduleMatchWithScores } from '../../hooks/useSchedule';
 import type { Court } from '../../types/database';
 
 interface CourtGridProps {
   playDateId: string;
-  rounds: Round[];
+  rounds: RoundWithScores[];
   currentRound: number | null;
   courts?: Court[];
 }
@@ -39,7 +39,7 @@ export function CourtGrid({
 
   // Group matches by court
   const matchesByCourt = useMemo(() => {
-    const grouped: Record<number, Match[]> = {};
+    const grouped: Record<number, ScheduleMatchWithScores[]> = {};
     
     // Initialize all courts
     const maxCourt = Math.max(

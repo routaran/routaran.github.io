@@ -3,12 +3,12 @@ import { User, Clock, Trophy, AlertCircle, Calendar } from 'lucide-react';
 import { Card, Badge, Alert, AlertDescription, AlertTitle } from '../common';
 import { MatchCard } from './MatchCard';
 import { cn } from '../../lib/utils';
-import type { Round, Match } from '../../lib/algorithms/scheduling';
+import type { RoundWithScores, ScheduleMatchWithScores } from '../../hooks/useSchedule';
 
 interface PlayerScheduleProps {
   playDateId: string;
   playerId: string;
-  rounds: Round[];
+  rounds: RoundWithScores[];
   currentRound: number | null;
 }
 
@@ -21,7 +21,7 @@ export function PlayerSchedule({
   // Get all matches for the player
   const playerMatches = useMemo(() => {
     const matches: Array<{
-      match: Match & any;
+      match: ScheduleMatchWithScores;
       round: number;
       isBye: boolean;
     }> = [];

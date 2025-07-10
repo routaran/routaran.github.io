@@ -11,14 +11,14 @@ import { Badge } from '@/components/common/Badge'
 import { Button } from '@/components/common/Button'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner'
 import { Progress } from '@/components/common/Progress'
-import { PlayerStatistics } from '@/hooks/usePlayerStats'
+import type { PlayerStatistics } from '@/hooks/usePlayerStats'
 import { 
   TrophyIcon, 
   ChartBarIcon, 
   FireIcon, 
   UserGroupIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline'
 
@@ -75,9 +75,9 @@ export function PlayerStatsCard({
   const getTrendIndicator = (trend: 'improving' | 'declining' | 'stable') => {
     switch (trend) {
       case 'improving':
-        return <TrendingUpIcon className="w-5 h-5 text-green-600" />
+        return <ArrowTrendingUpIcon className="w-5 h-5 text-green-600" />
       case 'declining':
-        return <TrendingDownIcon className="w-5 h-5 text-red-600" />
+        return <ArrowTrendingDownIcon className="w-5 h-5 text-red-600" />
       default:
         return <ArrowRightIcon className="w-5 h-5 text-gray-600" />
     }
@@ -132,7 +132,7 @@ export function PlayerStatsCard({
         {[
           { id: 'overview', label: 'Overview', icon: ChartBarIcon },
           { id: 'partnerships', label: 'Partnerships', icon: UserGroupIcon },
-          { id: 'trends', label: 'Trends', icon: TrendingUpIcon }
+          { id: 'trends', label: 'Trends', icon: ArrowTrendingUpIcon }
         ].map(tab => (
           <button
             key={tab.id}

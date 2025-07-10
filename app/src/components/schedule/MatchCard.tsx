@@ -6,10 +6,11 @@ import { useAuthStore } from '../../stores/authStore';
 import { db } from '../../lib/supabase';
 import { useToast } from '../../hooks/useToast';
 import { ScoreEntryModal, QuickScoreEntry, ScoreHistoryInline } from '../score';
-import type { Match } from '../../lib/algorithms/scheduling';
+import type { Match as ScheduleMatch } from '../../lib/algorithms/scheduling';
+import type { Match as DatabaseMatch } from '../../types/database';
 
 interface MatchCardProps {
-  match: Match & {
+  match: ScheduleMatch & {
     team1_score?: number | null;
     team2_score?: number | null;
     version?: number;
@@ -80,7 +81,7 @@ export function MatchCard({
     }
   };
 
-  const handleScoreUpdated = (updatedMatch: Match) => {
+  const handleScoreUpdated = (updatedMatch: DatabaseMatch) => {
     // Update local state to reflect the changes
     setTeam1Score(updatedMatch.team1_score || 0);
     setTeam2Score(updatedMatch.team2_score || 0);
@@ -260,7 +261,7 @@ export function MatchCard({
               Cancel
             </Button>
             <Button
-              variant="default"
+              variant="primary"
               size="sm"
               onClick={handleSave}
               disabled={isSaving}

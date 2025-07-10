@@ -5,8 +5,20 @@ import { logger } from '../lib/logger';
 import type { Round, Match as ScheduleMatch } from '../lib/algorithms/scheduling';
 import type { Match, Partnership, Player, Court } from '../types/database';
 
+// Extended match type that includes both scheduling and database properties
+export type ScheduleMatchWithScores = ScheduleMatch & {
+  team1_score?: number | null;
+  team2_score?: number | null;
+  version?: number;
+};
+
+// Extended round type with score-aware matches
+export type RoundWithScores = Omit<Round, 'matches'> & {
+  matches: ScheduleMatchWithScores[];
+};
+
 interface UseScheduleResult {
-  rounds: Round[] | null;
+  rounds: RoundWithScores[] | null;
   currentRound: number | null;
   courts: Court[];
   isLoading: boolean;
@@ -15,7 +27,7 @@ interface UseScheduleResult {
 }
 
 export function useSchedule(playDateId: string): UseScheduleResult {
-  const [rounds, setRounds] = useState<Round[] | null>(null);
+  const [rounds, setRounds] = useState<RoundWithScores[] | null>(null);
   const [courts, setCourts] = useState<Court[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -68,8 +80,8 @@ export function useSchedule(playDateId: string): UseScheduleResult {
       const generatedRounds = generateRoundRobinSchedule(partnershipsWithPlayers);
 
       // Merge with actual match data from database
-      const mergedRounds = generatedRounds.map(round => {
-        const updatedMatches = round.matches.map(scheduleMatch => {
+      const mergedRounds: RoundWithScores[] = generatedRounds.map(round => {
+        const updatedMatches: ScheduleMatchWithScores[] = round.matches.map(scheduleMatch => {
           // Find corresponding database match
           const dbMatch = matchesData.find((m: Match) =>
             (m.partnership1_id === scheduleMatch.partnership1.id &&

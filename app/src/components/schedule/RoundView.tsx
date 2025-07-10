@@ -2,11 +2,11 @@ import React from 'react';
 import { Users } from 'lucide-react';
 import { Badge } from '../common';
 import { MatchCard } from './MatchCard';
-import type { Round } from '../../lib/algorithms/scheduling';
+import type { RoundWithScores } from '../../hooks/useSchedule';
 import type { Court } from '../../types/database';
 
 interface RoundViewProps {
-  round: Round;
+  round: RoundWithScores;
   playDateId: string;
   isCurrentRound: boolean;
   courts?: Court[];

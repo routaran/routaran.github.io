@@ -18,18 +18,18 @@ import {
   PlayerRanking,
   PartnershipStats
 } from '@/lib/calculations/rankings'
-import { MatchResult, PlayDate, Player } from '@/types/database'
+import type { MatchResult, PlayDate, Player, MatchResultWithCalculations } from '@/types/database'
 
 export interface PlayerPerformanceTrend {
   playDate: PlayDate
-  matchResult: MatchResult
+  matchResult: MatchResultWithCalculations
   rank?: number
   rankChange?: number
 }
 
 export interface PlayerStatistics {
   // Current tournament stats
-  currentStats: MatchResult | null
+  currentStats: MatchResultWithCalculations | null
   currentRank: number | null
   
   // Historical performance
@@ -92,16 +92,22 @@ export function usePlayerStats(
     historicalData: MatchResult[],
     playDates: PlayDate[]
   ): Promise<PlayerStatistics> => {
+    // Convert MatchResult to MatchResultWithCalculations
+    const historicalDataWithCalcs: MatchResultWithCalculations[] = historicalData.map(result => ({
+      ...result,
+      win_percentage: result.games_played > 0 ? Math.round((result.games_won / result.games_played) * 100) : 0,
+      point_differential: result.points_for - result.points_against
+    }))
     // Get current tournament stats
     const currentStats = playDateId 
-      ? historicalData.find(result => result.play_date_id === playDateId)
+      ? historicalDataWithCalcs.find(result => result.play_date_id === playDateId)
       : null
 
     // Get current rank
     const currentRank = currentRankings?.find(r => r.player_id === playerId)?.rank || null
 
     // Calculate historical performance trends
-    const historicalStats: PlayerPerformanceTrend[] = historicalData.map(result => {
+    const historicalStats: PlayerPerformanceTrend[] = historicalDataWithCalcs.map(result => {
       const playDate = playDates.find(pd => pd.id === result.play_date_id)
       return {
         playDate: playDate!,
@@ -110,7 +116,7 @@ export function usePlayerStats(
     }).filter(item => item.playDate)
 
     // Calculate averages and extremes
-    const winPercentages = historicalData.map(r => r.win_percentage)
+    const winPercentages = historicalDataWithCalcs.map(r => r.win_percentage)
     const averageWinPercentage = winPercentages.length > 0 
       ? Math.round(winPercentages.reduce((sum, wp) => sum + wp, 0) / winPercentages.length)
       : 0
@@ -156,11 +162,11 @@ export function usePlayerStats(
     const longestWinningStreak = 0 // TODO: Implement with match history
 
     // Calculate performance metrics
-    const totalGames = historicalData.reduce((sum, r) => sum + r.games_played, 0)
-    const totalPoints = historicalData.reduce((sum, r) => sum + r.points_for, 0)
+    const totalGames = historicalDataWithCalcs.reduce((sum, r) => sum + r.games_played, 0)
+    const totalPoints = historicalDataWithCalcs.reduce((sum, r) => sum + r.points_for, 0)
     const averagePointsPerGame = totalGames > 0 ? Math.round(totalPoints / totalGames) : 0
 
-    const pointDifferentials = historicalData.map(r => r.point_differential)
+    const pointDifferentials = historicalDataWithCalcs.map(r => r.point_differential)
     const bestPointDifferential = pointDifferentials.length > 0 
       ? Math.max(...pointDifferentials) 
       : 0
@@ -175,7 +181,7 @@ export function usePlayerStats(
       currentStats,
       currentRank,
       historicalStats,
-      totalTournaments: historicalData.length,
+      totalTournaments: historicalDataWithCalcs.length,
       averageWinPercentage,
       bestWinPercentage,
       worstWinPercentage,

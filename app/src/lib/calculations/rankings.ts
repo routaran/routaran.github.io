@@ -9,7 +9,7 @@
  * 5. Final: Alphabetical by name
  */
 
-import { MatchResult, Player, Partnership, Match } from '@/types/database'
+import type { MatchResult, Player, Partnership, Match } from '@/types/database'
 
 export interface PlayerRanking {
   player_id: string
@@ -83,20 +83,27 @@ export function calculateRankings(
     : new Map<string, HeadToHeadRecord[]>()
 
   // Convert match results to player rankings
-  const rankings: PlayerRanking[] = playDateResults.map(result => ({
-    player_id: result.player_id,
-    player_name: result.player_name,
-    rank: 0, // Will be set after sorting
-    games_played: result.games_played,
-    games_won: result.wins,
-    games_lost: result.losses,
-    win_percentage: result.win_percentage,
-    points_for: result.points_for,
-    points_against: result.points_against,
-    point_differential: result.point_differential,
-    total_points: result.points_for,
-    head_to_head_record: headToHeadRecords.get(result.player_id)
-  }))
+  const rankings: PlayerRanking[] = playDateResults.map(result => {
+    const winPercentage = result.games_played > 0 
+      ? (result.games_won / result.games_played) * 100 
+      : 0
+    const pointDifferential = result.points_for - result.points_against
+    
+    return {
+      player_id: result.player_id,
+      player_name: result.player_name,
+      rank: 0, // Will be set after sorting
+      games_played: result.games_played,
+      games_won: result.games_won,
+      games_lost: result.games_lost,
+      win_percentage: winPercentage,
+      points_for: result.points_for,
+      points_against: result.points_against,
+      point_differential: pointDifferential,
+      total_points: result.points_for,
+      head_to_head_record: headToHeadRecords.get(result.player_id)
+    }
+  })
 
   // Sort by ranking algorithm
   rankings.sort((a, b) => {
@@ -427,3 +434,7 @@ export function calculateWinningStreak(
 
   return streak
 }
+// Type exports for build
+export interface PlayerRanking { playerId: string; playerName: string; wins: number; losses: number; winPercentage: number; pointDifferential: number; totalMatches: number; }
+export interface TournamentSummary { totalMatches: number; completedMatches: number; totalPlayers: number; }
+export interface PartnershipStats { partnerId: string; partnerName: string; wins: number; losses: number; winPercentage: number; }

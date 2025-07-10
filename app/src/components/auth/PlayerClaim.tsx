@@ -3,7 +3,7 @@ import { Button } from '../common/Button';
 import { Select } from '../common/Form';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
-import { db, supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { logger } from '../../lib/logger';
 import { useToast } from '../../hooks/useToast';
 import type { Player } from '../../types/database';

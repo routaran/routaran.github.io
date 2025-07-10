@@ -10,7 +10,7 @@ import { Card } from '@/components/common/Card'
 import { Badge } from '@/components/common/Badge'
 import { Button } from '@/components/common/Button'
 import { LoadingSpinner } from '@/components/common/LoadingSpinner'
-import { PlayerRanking } from '@/lib/calculations/rankings'
+import type { PlayerRanking } from '@/lib/calculations/rankings'
 import { ChevronUpIcon, ChevronDownIcon, TrophyIcon } from '@heroicons/react/24/outline'
 
 interface RankingsTableProps {

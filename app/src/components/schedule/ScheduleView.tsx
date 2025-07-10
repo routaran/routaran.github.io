@@ -10,7 +10,7 @@ import { RoundView } from './RoundView';
 import { CurrentRoundIndicator } from './CurrentRoundIndicator';
 import { PlayerSchedule } from './PlayerSchedule';
 import { CourtGrid } from './CourtGrid';
-import type { Round } from '../../lib/algorithms/scheduling';
+import type { RoundWithScores } from '../../hooks/useSchedule';
 
 interface ScheduleViewProps {
   playDateId: string;
@@ -83,7 +83,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
     return (
       <div className="flex gap-2 mb-4">
         <Button
-          variant={selectedView === 'full' ? 'default' : 'outline'}
+          variant={selectedView === 'full' ? 'primary' : 'outline'}
           size="sm"
           onClick={() => setSelectedView('full')}
         >
@@ -91,7 +91,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
           Full Schedule
         </Button>
         <Button
-          variant={selectedView === 'player' ? 'default' : 'outline'}
+          variant={selectedView === 'player' ? 'primary' : 'outline'}
           size="sm"
           onClick={() => setSelectedView('player')}
         >
@@ -99,7 +99,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
           My Schedule
         </Button>
         <Button
-          variant={selectedView === 'courts' ? 'default' : 'outline'}
+          variant={selectedView === 'courts' ? 'primary' : 'outline'}
           size="sm"
           onClick={() => setSelectedView('courts')}
         >
@@ -245,7 +245,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
   );
 }
 
-function getRoundStatus(round: Round): 'completed' | 'in_progress' | 'upcoming' {
+function getRoundStatus(round: RoundWithScores): 'completed' | 'in_progress' | 'upcoming' {
   const allCompleted = round.matches.every(
     match => match.team1_score !== null && match.team2_score !== null
   );
