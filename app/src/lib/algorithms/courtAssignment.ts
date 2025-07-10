@@ -3,7 +3,7 @@
  * Assigns matches to available courts to minimize wait times
  */
 
-import { Match, Round } from './scheduling';
+import type { Match, Round } from './scheduling';
 
 export interface Court {
   id: string;

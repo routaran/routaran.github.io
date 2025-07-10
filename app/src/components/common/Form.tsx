@@ -320,3 +320,32 @@ export function Label({ children, required, className, ...props }: LabelProps) {
     </label>
   );
 }
+
+// Form Component
+interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
+  children: React.ReactNode;
+}
+
+export function Form({ children, className, ...props }: FormProps) {
+  return (
+    <form className={cn('space-y-6', className)} {...props}>
+      {children}
+    </form>
+  );
+}
+
+// Error Message Component
+interface ErrorMessageProps {
+  error?: string;
+  className?: string;
+}
+
+export function ErrorMessage({ error, className }: ErrorMessageProps) {
+  if (!error) return null;
+  
+  return (
+    <p className={cn('mt-1 text-sm text-error-600', className)} role="alert">
+      {error}
+    </p>
+  );
+}

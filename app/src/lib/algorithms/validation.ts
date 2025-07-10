@@ -3,8 +3,10 @@
  * Ensures all constraints and requirements are met
  */
 
-import { Player, Partnership, validatePartnerships } from './partnerships';
-import { Round, Match, validateSchedule } from './scheduling';
+import type { Player, Partnership } from './partnerships';
+import { validatePartnerships } from './partnerships';
+import type { Round, Match } from './scheduling';
+import { validateSchedule } from './scheduling';
 import { validateCourtAssignments } from './courtAssignment';
 import { validateByeDistribution, validateNoConsecutiveByes } from './byeRotation';
 

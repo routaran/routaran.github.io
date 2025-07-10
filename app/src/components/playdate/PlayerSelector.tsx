@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { X, Plus, Search } from 'lucide-react'
 import { Label } from '../common/Form'
 import { Button } from '../common/Button'

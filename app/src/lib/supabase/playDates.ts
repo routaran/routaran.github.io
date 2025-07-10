@@ -1,4 +1,4 @@
-import { db } from './';
+import { supabase } from '../supabase';
 import { logger } from '../logger';
 import type { SupabaseError } from './errors';
 

@@ -28,7 +28,10 @@ export {
   Checkbox,
   Radio,
   FormGroup,
-  FormRow
+  FormRow,
+  Form,
+  ErrorMessage,
+  Label
 } from './Form';
 
 // Card components

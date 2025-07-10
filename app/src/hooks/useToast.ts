@@ -1,6 +1,6 @@
 import { useToast as useToastContext } from '../contexts/ToastContext';
 
-interface ShowToastOptions {
+export interface ShowToastOptions {
   title: string;
   description?: string;
   variant?: 'default' | 'success' | 'destructive' | 'warning';
@@ -28,5 +28,5 @@ export function useToast() {
     });
   };
 
-  return { showToast };
+  return { showToast, toast: showToast }; // 'toast' for backward compatibility
 }

@@ -5,13 +5,13 @@
  * Shows historical performance, ranking changes, and trend analysis
  */
 
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Card } from '@/components/common/Card'
 import { Badge } from '@/components/common/Badge'
-import { PlayerPerformanceTrend } from '@/hooks/usePlayerStats'
+import type { PlayerPerformanceTrend } from '@/hooks/usePlayerStats'
 import { 
-  TrendingUpIcon, 
-  TrendingDownIcon, 
+  ArrowArrowTrendingUpIcon, 
+  ArrowArrowTrendingDownIcon, 
   ArrowRightIcon,
   CalendarIcon,
   ChartBarIcon
@@ -22,6 +22,18 @@ interface PerformanceTrendsProps {
   playerName: string
   loading?: boolean
   className?: string
+}
+
+// Helper function to compute win percentage
+const getWinPercentage = (matchResult: PlayerPerformanceTrend['matchResult']) => {
+  return matchResult.games_played > 0 
+    ? (matchResult.games_won / matchResult.games_played) * 100 
+    : 0
+}
+
+// Helper function to compute point differential
+const getPointDifferential = (matchResult: PlayerPerformanceTrend['matchResult']) => {
+  return matchResult.points_for - matchResult.points_against
 }
 
 export function PerformanceTrends({
@@ -36,8 +48,14 @@ export function PerformanceTrends({
   const trendStats = useMemo(() => {
     if (trends.length === 0) return null
 
-    const winPercentages = trends.map(t => t.matchResult.win_percentage)
-    const pointDifferentials = trends.map(t => t.matchResult.point_differential)
+    const winPercentages = trends.map(t => 
+      t.matchResult.games_played > 0 
+        ? (t.matchResult.games_won / t.matchResult.games_played) * 100 
+        : 0
+    )
+    const pointDifferentials = trends.map(t => 
+      t.matchResult.points_for - t.matchResult.points_against
+    )
     
     const avgWinPercentage = Math.round(
       winPercentages.reduce((sum, wp) => sum + wp, 0) / winPercentages.length
@@ -48,11 +66,11 @@ export function PerformanceTrends({
     )
     
     const bestPerformance = trends.reduce((best, current) => 
-      current.matchResult.win_percentage > best.matchResult.win_percentage ? current : best
+      getWinPercentage(current.matchResult) > getWinPercentage(best.matchResult) ? current : best
     )
     
     const worstPerformance = trends.reduce((worst, current) => 
-      current.matchResult.win_percentage < worst.matchResult.win_percentage ? current : worst
+      getWinPercentage(current.matchResult) < getWinPercentage(worst.matchResult) ? current : worst
     )
     
     // Calculate trend direction
@@ -60,11 +78,11 @@ export function PerformanceTrends({
     const olderTrends = trends.slice(Math.min(3, trends.length))
     
     const recentAvg = recentTrends.length > 0 
-      ? recentTrends.reduce((sum, t) => sum + t.matchResult.win_percentage, 0) / recentTrends.length
+      ? recentTrends.reduce((sum, t) => sum + getWinPercentage(t.matchResult), 0) / recentTrends.length
       : 0
     
     const olderAvg = olderTrends.length > 0 
-      ? olderTrends.reduce((sum, t) => sum + t.matchResult.win_percentage, 0) / olderTrends.length
+      ? olderTrends.reduce((sum, t) => sum + getWinPercentage(t.matchResult), 0) / olderTrends.length
       : recentAvg
     
     const trendDirection = recentAvg > olderAvg + 5 ? 'improving' : 
@@ -86,9 +104,9 @@ export function PerformanceTrends({
   const getTrendIcon = (direction: 'improving' | 'declining' | 'stable') => {
     switch (direction) {
       case 'improving':
-        return <TrendingUpIcon className="w-5 h-5 text-green-600" />
+        return <ArrowTrendingUpIcon className="w-5 h-5 text-green-600" />
       case 'declining':
-        return <TrendingDownIcon className="w-5 h-5 text-red-600" />
+        return <ArrowTrendingDownIcon className="w-5 h-5 text-red-600" />
       default:
         return <ArrowRightIcon className="w-5 h-5 text-gray-600" />
     }
@@ -100,7 +118,7 @@ export function PerformanceTrends({
   const getPerformanceBadgeColor = (winPercentage: number) => {
     if (winPercentage >= 70) return 'success'
     if (winPercentage >= 50) return 'warning'
-    return 'error'
+    return 'destructive'
   }
 
   if (loading) {
@@ -173,7 +191,7 @@ export function PerformanceTrends({
           
           <div className="bg-green-50 p-4 rounded-lg">
             <p className="text-xs text-green-600 font-medium">Best Performance</p>
-            <p className="text-xl font-bold text-green-900">{trendStats.bestPerformance.matchResult.win_percentage}%</p>
+            <p className="text-xl font-bold text-green-900">{Math.round(getWinPercentage(trendStats.bestPerformance.matchResult))}%</p>
           </div>
           
           <div className="bg-orange-50 p-4 rounded-lg">
@@ -198,10 +216,10 @@ export function PerformanceTrends({
                 
                 <div className="flex items-center space-x-2">
                   <Badge
-                    variant={getPerformanceBadgeColor(trend.matchResult.win_percentage)}
+                    variant={getPerformanceBadgeColor(getWinPercentage(trend.matchResult))}
                     className="text-xs"
                   >
-                    {trend.matchResult.win_percentage}%
+                    {getWinPercentage(trend.matchResult)}%
                   </Badge>
                   
                   {trend.rank && (
@@ -214,24 +232,24 @@ export function PerformanceTrends({
               
               <div className="flex items-center space-x-4 text-sm">
                 <div className="text-gray-600">
-                  <span className="font-medium text-green-600">{trend.matchResult.wins}</span>
+                  <span className="font-medium text-green-600">{trend.matchResult.games_won}</span>
                   <span className="mx-1">-</span>
-                  <span className="font-medium text-red-600">{trend.matchResult.losses}</span>
+                  <span className="font-medium text-red-600">{trend.matchResult.games_lost}</span>
                 </div>
                 
                 <div className={`font-medium ${
-                  trend.matchResult.point_differential > 0 ? 'text-green-600' : 
-                  trend.matchResult.point_differential < 0 ? 'text-red-600' : 'text-gray-600'
+                  getPointDifferential(trend.matchResult) > 0 ? 'text-green-600' : 
+                  getPointDifferential(trend.matchResult) < 0 ? 'text-red-600' : 'text-gray-600'
                 }`}>
-                  {trend.matchResult.point_differential > 0 ? '+' : ''}{trend.matchResult.point_differential}
+                  {getPointDifferential(trend.matchResult) > 0 ? '+' : ''}{getPointDifferential(trend.matchResult)}
                 </div>
                 
                 {trend.rankChange && (
                   <div className="flex items-center">
                     {trend.rankChange > 0 ? (
-                      <TrendingUpIcon className="w-4 h-4 text-green-600 mr-1" />
+                      <ArrowTrendingUpIcon className="w-4 h-4 text-green-600 mr-1" />
                     ) : (
-                      <TrendingDownIcon className="w-4 h-4 text-red-600 mr-1" />
+                      <ArrowTrendingDownIcon className="w-4 h-4 text-red-600 mr-1" />
                     )}
                     <span className={`text-xs ${
                       trend.rankChange > 0 ? 'text-green-600' : 'text-red-600'
@@ -252,16 +270,16 @@ export function PerformanceTrends({
         <div className="relative">
           <div className="flex items-end space-x-2 h-16">
             {trends.slice(0, 10).reverse().map((trend, index) => {
-              const height = Math.max(8, (trend.matchResult.win_percentage / 100) * 64)
+              const height = Math.max(8, (getWinPercentage(trend.matchResult) / 100) * 64)
               return (
                 <div
                   key={index}
                   className={`rounded-t-sm transition-all duration-200 ${
-                    trend.matchResult.win_percentage >= 70 ? 'bg-green-500' :
-                    trend.matchResult.win_percentage >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                    getWinPercentage(trend.matchResult) >= 70 ? 'bg-green-500' :
+                    getWinPercentage(trend.matchResult) >= 50 ? 'bg-yellow-500' : 'bg-red-500'
                   }`}
                   style={{ height: `${height}px`, minWidth: '20px' }}
-                  title={`${new Date(trend.playDate.date).toLocaleDateString()}: ${trend.matchResult.win_percentage}%`}
+                  title={`${new Date(trend.playDate.date).toLocaleDateString()}: ${getWinPercentage(trend.matchResult)}%`}
                 />
               )
             })}
@@ -298,7 +316,7 @@ export function PerformanceTrends({
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 rounded-full bg-purple-500" />
               <span className="text-gray-700">
-                Best performance: {trendStats.bestPerformance.matchResult.win_percentage}% win rate 
+                Best performance: {Math.round(getWinPercentage(trendStats.bestPerformance.matchResult))}% win rate 
                 on {new Date(trendStats.bestPerformance.playDate.date).toLocaleDateString()}
               </span>
             </div>
@@ -344,11 +362,11 @@ export function MiniPerformanceTrends({
             </span>
             <div className="flex items-center space-x-2">
               <Badge
-                variant={trend.matchResult.win_percentage >= 60 ? 'success' : 
-                        trend.matchResult.win_percentage >= 40 ? 'warning' : 'error'}
+                variant={getWinPercentage(trend.matchResult) >= 60 ? 'success' : 
+                        getWinPercentage(trend.matchResult) >= 40 ? 'warning' : 'error'}
                 className="text-xs"
               >
-                {trend.matchResult.win_percentage}%
+                {getWinPercentage(trend.matchResult)}%
               </Badge>
             </div>
           </div>

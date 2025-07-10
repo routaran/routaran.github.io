@@ -3,7 +3,7 @@
  * Ensures each partnership plays against every other partnership exactly once
  */
 
-import { Partnership } from './partnerships';
+import type { Partnership } from './partnerships';
 
 export interface Match {
   id: string;

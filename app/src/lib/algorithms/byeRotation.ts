@@ -3,8 +3,8 @@
  * Ensures fair distribution of bye rounds across all partnerships
  */
 
-import { Partnership } from './partnerships';
-import { Round } from './scheduling';
+import type { Partnership } from './partnerships';
+import type { Round } from './scheduling';
 
 export interface ByeAssignment {
   partnership: Partnership;

@@ -5,6 +5,7 @@ import { useIsRealtimeConnected } from '../../contexts/RealtimeContext';
 import { cn } from '../../lib/utils';
 import { FocusTrap, useFocusManagement } from '../common/Accessibility';
 import { User, Crown, LogOut, Wifi, WifiOff } from 'lucide-react';
+import { ROUTES } from '../../router';
 
 export function Navigation() {
   const location = useLocation();

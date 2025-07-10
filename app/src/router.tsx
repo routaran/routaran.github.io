@@ -6,11 +6,11 @@ import { AuthCallbackPage } from './pages/AuthCallbackPage';
 import { PlayDateCreatePage } from './pages/PlayDateCreatePage';
 import { PlayDateDetailPage } from './pages/PlayDateDetailPage';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { DashboardPage } from './pages/DashboardPage';
+import { RankingsPage } from './pages/RankingsPage';
 
 // Page imports (these will be created in Phase 2)
-const DashboardPage = () => <div>Dashboard Page</div>;
 const ScoreEntryPage = () => <div>Score Entry Page</div>;
-const RankingsPage = () => <div>Rankings Page</div>;
 const MatchDetailsPage = () => <div>Match Details Page</div>;
 const ProfilePage = () => <div>Profile Page</div>;
 const AuditLogPage = () => <div>Audit Log Page</div>;

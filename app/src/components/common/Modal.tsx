@@ -28,8 +28,6 @@ export function Modal({
   closeOnOverlayClick = true,
   closeOnEscape = true,
 }: ModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
-
   // Handle escape key
   useEffect(() => {
     if (!isOpen || !closeOnEscape) return;
@@ -81,9 +79,8 @@ export function Modal({
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
     >
-      <FocusTrap>
+      <FocusTrap isActive={isOpen}>
         <Card
-          ref={modalRef}
           className={cn(
             'w-full max-h-[90vh] overflow-y-auto',
             sizeClasses[size],

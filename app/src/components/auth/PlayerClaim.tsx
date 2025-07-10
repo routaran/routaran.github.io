@@ -3,7 +3,7 @@ import { Button } from '../common/Button';
 import { Select } from '../common/Form';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
-import { db } from '../../lib/supabase';
+import { db, supabase } from '../../lib/supabase';
 import { logger } from '../../lib/logger';
 import { useToast } from '../../hooks/useToast';
 import type { Player } from '../../types/database';
@@ -32,7 +32,7 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
       });
 
       // Get all players without a claim
-      const { data, error } = await db.supabase
+      const { data, error } = await supabase
         .from('players')
         .select('*')
         .is('claim_user_id', null)

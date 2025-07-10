@@ -58,7 +58,7 @@ export function PlayDateForm({
       newErrors.date = 'Date must be today or in the future'
     }
 
-    if (formData.target_score < 5 || formData.target_score > 21) {
+    if (formData.target_score !== undefined && (formData.target_score < 5 || formData.target_score > 21)) {
       newErrors.target_score = 'Target score must be between 5 and 21'
     }
 
@@ -126,7 +126,7 @@ export function PlayDateForm({
           required
         />
         {touched.name && errors.name && (
-          <ErrorMessage>{errors.name}</ErrorMessage>
+          <ErrorMessage error={errors.name} />
         )}
       </FormGroup>
 
@@ -147,7 +147,7 @@ export function PlayDateForm({
           />
         </div>
         {touched.date && errors.date && (
-          <ErrorMessage>{errors.date}</ErrorMessage>
+          <ErrorMessage error={errors.date} />
         )}
       </FormGroup>
 
@@ -179,7 +179,7 @@ export function PlayDateForm({
             disabled={loading}
           />
           {touched.players && errors.players && (
-            <ErrorMessage>{errors.players}</ErrorMessage>
+            <ErrorMessage error={errors.players} />
           )}
         </>
       )}

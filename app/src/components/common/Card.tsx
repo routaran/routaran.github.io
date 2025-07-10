@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 
 interface CardProps {
@@ -12,7 +13,7 @@ interface CardProps {
   onClick?: () => void;
 }
 
-export function Card({
+export const Card = forwardRef<HTMLDivElement, CardProps>(({
   children,
   className,
   padding = 'md',
@@ -21,9 +22,8 @@ export function Card({
   border = true,
   hover = false,
   clickable = false,
-  onClick,
-  ...props
-}: CardProps) {
+  onClick
+}, ref) => {
   const baseClasses = 'bg-white';
   
   const paddingClasses = {
@@ -51,6 +51,7 @@ export function Card({
   
   return (
     <Component
+      ref={ref as any}
       className={cn(
         baseClasses,
         paddingClasses[padding],
@@ -62,12 +63,13 @@ export function Card({
         className
       )}
       onClick={onClick}
-      {...(clickable && props)}
     >
       {children}
     </Component>
   );
-}
+});
+
+Card.displayName = 'Card';
 
 // Card Header
 interface CardHeaderProps {

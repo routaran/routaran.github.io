@@ -16,15 +16,9 @@ export function DashboardPage() {
 
   const {
     playDates,
-    isLoading,
-    error,
-    refetch,
-    hasMore,
-    loadMore,
-  } = usePlayDates({
-    status: filterStatus === 'all' ? undefined : filterStatus,
-    onlyMyPlayDates: showOnlyMyPlayDates,
-  });
+    loading,
+    reload,
+  } = usePlayDates();
 
   const canCreatePlayDate = isAuthenticated && player;
 
@@ -72,7 +66,7 @@ export function DashboardPage() {
       </div>
 
       {/* Statistics */}
-      <DashboardStats playDates={playDates} isLoading={isLoading} />
+      <DashboardStats playDates={playDates} isLoading={loading} />
 
       {/* Filters */}
       <div className="mb-6 space-y-4">
@@ -118,11 +112,7 @@ export function DashboardPage() {
       {/* Play Date List */}
       <PlayDateList
         playDates={playDates}
-        isLoading={isLoading}
-        error={error}
-        onRefresh={refetch}
-        onLoadMore={loadMore}
-        hasMore={hasMore}
+        isLoading={loading}
         onEdit={handleEdit}
         onCreateNew={canCreatePlayDate ? handleCreateNew : undefined}
         canCreate={canCreatePlayDate}

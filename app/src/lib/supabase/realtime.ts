@@ -1,4 +1,4 @@
-import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { supabase } from '../supabase';
 import { logger } from '../logger';
 import { monitor } from '../monitoring';

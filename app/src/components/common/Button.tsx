@@ -1,12 +1,14 @@
 import { cn } from '../../lib/utils';
 import { LoadingSpinner } from './LoadingSpinner';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
+  loading?: boolean; // Support both for backward compatibility
   loadingText?: string;
   fullWidth?: boolean;
+  icon?: React.ReactNode; // Support icon prop for backward compatibility
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   children: React.ReactNode;
@@ -16,8 +18,10 @@ export function Button({
   variant = 'primary',
   size = 'md',
   isLoading = false,
+  loading = false,
   loadingText,
   fullWidth = false,
+  icon,
   leftIcon,
   rightIcon,
   children,
@@ -25,6 +29,10 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
+  // Support both isLoading and loading props
+  const isCurrentlyLoading = isLoading || loading;
+  // Use icon as leftIcon if leftIcon is not provided
+  const actualLeftIcon = leftIcon || icon;
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variantClasses = {
@@ -41,7 +49,7 @@ export function Button({
     lg: 'px-6 py-3 text-base min-h-[48px]',
   };
 
-  const content = isLoading ? (loadingText || children) : children;
+  const content = isCurrentlyLoading ? (loadingText || children) : children;
 
   return (
     <button
@@ -52,21 +60,21 @@ export function Button({
         fullWidth && 'w-full',
         className
       )}
-      disabled={disabled || isLoading}
+      disabled={disabled || isCurrentlyLoading}
       {...props}
     >
-      {isLoading && (
+      {isCurrentlyLoading && (
         <LoadingSpinner 
           size="sm" 
           color={variant === 'outline' || variant === 'ghost' ? 'primary' : 'white'}
           className="mr-2" 
         />
       )}
-      {!isLoading && leftIcon && (
-        <span className="mr-2">{leftIcon}</span>
+      {!isCurrentlyLoading && actualLeftIcon && (
+        <span className="mr-2">{actualLeftIcon}</span>
       )}
       {content}
-      {!isLoading && rightIcon && (
+      {!isCurrentlyLoading && rightIcon && (
         <span className="ml-2">{rightIcon}</span>
       )}
     </button>

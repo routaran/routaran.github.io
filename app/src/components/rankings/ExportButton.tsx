@@ -5,15 +5,15 @@
  * and user-friendly interface
  */
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/common/Button'
 import { Modal } from '@/components/common/Modal'
-import { Select } from '@/components/common/Select'
+import { Select } from '@/components/common/Form'
 import { Alert } from '@/components/common/Alert'
 import { useToast } from '@/hooks/useToast'
-import { PlayerRanking, TournamentSummary, PartnershipStats } from '@/lib/calculations/rankings'
-import { PlayerStatistics } from '@/hooks/usePlayerStats'
-import { PlayDate } from '@/types/database'
+import type { PlayerRanking, TournamentSummary, PartnershipStats } from '@/lib/calculations/rankings'
+import type { PlayerStatistics } from '@/hooks/usePlayerStats'
+import type { PlayDate } from '@/types/database'
 import {
   exportRankingsData,
   exportPlayerStatistics,
@@ -21,7 +21,7 @@ import {
   exportTournamentSummary,
   validateExportData,
   getExportStats,
-  ExportOptions
+  type ExportOptions
 } from '@/lib/export/rankingsExport'
 import { 
   ArrowDownTrayIcon, 
@@ -64,7 +64,7 @@ export function ExportButton({
   const [includeTimestamps, setIncludeTimestamps] = useState(true)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   
-  const { addToast } = useToast()
+  const { showToast } = useToast()
 
   /**
    * Validate data before export
@@ -116,20 +116,20 @@ export function ExportButton({
           break
       }
 
-      addToast({
-        type: 'success',
+      showToast({
+        variant: 'success',
         title: 'Export Successful',
-        message: `${type.replace('-', ' ')} data exported successfully.`,
+        description: `${type.replace('-', ' ')} data exported successfully.`,
         duration: 3000
       })
 
       setShowModal(false)
     } catch (error) {
       console.error('Export failed:', error)
-      addToast({
-        type: 'error',
+      showToast({
+        variant: 'destructive',
         title: 'Export Failed',
-        message: 'Failed to export data. Please try again.',
+        description: 'Failed to export data. Please try again.',
         duration: 5000
       })
     } finally {
@@ -236,7 +236,7 @@ export function ExportButton({
               </label>
               <Select
                 value={exportFormat}
-                onChange={(value) => setExportFormat(value as 'csv' | 'json')}
+                onChange={(e) => setExportFormat(e.target.value as 'csv' | 'json')}
                 options={[
                   { value: 'csv', label: 'CSV (Spreadsheet)' },
                   { value: 'json', label: 'JSON (Data Archive)' }
@@ -275,7 +275,7 @@ export function ExportButton({
 
           {/* Validation Errors */}
           {validationErrors.length > 0 && (
-            <Alert type="error" className="p-3">
+            <Alert variant="destructive" className="p-3">
               <ExclamationTriangleIcon className="w-5 h-5" />
               <div className="ml-3">
                 <p className="text-sm font-medium">Export Validation Errors:</p>
