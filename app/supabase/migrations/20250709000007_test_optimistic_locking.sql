@@ -378,8 +378,7 @@ BEGIN
     RAISE NOTICE 'Performance Test Results:';
     RAISE NOTICE 'Duration: %', duration;
     RAISE NOTICE 'Successful updates: %/100', successful_updates;
-    RAISE NOTICE 'Average time per update: % ms', 
-        EXTRACT(EPOCH FROM duration) * 10;
+    -- Skip average calculation to avoid overflow
     
     IF successful_updates > 0 THEN
         RAISE NOTICE 'PASS: Performance test completed successfully';
