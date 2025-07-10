@@ -1,14 +1,14 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database';
-import { logger } from './logger';
-import { monitor } from './monitoring';
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../types/database";
+import { logger } from "./logger";
+import { monitor } from "./monitoring";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
-    'Missing Supabase environment variables. Please check your .env file.'
+    "Missing Supabase environment variables. Please check your .env file."
   );
 }
 
@@ -17,7 +17,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    flowType: 'pkce', // Use PKCE flow for better security
+    flowType: "pkce", // Use PKCE flow for better security
   },
   realtime: {
     params: {
@@ -29,64 +29,80 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 // Auth helpers
 export const auth = {
   signIn: async (email: string) => {
-    return await logger.time('auth.signIn', async () => {
-      logger.info('Attempting sign in', {
-        component: 'supabase',
-        action: 'signIn',
-        metadata: { email },
-      });
-
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) {
-        logger.error('Sign in failed', {
-          component: 'supabase',
-          action: 'signIn',
-          metadata: { email, errorCode: error.message },
-        }, error);
-        monitor.recordError(error, { component: 'supabase' });
-      } else {
-        logger.info('Sign in successful', {
-          component: 'supabase',
-          action: 'signIn',
+    return await logger.time(
+      "auth.signIn",
+      async () => {
+        logger.info("Attempting sign in", {
+          component: "supabase",
+          action: "signIn",
           metadata: { email },
         });
-      }
 
-      return { data, error };
-    }, { component: 'supabase' });
+        const { data, error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: true,
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+
+        if (error) {
+          logger.error(
+            "Sign in failed",
+            {
+              component: "supabase",
+              action: "signIn",
+              metadata: { email, errorCode: error.message },
+            },
+            error
+          );
+          monitor.recordError(error, { component: "supabase" });
+        } else {
+          logger.info("Sign in successful", {
+            component: "supabase",
+            action: "signIn",
+            metadata: { email },
+          });
+        }
+
+        return { data, error };
+      },
+      { component: "supabase" }
+    );
   },
 
   signOut: async () => {
-    return await logger.time('auth.signOut', async () => {
-      logger.info('Attempting sign out', {
-        component: 'supabase',
-        action: 'signOut',
-      });
-
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        logger.error('Sign out failed', {
-          component: 'supabase',
-          action: 'signOut',
-        }, error);
-        monitor.recordError(error, { component: 'supabase' });
-      } else {
-        logger.info('Sign out successful', {
-          component: 'supabase',
-          action: 'signOut',
+    return await logger.time(
+      "auth.signOut",
+      async () => {
+        logger.info("Attempting sign out", {
+          component: "supabase",
+          action: "signOut",
         });
-      }
 
-      return { error };
-    }, { component: 'supabase' });
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+          logger.error(
+            "Sign out failed",
+            {
+              component: "supabase",
+              action: "signOut",
+            },
+            error
+          );
+          monitor.recordError(error, { component: "supabase" });
+        } else {
+          logger.info("Sign out successful", {
+            component: "supabase",
+            action: "signOut",
+          });
+        }
+
+        return { error };
+      },
+      { component: "supabase" }
+    );
   },
 
   getSession: async () => {
@@ -108,86 +124,104 @@ export const auth = {
 export const db = {
   // Play Dates
   getPlayDates: async () => {
-    return await monitor.measureApiCall('getPlayDates', async () => {
-      logger.debug('Fetching play dates', {
-        component: 'supabase',
-        action: 'getPlayDates',
-      });
+    return await monitor.measureApiCall(
+      "getPlayDates",
+      async () => {
+        logger.debug("Fetching play dates", {
+          component: "supabase",
+          action: "getPlayDates",
+        });
 
-      const { data, error } = await supabase
-        .from('play_dates')
-        .select('*')
-        .order('date', { ascending: false });
-      
-      if (error) {
-        logger.error('Failed to fetch play dates', {
-          component: 'supabase',
-          action: 'getPlayDates',
-        }, error);
-        throw new Error(`Failed to fetch play dates: ${error.message}`);
-      }
+        const { data, error } = await supabase
+          .from("play_dates")
+          .select("*")
+          .order("date", { ascending: false });
 
-      logger.info('Successfully fetched play dates', {
-        component: 'supabase',
-        action: 'getPlayDates',
-        metadata: { count: data.length },
-      });
+        if (error) {
+          logger.error(
+            "Failed to fetch play dates",
+            {
+              component: "supabase",
+              action: "getPlayDates",
+            },
+            error
+          );
+          throw new Error(`Failed to fetch play dates: ${error.message}`);
+        }
 
-      return data;
-    }, { component: 'supabase' });
+        logger.info("Successfully fetched play dates", {
+          component: "supabase",
+          action: "getPlayDates",
+          metadata: { count: data.length },
+        });
+
+        return data;
+      },
+      { component: "supabase" }
+    );
   },
 
   getPlayDate: async (id: string) => {
-    return await monitor.measureApiCall('getPlayDate', async () => {
-      logger.debug('Fetching play date', {
-        component: 'supabase',
-        action: 'getPlayDate',
-        playDateId: id,
-      });
+    return await monitor.measureApiCall(
+      "getPlayDate",
+      async () => {
+        logger.debug("Fetching play date", {
+          component: "supabase",
+          action: "getPlayDate",
+          playDateId: id,
+        });
 
-      const { data, error } = await supabase
-        .from('play_dates')
-        .select(`
+        const { data, error } = await supabase
+          .from("play_dates")
+          .select(
+            `
           *,
           players (*),
           partnerships (*),
           matches (*)
-        `)
-        .eq('id', id)
-        .single();
-      
-      if (error) {
-        logger.error('Failed to fetch play date', {
-          component: 'supabase',
-          action: 'getPlayDate',
+        `
+          )
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          logger.error(
+            "Failed to fetch play date",
+            {
+              component: "supabase",
+              action: "getPlayDate",
+              playDateId: id,
+            },
+            error
+          );
+          throw new Error(`Failed to fetch play date: ${error.message}`);
+        }
+
+        logger.info("Successfully fetched play date", {
+          component: "supabase",
+          action: "getPlayDate",
           playDateId: id,
-        }, error);
-        throw new Error(`Failed to fetch play date: ${error.message}`);
-      }
+          metadata: {
+            playDateName: data.name,
+            playerCount: data.players?.length || 0,
+            matchCount: data.matches?.length || 0,
+          },
+        });
 
-      logger.info('Successfully fetched play date', {
-        component: 'supabase',
-        action: 'getPlayDate',
-        playDateId: id,
-        metadata: { 
-          playDateName: data.name,
-          playerCount: data.players?.length || 0,
-          matchCount: data.matches?.length || 0,
-        },
-      });
-
-      return data;
-    }, { component: 'supabase', playDateId: id });
+        return data;
+      },
+      { component: "supabase", playDateId: id }
+    );
   },
 
   // Players
   getPlayers: async (playDateId: string) => {
     const { data, error } = await supabase
-      .from('players')
-      .select('*')
-      .eq('play_date_id', playDateId)
-      .order('name');
-    
+      .from("players")
+      .select("*")
+      .eq("play_date_id", playDateId)
+      .order("name");
+
     if (error) throw new Error(`Failed to fetch players: ${error.message}`);
     return data;
   },
@@ -195,83 +229,95 @@ export const db = {
   // Matches
   getMatches: async (playDateId: string) => {
     const { data, error } = await supabase
-      .from('matches')
-      .select(`
+      .from("matches")
+      .select(
+        `
         *,
         partnership1:partnerships!partnership1_id (*),
         partnership2:partnerships!partnership2_id (*)
-      `)
-      .eq('play_date_id', playDateId)
-      .order('round_number', { ascending: true })
-      .order('court_number', { ascending: true });
-    
+      `
+      )
+      .eq("play_date_id", playDateId)
+      .order("round_number", { ascending: true })
+      .order("court_number", { ascending: true });
+
     if (error) throw new Error(`Failed to fetch matches: ${error.message}`);
     return data;
   },
 
   updateMatchScore: async (
-    matchId: string, 
-    team1Score: number, 
-    team2Score: number, 
+    matchId: string,
+    team1Score: number,
+    team2Score: number,
     currentVersion: number
   ) => {
-    return await monitor.measureApiCall('updateMatchScore', async () => {
-      logger.info('Updating match score', {
-        component: 'supabase',
-        action: 'updateMatchScore',
-        matchId,
-        metadata: { 
-          team1Score, 
-          team2Score, 
-          version: currentVersion,
-        },
-      });
-
-      const { data, error } = await supabase
-        .from('matches')
-        .update({
-          team1_score: team1Score,
-          team2_score: team2Score,
-          version: currentVersion + 1,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', matchId)
-        .eq('version', currentVersion) // Optimistic locking
-        .select()
-        .single();
-      
-      if (error) {
-        logger.error('Failed to update match score', {
-          component: 'supabase',
-          action: 'updateMatchScore',
+    return await monitor.measureApiCall(
+      "updateMatchScore",
+      async () => {
+        logger.info("Updating match score", {
+          component: "supabase",
+          action: "updateMatchScore",
           matchId,
-          metadata: { 
-            team1Score, 
-            team2Score, 
+          metadata: {
+            team1Score,
+            team2Score,
             version: currentVersion,
-            errorCode: error.code,
           },
-        }, error);
+        });
 
-        if (error.code === 'PGRST116') {
-          throw new Error('Match was updated by another user. Please refresh and try again.');
+        const { data, error } = await supabase
+          .from("matches")
+          .update({
+            team1_score: team1Score,
+            team2_score: team2Score,
+            version: currentVersion + 1,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", matchId)
+          .eq("version", currentVersion) // Optimistic locking
+          .select()
+          .single();
+
+        if (error) {
+          logger.error(
+            "Failed to update match score",
+            {
+              component: "supabase",
+              action: "updateMatchScore",
+              matchId,
+              metadata: {
+                team1Score,
+                team2Score,
+                version: currentVersion,
+                errorCode: error.code,
+              },
+            },
+            error
+          );
+
+          if (error.code === "PGRST116") {
+            throw new Error(
+              "Match was updated by another user. Please refresh and try again."
+            );
+          }
+          throw new Error(`Failed to update match score: ${error.message}`);
         }
-        throw new Error(`Failed to update match score: ${error.message}`);
-      }
 
-      logger.info('Successfully updated match score', {
-        component: 'supabase',
-        action: 'updateMatchScore',
-        matchId,
-        metadata: { 
-          team1Score, 
-          team2Score, 
-          newVersion: currentVersion + 1,
-        },
-      });
+        logger.info("Successfully updated match score", {
+          component: "supabase",
+          action: "updateMatchScore",
+          matchId,
+          metadata: {
+            team1Score,
+            team2Score,
+            newVersion: currentVersion + 1,
+          },
+        });
 
-      return data;
-    }, { component: 'supabase', matchId });
+        return data;
+      },
+      { component: "supabase", matchId }
+    );
   },
 
   // Enhanced score-specific functions
@@ -284,9 +330,11 @@ export const db = {
     reason?: string
   ) => {
     // This function will be imported from the new scores module
-    const { updateMatchScore } = await import('./supabase/scores');
-    const { validateMatchScore, DEFAULT_SCORE_CONFIG } = await import('./validation/scoreValidation');
-    
+    const { updateMatchScore } = await import("./supabase/scores");
+    const { validateMatchScore, DEFAULT_SCORE_CONFIG } = await import(
+      "./validation/scoreValidation"
+    );
+
     // Get play date for validation config
     const playDate = await db.getPlayDate(playDateId);
     const validationConfig = {
@@ -311,12 +359,12 @@ export const db = {
   // Rankings
   getRankings: async (playDateId: string) => {
     const { data, error } = await supabase
-      .from('match_results')
-      .select('*')
-      .eq('play_date_id', playDateId)
-      .order('games_won', { ascending: false })
-      .order('points_for', { ascending: false });
-    
+      .from("match_results")
+      .select("*")
+      .eq("play_date_id", playDateId)
+      .order("games_won", { ascending: false })
+      .order("points_for", { ascending: false });
+
     if (error) throw new Error(`Failed to fetch rankings: ${error.message}`);
     return data;
   },
@@ -324,19 +372,22 @@ export const db = {
 
 // Real-time subscriptions
 export const realtime = {
-  subscribeToMatches: (playDateId: string, callback: (payload: any) => void) => {
-    logger.info('Subscribing to matches', {
-      component: 'supabase',
-      action: 'subscribeToMatches',
+  subscribeToMatches: (
+    playDateId: string,
+    callback: (payload: any) => void
+  ) => {
+    logger.info("Subscribing to matches", {
+      component: "supabase",
+      action: "subscribeToMatches",
       playDateId,
     });
 
     const enhancedCallback = (payload: any) => {
-      logger.debug('Match update received', {
-        component: 'supabase',
-        action: 'matchUpdate',
+      logger.debug("Match update received", {
+        component: "supabase",
+        action: "matchUpdate",
         playDateId,
-        metadata: { 
+        metadata: {
           event: payload.eventType,
           matchId: payload.new?.id || payload.old?.id,
         },
@@ -344,8 +395,9 @@ export const realtime = {
 
       // Record latency if we have timing info
       if (payload.commit_timestamp) {
-        const latency = Date.now() - new Date(payload.commit_timestamp).getTime();
-        monitor.recordLatency(latency, { component: 'supabase', playDateId });
+        const latency =
+          Date.now() - new Date(payload.commit_timestamp).getTime();
+        monitor.recordLatency(latency, { component: "supabase", playDateId });
       }
 
       callback(payload);
@@ -354,11 +406,11 @@ export const realtime = {
     return supabase
       .channel(`matches:${playDateId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'matches',
+          event: "*",
+          schema: "public",
+          table: "matches",
           filter: `play_date_id=eq.${playDateId}`,
         },
         enhancedCallback
@@ -366,19 +418,22 @@ export const realtime = {
       .subscribe();
   },
 
-  subscribeToRankings: (playDateId: string, callback: (payload: any) => void) => {
-    logger.info('Subscribing to rankings', {
-      component: 'supabase',
-      action: 'subscribeToRankings',
+  subscribeToRankings: (
+    playDateId: string,
+    callback: (payload: any) => void
+  ) => {
+    logger.info("Subscribing to rankings", {
+      component: "supabase",
+      action: "subscribeToRankings",
       playDateId,
     });
 
     const enhancedCallback = (payload: any) => {
-      logger.debug('Rankings update received', {
-        component: 'supabase',
-        action: 'rankingsUpdate',
+      logger.debug("Rankings update received", {
+        component: "supabase",
+        action: "rankingsUpdate",
         playDateId,
-        metadata: { 
+        metadata: {
           event: payload.eventType,
           playerId: payload.new?.player_id || payload.old?.player_id,
         },
@@ -386,8 +441,9 @@ export const realtime = {
 
       // Record latency if we have timing info
       if (payload.commit_timestamp) {
-        const latency = Date.now() - new Date(payload.commit_timestamp).getTime();
-        monitor.recordLatency(latency, { component: 'supabase', playDateId });
+        const latency =
+          Date.now() - new Date(payload.commit_timestamp).getTime();
+        monitor.recordLatency(latency, { component: "supabase", playDateId });
       }
 
       callback(payload);
@@ -396,11 +452,11 @@ export const realtime = {
     return supabase
       .channel(`rankings:${playDateId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'match_results',
+          event: "*",
+          schema: "public",
+          table: "match_results",
           filter: `play_date_id=eq.${playDateId}`,
         },
         enhancedCallback
@@ -409,9 +465,9 @@ export const realtime = {
   },
 
   unsubscribe: (channel: any) => {
-    logger.info('Unsubscribing from channel', {
-      component: 'supabase',
-      action: 'unsubscribe',
+    logger.info("Unsubscribing from channel", {
+      component: "supabase",
+      action: "unsubscribe",
       metadata: { channelTopic: channel?.topic },
     });
     return supabase.removeChannel(channel);

@@ -1,9 +1,9 @@
-import React from 'react';
-import { Users } from 'lucide-react';
-import { Badge } from '../common';
-import { MatchCard } from './MatchCard';
-import type { RoundWithScores } from '../../hooks/useSchedule';
-import type { Court } from '../../types/database';
+import React from "react";
+import { Users } from "lucide-react";
+import { Badge } from "../common";
+import { MatchCard } from "./MatchCard";
+import type { RoundWithScores } from "../../hooks/useSchedule";
+import type { Court } from "../../types/database";
 
 interface RoundViewProps {
   round: RoundWithScores;
@@ -16,19 +16,22 @@ export function RoundView({
   round,
   playDateId,
   isCurrentRound,
-  courts = []
+  courts = [],
 }: RoundViewProps) {
   // Group matches by court
-  const matchesByCourt = round.matches.reduce((acc, match) => {
-    const court = match.court || 0;
-    if (!acc[court]) acc[court] = [];
-    acc[court].push(match);
-    return acc;
-  }, {} as Record<number, typeof round.matches>);
+  const matchesByCourt = round.matches.reduce(
+    (acc, match) => {
+      const court = match.court || 0;
+      if (!acc[court]) acc[court] = [];
+      acc[court].push(match);
+      return acc;
+    },
+    {} as Record<number, typeof round.matches>
+  );
 
   // Get court name
   const getCourtName = (courtNumber: number) => {
-    const court = courts.find(c => c.number === courtNumber);
+    const court = courts.find((c) => c.number === courtNumber);
     return court?.name || `Court ${courtNumber}`;
   };
 
@@ -41,7 +44,8 @@ export function RoundView({
           <div>
             <p className="font-medium">Bye Round</p>
             <p className="text-sm text-muted-foreground">
-              {round.byePartnership.player1.name} & {round.byePartnership.player2.name} sit out this round
+              {round.byePartnership.player1.name} &{" "}
+              {round.byePartnership.player2.name} sit out this round
             </p>
           </div>
         </div>
@@ -60,7 +64,7 @@ export function RoundView({
               </Badge>
             )}
           </div>
-          
+
           <div className="grid gap-3 md:grid-cols-1 lg:grid-cols-2">
             {courtMatches.map((match) => (
               <MatchCard

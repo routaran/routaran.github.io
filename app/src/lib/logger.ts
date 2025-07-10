@@ -4,7 +4,7 @@
  * and error tracking capabilities.
  */
 
-export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+export type LogLevel = "error" | "warn" | "info" | "debug";
 
 export interface LogContext {
   userId?: string;
@@ -30,7 +30,7 @@ export interface LogEntry {
 export interface PerformanceMetric {
   name: string;
   value: number;
-  unit: 'ms' | 'bytes' | 'count';
+  unit: "ms" | "bytes" | "count";
   timestamp: string;
   context?: LogContext;
 }
@@ -55,7 +55,7 @@ class Logger {
 
   constructor(config: Partial<LoggerConfig> = {}) {
     this.config = {
-      level: this.isProduction ? 'warn' : 'debug',
+      level: this.isProduction ? "warn" : "debug",
       enableConsole: !this.isProduction,
       enableStorage: true,
       enableRemoteLogging: this.isProduction,
@@ -80,10 +80,10 @@ class Logger {
    */
   private initializeErrorHandling(): void {
     // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
-      this.error('Unhandled promise rejection', {
-        component: 'global',
-        action: 'unhandledrejection',
+    window.addEventListener("unhandledrejection", (event) => {
+      this.error("Unhandled promise rejection", {
+        component: "global",
+        action: "unhandledrejection",
         metadata: {
           reason: event.reason,
           stack: event.reason?.stack,
@@ -92,17 +92,21 @@ class Logger {
     });
 
     // Handle uncaught errors
-    window.addEventListener('error', (event) => {
-      this.error('Uncaught error', {
-        component: 'global',
-        action: 'uncaughterror',
-        metadata: {
-          message: event.message,
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
+    window.addEventListener("error", (event) => {
+      this.error(
+        "Uncaught error",
+        {
+          component: "global",
+          action: "uncaughterror",
+          metadata: {
+            message: event.message,
+            filename: event.filename,
+            lineno: event.lineno,
+            colno: event.colno,
+          },
         },
-      }, event.error);
+        event.error
+      );
     });
   }
 
@@ -110,7 +114,7 @@ class Logger {
    * Check if a log level should be processed
    */
   private shouldLog(level: LogLevel): boolean {
-    const levels: LogLevel[] = ['error', 'warn', 'info', 'debug'];
+    const levels: LogLevel[] = ["error", "warn", "info", "debug"];
     const configIndex = levels.indexOf(this.config.level);
     const messageIndex = levels.indexOf(level);
     return messageIndex <= configIndex;
@@ -157,7 +161,7 @@ class Logger {
     }
 
     // Remote logging (errors only for performance)
-    if (this.config.enableRemoteLogging && entry.level === 'error') {
+    if (this.config.enableRemoteLogging && entry.level === "error") {
       this.logToRemote(entry);
     }
   }
@@ -168,7 +172,7 @@ class Logger {
   private logToConsole(entry: LogEntry): void {
     const style = this.getConsoleStyle(entry.level);
     const prefix = `[${entry.timestamp}][${entry.level.toUpperCase()}]`;
-    
+
     if (entry.error) {
       console.groupCollapsed(`${prefix} ${entry.message}`);
       console.error(entry.error);
@@ -178,7 +182,7 @@ class Logger {
       console.groupEnd();
     } else {
       const logFn = this.getConsoleMethod(entry.level);
-      logFn(`%c${prefix} ${entry.message}`, style, entry.context || '');
+      logFn(`%c${prefix} ${entry.message}`, style, entry.context || "");
     }
   }
 
@@ -187,10 +191,10 @@ class Logger {
    */
   private getConsoleStyle(level: LogLevel): string {
     const styles = {
-      error: 'color: #ff6b6b; font-weight: bold;',
-      warn: 'color: #ffa726; font-weight: bold;',
-      info: 'color: #42a5f5; font-weight: bold;',
-      debug: 'color: #66bb6a; font-weight: normal;',
+      error: "color: #ff6b6b; font-weight: bold;",
+      warn: "color: #ffa726; font-weight: bold;",
+      info: "color: #42a5f5; font-weight: bold;",
+      debug: "color: #66bb6a; font-weight: normal;",
     };
     return styles[level];
   }
@@ -200,13 +204,13 @@ class Logger {
    */
   private getConsoleMethod(level: LogLevel): (...args: any[]) => void {
     switch (level) {
-      case 'error':
+      case "error":
         return console.error;
-      case 'warn':
+      case "warn":
         return console.warn;
-      case 'info':
+      case "info":
         return console.info;
-      case 'debug':
+      case "debug":
         return console.debug;
       default:
         return console.log;
@@ -218,14 +222,14 @@ class Logger {
    */
   private logToStorage(entry: LogEntry): void {
     this.storage.push(entry);
-    
+
     // Keep only the most recent entries
     if (this.storage.length > this.config.maxStorageEntries) {
       this.storage = this.storage.slice(-this.config.maxStorageEntries);
     }
 
     // Store error entries separately for quick access
-    if (entry.level === 'error') {
+    if (entry.level === "error") {
       this.errorBuffer.push(entry);
       if (this.errorBuffer.length > 100) {
         this.errorBuffer = this.errorBuffer.slice(-100);
@@ -234,7 +238,10 @@ class Logger {
 
     // Persist to localStorage for debugging
     try {
-      localStorage.setItem('pickleball-logs', JSON.stringify(this.storage.slice(-100)));
+      localStorage.setItem(
+        "pickleball-logs",
+        JSON.stringify(this.storage.slice(-100))
+      );
     } catch (_e) {
       // Ignore localStorage errors
     }
@@ -248,7 +255,7 @@ class Logger {
     // For now, we'll just queue it for potential future use
     if (this.config.remoteEndpoint) {
       // Could integrate with services like Sentry, LogRocket, etc.
-      console.debug('Would send to remote:', entry);
+      console.debug("Would send to remote:", entry);
     }
   }
 
@@ -256,7 +263,7 @@ class Logger {
    * Log an error message
    */
   error(message: string, context?: LogContext, error?: Error): void {
-    const entry = this.createLogEntry('error', message, context, error);
+    const entry = this.createLogEntry("error", message, context, error);
     this.processLogEntry(entry);
   }
 
@@ -264,7 +271,7 @@ class Logger {
    * Log a warning message
    */
   warn(message: string, context?: LogContext): void {
-    const entry = this.createLogEntry('warn', message, context);
+    const entry = this.createLogEntry("warn", message, context);
     this.processLogEntry(entry);
   }
 
@@ -272,7 +279,7 @@ class Logger {
    * Log an info message
    */
   info(message: string, context?: LogContext): void {
-    const entry = this.createLogEntry('info', message, context);
+    const entry = this.createLogEntry("info", message, context);
     this.processLogEntry(entry);
   }
 
@@ -280,14 +287,19 @@ class Logger {
    * Log a debug message
    */
   debug(message: string, context?: LogContext): void {
-    const entry = this.createLogEntry('debug', message, context);
+    const entry = this.createLogEntry("debug", message, context);
     this.processLogEntry(entry);
   }
 
   /**
    * Log a performance metric
    */
-  performance(name: string, value: number, unit: 'ms' | 'bytes' | 'count' = 'ms', context?: LogContext): void {
+  performance(
+    name: string,
+    value: number,
+    unit: "ms" | "bytes" | "count" = "ms",
+    context?: LogContext
+  ): void {
     const metric: PerformanceMetric = {
       name,
       value,
@@ -302,10 +314,10 @@ class Logger {
     this.performanceMetrics.push(metric);
 
     // Log slow operations
-    if (unit === 'ms' && value > this.config.performanceThreshold) {
+    if (unit === "ms" && value > this.config.performanceThreshold) {
       this.warn(`Slow operation detected: ${name} took ${value}ms`, {
-        component: 'performance',
-        action: 'slow_operation',
+        component: "performance",
+        action: "slow_operation",
         metadata: { metric },
       });
     }
@@ -319,31 +331,39 @@ class Logger {
   /**
    * Time a function execution
    */
-  async time<T>(name: string, fn: () => Promise<T>, context?: LogContext): Promise<T> {
+  async time<T>(
+    name: string,
+    fn: () => Promise<T>,
+    context?: LogContext
+  ): Promise<T> {
     const startTime = performance.now();
     const startMessage = `Starting ${name}`;
-    
-    this.debug(startMessage, { ...context, action: 'start' });
+
+    this.debug(startMessage, { ...context, action: "start" });
 
     try {
       const result = await fn();
       const duration = performance.now() - startTime;
-      
-      this.performance(name, duration, 'ms', context);
+
+      this.performance(name, duration, "ms", context);
       this.debug(`Completed ${name} in ${duration.toFixed(2)}ms`, {
         ...context,
-        action: 'complete',
+        action: "complete",
         metadata: { duration },
       });
-      
+
       return result;
     } catch (error) {
       const duration = performance.now() - startTime;
-      this.error(`Failed ${name} after ${duration.toFixed(2)}ms`, {
-        ...context,
-        action: 'error',
-        metadata: { duration },
-      }, error as Error);
+      this.error(
+        `Failed ${name} after ${duration.toFixed(2)}ms`,
+        {
+          ...context,
+          action: "error",
+          metadata: { duration },
+        },
+        error as Error
+      );
       throw error;
     }
   }
@@ -354,28 +374,32 @@ class Logger {
   timeSync<T>(name: string, fn: () => T, context?: LogContext): T {
     const startTime = performance.now();
     const startMessage = `Starting ${name}`;
-    
-    this.debug(startMessage, { ...context, action: 'start' });
+
+    this.debug(startMessage, { ...context, action: "start" });
 
     try {
       const result = fn();
       const duration = performance.now() - startTime;
-      
-      this.performance(name, duration, 'ms', context);
+
+      this.performance(name, duration, "ms", context);
       this.debug(`Completed ${name} in ${duration.toFixed(2)}ms`, {
         ...context,
-        action: 'complete',
+        action: "complete",
         metadata: { duration },
       });
-      
+
       return result;
     } catch (error) {
       const duration = performance.now() - startTime;
-      this.error(`Failed ${name} after ${duration.toFixed(2)}ms`, {
-        ...context,
-        action: 'error',
-        metadata: { duration },
-      }, error as Error);
+      this.error(
+        `Failed ${name} after ${duration.toFixed(2)}ms`,
+        {
+          ...context,
+          action: "error",
+          metadata: { duration },
+        },
+        error as Error
+      );
       throw error;
     }
   }
@@ -408,20 +432,24 @@ class Logger {
     this.storage = [];
     this.errorBuffer = [];
     this.performanceMetrics = [];
-    localStorage.removeItem('pickleball-logs');
+    localStorage.removeItem("pickleball-logs");
   }
 
   /**
    * Export logs for debugging
    */
   exportLogs(): string {
-    return JSON.stringify({
-      sessionId: this.sessionId,
-      timestamp: new Date().toISOString(),
-      logs: this.storage,
-      errors: this.errorBuffer,
-      performance: this.performanceMetrics,
-    }, null, 2);
+    return JSON.stringify(
+      {
+        sessionId: this.sessionId,
+        timestamp: new Date().toISOString(),
+        logs: this.storage,
+        errors: this.errorBuffer,
+        performance: this.performanceMetrics,
+      },
+      null,
+      2
+    );
   }
 
   /**

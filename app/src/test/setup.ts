@@ -1,8 +1,8 @@
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // Mock supabase module
-vi.mock('../lib/supabase', () => {
+vi.mock("../lib/supabase", () => {
   const mockChain = {
     select: vi.fn(() => mockChain),
     insert: vi.fn(() => mockChain),
@@ -24,7 +24,9 @@ vi.mock('../lib/supabase', () => {
     limit: vi.fn(() => mockChain),
     single: vi.fn(() => Promise.resolve({ data: null, error: null })),
     maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
-    then: vi.fn((callback) => Promise.resolve({ data: [], error: null }).then(callback)),
+    then: vi.fn((callback) =>
+      Promise.resolve({ data: [], error: null }).then(callback)
+    ),
     catch: vi.fn(),
   };
 
@@ -41,33 +43,33 @@ vi.mock('../lib/supabase', () => {
       channel: vi.fn(),
       removeChannel: vi.fn(),
     },
-  auth: {
-    signIn: vi.fn(),
-    signOut: vi.fn(),
-    getSession: vi.fn(),
-    getUser: vi.fn(),
-    onAuthStateChange: vi.fn(),
-  },
-  db: {
-    getPlayDates: vi.fn(),
-    getPlayDate: vi.fn(),
-    getPlayers: vi.fn(),
-    getMatches: vi.fn(),
-    updateMatchScore: vi.fn(),
-    updateMatchScoreWithValidation: vi.fn(),
-    getRankings: vi.fn(),
-    from: vi.fn(),
-  },
-  realtime: {
-    subscribeToMatches: vi.fn(),
-    subscribeToRankings: vi.fn(),
-    unsubscribe: vi.fn(),
-  },
+    auth: {
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      getSession: vi.fn(),
+      getUser: vi.fn(),
+      onAuthStateChange: vi.fn(),
+    },
+    db: {
+      getPlayDates: vi.fn(),
+      getPlayDate: vi.fn(),
+      getPlayers: vi.fn(),
+      getMatches: vi.fn(),
+      updateMatchScore: vi.fn(),
+      updateMatchScoreWithValidation: vi.fn(),
+      getRankings: vi.fn(),
+      from: vi.fn(),
+    },
+    realtime: {
+      subscribeToMatches: vi.fn(),
+      subscribeToRankings: vi.fn(),
+      unsubscribe: vi.fn(),
+    },
   };
 });
 
 // Mock logger module
-vi.mock('../lib/logger', () => ({
+vi.mock("../lib/logger", () => ({
   logger: {
     info: vi.fn(),
     warn: vi.fn(),
@@ -87,14 +89,14 @@ vi.mock('../lib/logger', () => ({
 }));
 
 // Mock monitoring module
-vi.mock('../lib/monitoring', () => ({
+vi.mock("../lib/monitoring", () => ({
   monitor: {
     updateConnectionStatus: vi.fn(),
     recordLatency: vi.fn(),
     recordError: vi.fn(),
     recordMetric: vi.fn(),
     getMonitoringSummary: vi.fn(() => ({
-      currentConnectionStatus: 'disconnected',
+      currentConnectionStatus: "disconnected",
       averageLatency: 0,
       errorCount: 0,
     })),
@@ -106,24 +108,40 @@ vi.mock('../lib/monitoring', () => ({
 }));
 
 // Mock supabase scores module
-vi.mock('../lib/supabase/scores', () => ({
+vi.mock("../lib/supabase/scores", () => ({
   updateMatchScore: vi.fn(),
   canUpdateMatchScore: vi.fn(() => Promise.resolve({ canUpdate: true })),
-  validateScoreUpdate: vi.fn(() => ({ isValid: true, errors: [], warnings: [] })),
+  validateScoreUpdate: vi.fn(() => ({
+    isValid: true,
+    errors: [],
+    warnings: [],
+  })),
 }));
 
 // Mock score validation module
-vi.mock('../lib/validation/scoreValidation', () => ({
-  validateMatchScore: vi.fn(() => ({ isValid: true, errors: [], warnings: [] })),
+vi.mock("../lib/validation/scoreValidation", () => ({
+  validateMatchScore: vi.fn(() => ({
+    isValid: true,
+    errors: [],
+    warnings: [],
+  })),
   validateScoreValue: vi.fn(() => ({ isValid: true, error: null })),
-  validateWinCondition: vi.fn(() => ({ isValid: true, errors: [], warnings: [] })),
-  determineWinner: vi.fn((score1: number, score2: number) => score1 > score2 ? 1 : score2 > score1 ? 2 : null),
+  validateWinCondition: vi.fn(() => ({
+    isValid: true,
+    errors: [],
+    warnings: [],
+  })),
+  determineWinner: vi.fn((score1: number, score2: number) =>
+    score1 > score2 ? 1 : score2 > score1 ? 2 : null
+  ),
   isMatchComplete: vi.fn(() => true),
   getCommonScores: vi.fn(() => [11, 15, 21]),
-  formatScore: vi.fn((score: number | null) => score?.toString() || '-'),
-  parseScore: vi.fn((score: string) => score === '-' ? null : parseInt(score, 10)),
+  formatScore: vi.fn((score: number | null) => score?.toString() || "-"),
+  parseScore: vi.fn((score: string) =>
+    score === "-" ? null : parseInt(score, 10)
+  ),
   DEFAULT_SCORE_CONFIG: {
-    winCondition: 'first-to-target',
+    winCondition: "first-to-target",
     targetScore: 15,
     minWinDifference: 2,
     MIN_SCORE: 0,
@@ -134,7 +152,7 @@ vi.mock('../lib/validation/scoreValidation', () => ({
 }));
 
 // Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,
@@ -176,12 +194,12 @@ const localStorageMock = {
   key: vi.fn(),
 };
 
-Object.defineProperty(window, 'localStorage', {
+Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
 });
 
 // Mock sessionStorage
-Object.defineProperty(window, 'sessionStorage', {
+Object.defineProperty(window, "sessionStorage", {
   value: localStorageMock,
 });
 
@@ -189,13 +207,13 @@ Object.defineProperty(window, 'sessionStorage', {
 global.fetch = vi.fn();
 
 // Clean up after each test
-if (typeof beforeEach !== 'undefined') {
+if (typeof beforeEach !== "undefined") {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 }
 
-if (typeof afterEach !== 'undefined') {
+if (typeof afterEach !== "undefined") {
   afterEach(() => {
     vi.clearAllMocks();
   });

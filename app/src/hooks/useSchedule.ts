@@ -1,9 +1,12 @@
-import { useState, useEffect, useMemo } from 'react';
-import { generateRoundRobinSchedule } from '../lib/algorithms/scheduling';
-import { db, realtime, supabase } from '../lib/supabase';
-import { logger } from '../lib/logger';
-import type { Round, Match as ScheduleMatch } from '../lib/algorithms/scheduling';
-import type { Match, Partnership, Player, Court } from '../types/database';
+import { useState, useEffect, useMemo } from "react";
+import { generateRoundRobinSchedule } from "../lib/algorithms/scheduling";
+import { db, realtime, supabase } from "../lib/supabase";
+import { logger } from "../lib/logger";
+import type {
+  Round,
+  Match as ScheduleMatch,
+} from "../lib/algorithms/scheduling";
+import type { Match, Partnership, Player, Court } from "../types/database";
 
 // Extended match type that includes both scheduling and database properties
 export type ScheduleMatchWithScores = ScheduleMatch & {
@@ -13,7 +16,7 @@ export type ScheduleMatchWithScores = ScheduleMatch & {
 };
 
 // Extended round type with score-aware matches
-export type RoundWithScores = Omit<Round, 'matches'> & {
+export type RoundWithScores = Omit<Round, "matches"> & {
   matches: ScheduleMatchWithScores[];
 };
 
@@ -38,9 +41,9 @@ export function useSchedule(playDateId: string): UseScheduleResult {
       setIsLoading(true);
       setError(null);
 
-      logger.info('Fetching schedule data', {
-        component: 'useSchedule',
-        action: 'fetchSchedule',
+      logger.info("Fetching schedule data", {
+        component: "useSchedule",
+        action: "fetchSchedule",
         playDateId,
       });
 
@@ -48,10 +51,11 @@ export function useSchedule(playDateId: string): UseScheduleResult {
       const [playDateData, matchesData, courtsData] = await Promise.all([
         db.getPlayDate(playDateId),
         db.getMatches(playDateId),
-        supabase.from('courts')
-          .select('*')
-          .eq('play_date_id', playDateId)
-          .order('number')
+        supabase
+          .from("courts")
+          .select("*")
+          .eq("play_date_id", playDateId)
+          .order("number"),
       ]);
 
       if (courtsData.error) {
@@ -68,42 +72,47 @@ export function useSchedule(playDateId: string): UseScheduleResult {
       const partnershipsWithPlayers = partnerships.map((p: Partnership) => {
         const player1 = players.find((pl: Player) => pl.id === p.player1_id);
         const player2 = players.find((pl: Player) => pl.id === p.player2_id);
-        
+
         return {
           id: p.id,
-          player1: player1 || { id: p.player1_id, name: 'Unknown' },
-          player2: player2 || { id: p.player2_id, name: 'Unknown' },
+          player1: player1 || { id: p.player1_id, name: "Unknown" },
+          player2: player2 || { id: p.player2_id, name: "Unknown" },
         };
       });
 
       // Generate the round-robin schedule
-      const generatedRounds = generateRoundRobinSchedule(partnershipsWithPlayers);
+      const generatedRounds = generateRoundRobinSchedule(
+        partnershipsWithPlayers
+      );
 
       // Merge with actual match data from database
-      const mergedRounds: RoundWithScores[] = generatedRounds.map(round => {
-        const updatedMatches: ScheduleMatchWithScores[] = round.matches.map(scheduleMatch => {
-          // Find corresponding database match
-          const dbMatch = matchesData.find((m: Match) =>
-            (m.partnership1_id === scheduleMatch.partnership1.id &&
-             m.partnership2_id === scheduleMatch.partnership2.id) ||
-            (m.partnership1_id === scheduleMatch.partnership2.id &&
-             m.partnership2_id === scheduleMatch.partnership1.id)
-          );
+      const mergedRounds: RoundWithScores[] = generatedRounds.map((round) => {
+        const updatedMatches: ScheduleMatchWithScores[] = round.matches.map(
+          (scheduleMatch) => {
+            // Find corresponding database match
+            const dbMatch = matchesData.find(
+              (m: Match) =>
+                (m.partnership1_id === scheduleMatch.partnership1.id &&
+                  m.partnership2_id === scheduleMatch.partnership2.id) ||
+                (m.partnership1_id === scheduleMatch.partnership2.id &&
+                  m.partnership2_id === scheduleMatch.partnership1.id)
+            );
 
-          if (dbMatch) {
-            // Merge database data with schedule data
-            return {
-              ...scheduleMatch,
-              id: dbMatch.id,
-              team1_score: dbMatch.team1_score,
-              team2_score: dbMatch.team2_score,
-              court: dbMatch.court_number,
-              version: dbMatch.version,
-            };
+            if (dbMatch) {
+              // Merge database data with schedule data
+              return {
+                ...scheduleMatch,
+                id: dbMatch.id,
+                team1_score: dbMatch.team1_score,
+                team2_score: dbMatch.team2_score,
+                court: dbMatch.court_number,
+                version: dbMatch.version,
+              };
+            }
+
+            return scheduleMatch;
           }
-
-          return scheduleMatch;
-        });
+        );
 
         return {
           ...round,
@@ -113,9 +122,9 @@ export function useSchedule(playDateId: string): UseScheduleResult {
 
       setRounds(mergedRounds);
 
-      logger.info('Schedule data fetched successfully', {
-        component: 'useSchedule',
-        action: 'fetchSchedule',
+      logger.info("Schedule data fetched successfully", {
+        component: "useSchedule",
+        action: "fetchSchedule",
         playDateId,
         metadata: {
           roundCount: mergedRounds.length,
@@ -125,11 +134,15 @@ export function useSchedule(playDateId: string): UseScheduleResult {
       });
     } catch (err) {
       const error = err as Error;
-      logger.error('Failed to fetch schedule', {
-        component: 'useSchedule',
-        action: 'fetchSchedule',
-        playDateId,
-      }, error);
+      logger.error(
+        "Failed to fetch schedule",
+        {
+          component: "useSchedule",
+          action: "fetchSchedule",
+          playDateId,
+        },
+        error
+      );
       setError(error);
     } finally {
       setIsLoading(false);
@@ -143,9 +156,9 @@ export function useSchedule(playDateId: string): UseScheduleResult {
     // Find the first round with incomplete matches
     for (const round of rounds) {
       const hasIncompleteMatch = round.matches.some(
-        match => match.team1_score === null || match.team2_score === null
+        (match) => match.team1_score === null || match.team2_score === null
       );
-      
+
       if (hasIncompleteMatch) {
         return round.number;
       }
@@ -163,9 +176,9 @@ export function useSchedule(playDateId: string): UseScheduleResult {
     const matchSubscription = realtime.subscribeToMatches(
       playDateId,
       (payload) => {
-        logger.debug('Match update received in schedule', {
-          component: 'useSchedule',
-          action: 'realtimeUpdate',
+        logger.debug("Match update received in schedule", {
+          component: "useSchedule",
+          action: "realtimeUpdate",
           playDateId,
           metadata: { event: payload.eventType },
         });

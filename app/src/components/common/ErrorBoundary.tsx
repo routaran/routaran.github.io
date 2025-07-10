@@ -1,7 +1,7 @@
-import { Component } from 'react';
-import type { ErrorInfo, ReactNode } from 'react';
-import { logger } from '../../lib/logger';
-import { monitor } from '../../lib/monitoring';
+import { Component } from "react";
+import type { ErrorInfo, ReactNode } from "react";
+import { logger } from "../../lib/logger";
+import { monitor } from "../../lib/monitoring";
 
 interface Props {
   children?: ReactNode;
@@ -26,24 +26,28 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
-    
+    console.error("Uncaught error:", error, errorInfo);
+
     // Log the error with our logging system
-    logger.error('React Error Boundary caught an error', {
-      component: 'ErrorBoundary',
-      action: 'componentDidCatch',
-      metadata: {
-        errorId: this.state.errorId,
-        errorName: error.name,
-        errorMessage: error.message,
-        componentStack: errorInfo.componentStack,
-        errorBoundary: true,
+    logger.error(
+      "React Error Boundary caught an error",
+      {
+        component: "ErrorBoundary",
+        action: "componentDidCatch",
+        metadata: {
+          errorId: this.state.errorId,
+          errorName: error.name,
+          errorMessage: error.message,
+          componentStack: errorInfo.componentStack,
+          errorBoundary: true,
+        },
       },
-    }, error);
+      error
+    );
 
     // Record error in monitoring system
     monitor.recordError(error, {
-      component: 'ErrorBoundary',
+      component: "ErrorBoundary",
       metadata: {
         errorId: this.state.errorId,
         componentStack: errorInfo.componentStack,
@@ -74,13 +78,14 @@ export class ErrorBoundary extends Component<Props, State> {
                 />
               </svg>
             </div>
-            
+
             <div className="mt-4 text-center">
               <h1 className="text-lg font-semibold text-gray-900">
                 Something went wrong
               </h1>
               <p className="mt-2 text-sm text-gray-600">
-                We're sorry, but something unexpected happened. Please try refreshing the page.
+                We're sorry, but something unexpected happened. Please try
+                refreshing the page.
               </p>
               {this.state.errorId && (
                 <p className="mt-1 text-xs text-gray-500">
@@ -89,7 +94,7 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
             </div>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mt-4 text-xs">
                 <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
                   Error Details (Development)
@@ -104,9 +109,9 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="mt-6 flex space-x-3">
               <button
                 onClick={() => {
-                  logger.info('User clicked refresh after error', {
-                    component: 'ErrorBoundary',
-                    action: 'refresh',
+                  logger.info("User clicked refresh after error", {
+                    component: "ErrorBoundary",
+                    action: "refresh",
                     metadata: { errorId: this.state.errorId },
                   });
                   window.location.reload();
@@ -117,12 +122,12 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => {
-                  logger.info('User clicked go home after error', {
-                    component: 'ErrorBoundary',
-                    action: 'goHome',
+                  logger.info("User clicked go home after error", {
+                    component: "ErrorBoundary",
+                    action: "goHome",
                     metadata: { errorId: this.state.errorId },
                   });
-                  window.location.href = '/';
+                  window.location.href = "/";
                 }}
                 className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md text-sm font-medium transition-colors"
               >

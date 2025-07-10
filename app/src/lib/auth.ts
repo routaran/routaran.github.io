@@ -1,6 +1,6 @@
-import { supabase } from './supabase';
-import { logger } from './logger';
-import type { Player } from '../types/database';
+import { supabase } from "./supabase";
+import { logger } from "./logger";
+import type { Player } from "../types/database";
 
 /**
  * Auth service for managing authentication and player claims
@@ -83,20 +83,20 @@ export const authService = {
    */
   async getPlayerByUserId(userId: string): Promise<Player | null> {
     try {
-      logger.debug('Fetching player by user ID', {
-        component: 'authService',
-        action: 'getPlayerByUserId',
+      logger.debug("Fetching player by user ID", {
+        component: "authService",
+        action: "getPlayerByUserId",
         userId,
       });
 
       const { data, error } = await supabase
-        .from('players')
-        .select('*')
-        .eq('claim_user_id', userId)
+        .from("players")
+        .select("*")
+        .eq("claim_user_id", userId)
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') {
+        if (error.code === "PGRST116") {
           // No rows found
           return null;
         }
@@ -105,11 +105,15 @@ export const authService = {
 
       return data;
     } catch (error) {
-      logger.error('Failed to get player by user ID', {
-        component: 'authService',
-        action: 'getPlayerByUserId',
-        userId,
-      }, error as Error);
+      logger.error(
+        "Failed to get player by user ID",
+        {
+          component: "authService",
+          action: "getPlayerByUserId",
+          userId,
+        },
+        error as Error
+      );
       throw error;
     }
   },
@@ -119,31 +123,35 @@ export const authService = {
    */
   async getUnclaimedPlayers(): Promise<Player[]> {
     try {
-      logger.debug('Fetching unclaimed players', {
-        component: 'authService',
-        action: 'getUnclaimedPlayers',
+      logger.debug("Fetching unclaimed players", {
+        component: "authService",
+        action: "getUnclaimedPlayers",
       });
 
       const { data, error } = await supabase
-        .from('players')
-        .select('*')
-        .is('claim_user_id', null)
-        .order('name');
+        .from("players")
+        .select("*")
+        .is("claim_user_id", null)
+        .order("name");
 
       if (error) throw error;
 
-      logger.info('Fetched unclaimed players', {
-        component: 'authService',
-        action: 'getUnclaimedPlayers',
+      logger.info("Fetched unclaimed players", {
+        component: "authService",
+        action: "getUnclaimedPlayers",
         metadata: { count: data.length },
       });
 
       return data;
     } catch (error) {
-      logger.error('Failed to get unclaimed players', {
-        component: 'authService',
-        action: 'getUnclaimedPlayers',
-      }, error as Error);
+      logger.error(
+        "Failed to get unclaimed players",
+        {
+          component: "authService",
+          action: "getUnclaimedPlayers",
+        },
+        error as Error
+      );
       throw error;
     }
   },
@@ -169,9 +177,9 @@ export const authService = {
    */
   async handleAuthCallback(): Promise<{ error: Error | null }> {
     try {
-      logger.info('Handling auth callback', {
-        component: 'authService',
-        action: 'handleAuthCallback',
+      logger.info("Handling auth callback", {
+        component: "authService",
+        action: "handleAuthCallback",
       });
 
       // Get the session from the URL
@@ -180,21 +188,25 @@ export const authService = {
       if (error) throw error;
 
       if (!data.session) {
-        throw new Error('No session found in callback');
+        throw new Error("No session found in callback");
       }
 
-      logger.info('Auth callback handled successfully', {
-        component: 'authService',
-        action: 'handleAuthCallback',
+      logger.info("Auth callback handled successfully", {
+        component: "authService",
+        action: "handleAuthCallback",
         userId: data.session.user.id,
       });
 
       return { error: null };
     } catch (error) {
-      logger.error('Failed to handle auth callback', {
-        component: 'authService',
-        action: 'handleAuthCallback',
-      }, error as Error);
+      logger.error(
+        "Failed to handle auth callback",
+        {
+          component: "authService",
+          action: "handleAuthCallback",
+        },
+        error as Error
+      );
       return { error: error as Error };
     }
   },
@@ -202,53 +214,60 @@ export const authService = {
   /**
    * Check if user has required permissions
    */
-  async checkPermissions(action: 'create_play_date' | 'manage_play_date' | 'update_score', context?: {
-    playDateId?: string;
-    matchId?: string;
-  }): Promise<boolean> {
+  async checkPermissions(
+    action: "create_play_date" | "manage_play_date" | "update_score",
+    context?: {
+      playDateId?: string;
+      matchId?: string;
+    }
+  ): Promise<boolean> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return false;
 
       const player = await this.getPlayerByUserId(user.id);
       if (!player) return false;
 
       switch (action) {
-        case 'create_play_date':
+        case "create_play_date":
           // Only project owners and organizers can create play dates
           return player.project_owner === true;
 
-        case 'manage_play_date':
+        case "manage_play_date":
           // Project owners can manage any play date
           if (player.project_owner) return true;
-          
+
           // Organizers can only manage their own play dates
           if (context?.playDateId) {
             const { data } = await supabase
-              .from('play_dates')
-              .select('created_by')
-              .eq('id', context.playDateId)
+              .from("play_dates")
+              .select("created_by")
+              .eq("id", context.playDateId)
               .single();
-            
+
             return data?.created_by === user.id;
           }
           return false;
 
-        case 'update_score':
+        case "update_score":
           // Project owners can update any score
           if (player.project_owner) return true;
-          
+
           // Players can only update scores for matches they're in
           if (context?.matchId) {
             const { data } = await supabase
-              .from('matches')
-              .select(`
+              .from("matches")
+              .select(
+                `
                 partnership1:partnerships!partnership1_id (player1_id, player2_id),
                 partnership2:partnerships!partnership2_id (player1_id, player2_id)
-              `)
-              .eq('id', context.matchId)
+              `
+              )
+              .eq("id", context.matchId)
               .single();
-            
+
             if (data) {
               const playerIds = [
                 data.partnership1.player1_id,
@@ -265,11 +284,15 @@ export const authService = {
           return false;
       }
     } catch (error) {
-      logger.error('Failed to check permissions', {
-        component: 'authService',
-        action: 'checkPermissions',
-        metadata: { action, context },
-      }, error as Error);
+      logger.error(
+        "Failed to check permissions",
+        {
+          component: "authService",
+          action: "checkPermissions",
+          metadata: { action, context },
+        },
+        error as Error
+      );
       return false;
     }
   },

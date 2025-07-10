@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Button } from '../common/Button';
-import { Select } from '../common/Form';
-import { LoadingSpinner } from '../common/LoadingSpinner';
-import { useAuth } from '../../hooks/useAuth';
-import { supabase } from '../../lib/supabase';
-import { logger } from '../../lib/logger';
-import { useToast } from '../../hooks/useToast';
-import type { Player } from '../../types/database';
+import { useState, useEffect } from "react";
+import { Button } from "../common/Button";
+import { Select } from "../common/Form";
+import { LoadingSpinner } from "../common/LoadingSpinner";
+import { useAuth } from "../../hooks/useAuth";
+import { supabase } from "../../lib/supabase";
+import { logger } from "../../lib/logger";
+import { useToast } from "../../hooks/useToast";
+import type { Player } from "../../types/database";
 
 interface PlayerClaimProps {
   onSuccess: () => void;
@@ -14,7 +14,7 @@ interface PlayerClaimProps {
 
 export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
   const [players, setPlayers] = useState<Player[]>([]);
-  const [selectedPlayerId, setSelectedPlayerId] = useState<string>('');
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [isClaiming, setIsClaiming] = useState(false);
   const { claimPlayer } = useAuth();
@@ -26,42 +26,46 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
 
   const loadUnclaimedPlayers = async () => {
     try {
-      logger.info('Loading unclaimed players', {
-        component: 'PlayerClaim',
-        action: 'loadPlayers',
+      logger.info("Loading unclaimed players", {
+        component: "PlayerClaim",
+        action: "loadPlayers",
       });
 
       // Get all players without a claim
       const { data, error } = await supabase
-        .from('players')
-        .select('*')
-        .is('claim_user_id', null)
-        .order('name');
+        .from("players")
+        .select("*")
+        .is("claim_user_id", null)
+        .order("name");
 
       if (error) throw error;
 
-      logger.info('Loaded unclaimed players', {
-        component: 'PlayerClaim',
-        action: 'loadPlayers',
+      logger.info("Loaded unclaimed players", {
+        component: "PlayerClaim",
+        action: "loadPlayers",
         metadata: { count: data?.length || 0 },
       });
 
       setPlayers(data || []);
-      
+
       // Auto-select if only one player available
       if (data && data.length === 1) {
         setSelectedPlayerId(data[0].id);
       }
     } catch (error) {
-      logger.error('Failed to load unclaimed players', {
-        component: 'PlayerClaim',
-        action: 'loadPlayers',
-      }, error as Error);
+      logger.error(
+        "Failed to load unclaimed players",
+        {
+          component: "PlayerClaim",
+          action: "loadPlayers",
+        },
+        error as Error
+      );
 
       toast({
-        title: 'Failed to load players',
-        description: 'Unable to load available players. Please try again.',
-        variant: 'destructive',
+        title: "Failed to load players",
+        description: "Unable to load available players. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -71,9 +75,9 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
   const handleClaim = async () => {
     if (!selectedPlayerId) {
       toast({
-        title: 'Select a player',
-        description: 'Please select your name from the list',
-        variant: 'destructive',
+        title: "Select a player",
+        description: "Please select your name from the list",
+        variant: "destructive",
       });
       return;
     }
@@ -81,38 +85,45 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
     setIsClaiming(true);
 
     try {
-      logger.info('Attempting to claim player', {
-        component: 'PlayerClaim',
-        action: 'claimPlayer',
+      logger.info("Attempting to claim player", {
+        component: "PlayerClaim",
+        action: "claimPlayer",
         metadata: { playerId: selectedPlayerId },
       });
 
       await claimPlayer(selectedPlayerId);
 
-      logger.info('Player claimed successfully', {
-        component: 'PlayerClaim',
-        action: 'claimPlayer',
+      logger.info("Player claimed successfully", {
+        component: "PlayerClaim",
+        action: "claimPlayer",
         metadata: { playerId: selectedPlayerId },
       });
 
       toast({
-        title: 'Welcome!',
-        description: 'Your player profile has been linked to your account.',
-        variant: 'success',
+        title: "Welcome!",
+        description: "Your player profile has been linked to your account.",
+        variant: "success",
       });
 
       onSuccess();
     } catch (error) {
-      logger.error('Failed to claim player', {
-        component: 'PlayerClaim',
-        action: 'claimPlayer',
-        metadata: { playerId: selectedPlayerId },
-      }, error as Error);
+      logger.error(
+        "Failed to claim player",
+        {
+          component: "PlayerClaim",
+          action: "claimPlayer",
+          metadata: { playerId: selectedPlayerId },
+        },
+        error as Error
+      );
 
       toast({
-        title: 'Claim failed',
-        description: error instanceof Error ? error.message : 'Unable to claim player. Please try again.',
-        variant: 'destructive',
+        title: "Claim failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Unable to claim player. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsClaiming(false);
@@ -172,7 +183,10 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="player" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label
+            htmlFor="player"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
             Your name
           </label>
           <Select
@@ -186,7 +200,7 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
             options={players.map((player) => ({
               value: player.id,
               label: player.name,
-              disabled: false
+              disabled: false,
             }))}
           />
         </div>
@@ -199,13 +213,15 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
           loading={isClaiming}
           className="w-full"
         >
-          {isClaiming ? 'Claiming...' : 'Claim player'}
+          {isClaiming ? "Claiming..." : "Claim player"}
         </Button>
 
         <div className="text-center">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Don't see your name?{' '}
-            <span className="font-medium">Contact your tournament organizer</span>
+            Don't see your name?{" "}
+            <span className="font-medium">
+              Contact your tournament organizer
+            </span>
           </p>
         </div>
       </div>

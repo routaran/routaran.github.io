@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useConnectionState } from '../../hooks/useConnectionState';
-import { useToast } from '../../hooks/useToast';
-import { cn } from '../../lib/utils';
-import { Button } from '../common/Button';
-import { Progress } from '../common/Progress';
+import React, { useState, useEffect } from "react";
+import { useConnectionState } from "../../hooks/useConnectionState";
+import { useToast } from "../../hooks/useToast";
+import { cn } from "../../lib/utils";
+import { Button } from "../common/Button";
+import { Progress } from "../common/Progress";
 
 export interface ConnectionStatusBarProps {
   /** Position of the status bar */
-  position?: 'top' | 'bottom';
+  position?: "top" | "bottom";
   /** Whether to show detailed metrics */
   showMetrics?: boolean;
   /** Whether to show connection quality */
@@ -26,7 +26,7 @@ export interface ConnectionStatusBarProps {
  * Enhanced connection status bar with metrics, quality indicators, and manual controls
  */
 export function ConnectionStatusBar({
-  position = 'top',
+  position = "top",
   showMetrics = false,
   showQuality = false,
   autoHide = true,
@@ -50,12 +50,13 @@ export function ConnectionStatusBar({
   } = useConnectionState({
     enabled: true,
     autoReconnect: true,
-    onConnectionLost: showToastNotifications ? 
-      (_metrics) => showToast('Connection lost. Attempting to reconnect...', 'warning') : 
-      undefined,
-    onConnectionRestored: showToastNotifications ? 
-      (_metrics) => showToast('Connection restored!', 'success') : 
-      undefined,
+    onConnectionLost: showToastNotifications
+      ? (_metrics) =>
+          showToast("Connection lost. Attempting to reconnect...", "warning")
+      : undefined,
+    onConnectionRestored: showToastNotifications
+      ? (_metrics) => showToast("Connection restored!", "success")
+      : undefined,
   });
 
   // Auto-hide logic
@@ -78,44 +79,44 @@ export function ConnectionStatusBar({
   // Get status configuration
   const statusConfig = {
     connecting: {
-      color: 'bg-yellow-500',
-      textColor: 'text-yellow-900',
-      bgColor: 'bg-yellow-50',
-      borderColor: 'border-yellow-200',
-      icon: '🔄',
-      message: 'Connecting to server...',
+      color: "bg-yellow-500",
+      textColor: "text-yellow-900",
+      bgColor: "bg-yellow-50",
+      borderColor: "border-yellow-200",
+      icon: "🔄",
+      message: "Connecting to server...",
     },
     connected: {
-      color: 'bg-green-500',
-      textColor: 'text-green-900',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-      icon: '✅',
-      message: 'Connected to server',
+      color: "bg-green-500",
+      textColor: "text-green-900",
+      bgColor: "bg-green-50",
+      borderColor: "border-green-200",
+      icon: "✅",
+      message: "Connected to server",
     },
     disconnected: {
-      color: 'bg-gray-500',
-      textColor: 'text-gray-900',
-      bgColor: 'bg-gray-50',
-      borderColor: 'border-gray-200',
-      icon: '❌',
-      message: 'Disconnected from server',
+      color: "bg-gray-500",
+      textColor: "text-gray-900",
+      bgColor: "bg-gray-50",
+      borderColor: "border-gray-200",
+      icon: "❌",
+      message: "Disconnected from server",
     },
     reconnecting: {
-      color: 'bg-orange-500',
-      textColor: 'text-orange-900',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200',
-      icon: '🔄',
-      message: 'Reconnecting...',
+      color: "bg-orange-500",
+      textColor: "text-orange-900",
+      bgColor: "bg-orange-50",
+      borderColor: "border-orange-200",
+      icon: "🔄",
+      message: "Reconnecting...",
     },
     error: {
-      color: 'bg-red-500',
-      textColor: 'text-red-900',
-      bgColor: 'bg-red-50',
-      borderColor: 'border-red-200',
-      icon: '⚠️',
-      message: 'Connection error',
+      color: "bg-red-500",
+      textColor: "text-red-900",
+      bgColor: "bg-red-50",
+      borderColor: "border-red-200",
+      icon: "⚠️",
+      message: "Connection error",
     },
   };
 
@@ -129,25 +130,26 @@ export function ConnectionStatusBar({
 
   // Position classes
   const positionClasses = {
-    top: 'top-0 rounded-b-lg',
-    bottom: 'bottom-0 rounded-t-lg',
+    top: "top-0 rounded-b-lg",
+    bottom: "bottom-0 rounded-t-lg",
   };
 
   return (
     <div
       className={cn(
-        'fixed left-4 right-4 z-50 transition-all duration-300',
+        "fixed left-4 right-4 z-50 transition-all duration-300",
         positionClasses[position],
-        isVisible ? 'translate-y-0 opacity-100' : 
-          position === 'top' ? '-translate-y-full opacity-0' : 'translate-y-full opacity-0',
+        isVisible
+          ? "translate-y-0 opacity-100"
+          : position === "top"
+            ? "-translate-y-full opacity-0"
+            : "translate-y-full opacity-0",
         className
       )}
     >
-      <div className={cn(
-        'border shadow-lg',
-        config.bgColor,
-        config.borderColor
-      )}>
+      <div
+        className={cn("border shadow-lg", config.bgColor, config.borderColor)}
+      >
         {/* Main status bar */}
         <div className="flex items-center justify-between p-3">
           <div className="flex items-center gap-3">
@@ -156,13 +158,14 @@ export function ConnectionStatusBar({
               <div className="relative">
                 <div
                   className={cn(
-                    'w-3 h-3 rounded-full',
+                    "w-3 h-3 rounded-full",
                     config.color,
-                    (isReconnecting || connectionState === 'connecting') && 'animate-pulse'
+                    (isReconnecting || connectionState === "connecting") &&
+                      "animate-pulse"
                   )}
                 />
               </div>
-              <span className={cn('text-sm font-medium', config.textColor)}>
+              <span className={cn("text-sm font-medium", config.textColor)}>
                 {config.message}
               </span>
             </div>
@@ -173,7 +176,9 @@ export function ConnectionStatusBar({
                 <span className="text-xs text-gray-500">Quality:</span>
                 <div className="flex items-center gap-1">
                   <Progress value={quality} className="w-16 h-2" />
-                  <span className="text-xs text-gray-600">{Math.round(quality)}%</span>
+                  <span className="text-xs text-gray-600">
+                    {Math.round(quality)}%
+                  </span>
                 </div>
               </div>
             )}
@@ -189,7 +194,7 @@ export function ConnectionStatusBar({
                 onClick={() => setShowDetails(!showDetails)}
                 className="text-xs"
               >
-                {showDetails ? 'Hide' : 'Show'} Details
+                {showDetails ? "Hide" : "Show"} Details
               </Button>
             )}
 
@@ -202,7 +207,7 @@ export function ConnectionStatusBar({
                 disabled={isReconnecting}
                 className="text-xs"
               >
-                {isReconnecting ? 'Reconnecting...' : 'Reconnect'}
+                {isReconnecting ? "Reconnecting..." : "Reconnect"}
               </Button>
             )}
 
@@ -230,11 +235,15 @@ export function ConnectionStatusBar({
               </div>
               <div>
                 <span className="text-gray-500">Successful:</span>
-                <div className="font-medium text-green-600">{metrics.successfulConnections}</div>
+                <div className="font-medium text-green-600">
+                  {metrics.successfulConnections}
+                </div>
               </div>
               <div>
                 <span className="text-gray-500">Failed:</span>
-                <div className="font-medium text-red-600">{metrics.failedConnections}</div>
+                <div className="font-medium text-red-600">
+                  {metrics.failedConnections}
+                </div>
               </div>
               <div>
                 <span className="text-gray-500">Downtime:</span>
@@ -247,23 +256,33 @@ export function ConnectionStatusBar({
             {/* Connection duration */}
             {metrics.currentConnectionDuration && (
               <div className="mt-2 text-xs text-gray-500">
-                Connected for {Math.round(metrics.currentConnectionDuration / 1000)}s
+                Connected for{" "}
+                {Math.round(metrics.currentConnectionDuration / 1000)}s
               </div>
             )}
 
             {/* Connection history */}
             {history.length > 0 && (
               <div className="mt-3">
-                <div className="text-xs text-gray-500 mb-2">Recent Activity:</div>
+                <div className="text-xs text-gray-500 mb-2">
+                  Recent Activity:
+                </div>
                 <div className="space-y-1">
                   {history.slice(0, 3).map((entry, index) => (
-                    <div key={index} className="flex items-center justify-between text-xs">
-                      <span className={cn(
-                        'font-medium',
-                        entry.state === 'connected' ? 'text-green-600' :
-                        entry.state === 'error' ? 'text-red-600' :
-                        'text-gray-600'
-                      )}>
+                    <div
+                      key={index}
+                      className="flex items-center justify-between text-xs"
+                    >
+                      <span
+                        className={cn(
+                          "font-medium",
+                          entry.state === "connected"
+                            ? "text-green-600"
+                            : entry.state === "error"
+                              ? "text-red-600"
+                              : "text-gray-600"
+                        )}
+                      >
                         {entry.state}
                       </span>
                       <span className="text-gray-500">
@@ -343,35 +362,38 @@ export function InlineConnectionStatus({
   showQuality?: boolean;
   className?: string;
 }) {
-  const { connectionState, isConnected, getConnectionQuality } = useConnectionState();
+  const { connectionState, isConnected, getConnectionQuality } =
+    useConnectionState();
 
   const statusConfig = {
-    connecting: { color: 'text-yellow-600', label: 'Connecting' },
-    connected: { color: 'text-green-600', label: 'Connected' },
-    disconnected: { color: 'text-gray-600', label: 'Disconnected' },
-    reconnecting: { color: 'text-orange-600', label: 'Reconnecting' },
-    error: { color: 'text-red-600', label: 'Error' },
+    connecting: { color: "text-yellow-600", label: "Connecting" },
+    connected: { color: "text-green-600", label: "Connected" },
+    disconnected: { color: "text-gray-600", label: "Disconnected" },
+    reconnecting: { color: "text-orange-600", label: "Reconnecting" },
+    error: { color: "text-red-600", label: "Error" },
   };
 
   const config = statusConfig[connectionState];
   const quality = getConnectionQuality();
 
   return (
-    <div className={cn('flex items-center gap-2 text-sm', className)}>
+    <div className={cn("flex items-center gap-2 text-sm", className)}>
       <div className="flex items-center gap-1">
-        <div className={cn(
-          'w-2 h-2 rounded-full',
-          isConnected ? 'bg-green-500' : 'bg-gray-400',
-          connectionState === 'connecting' && 'animate-pulse'
-        )} />
-        <span className={config.color}>
-          {config.label}
-        </span>
+        <div
+          className={cn(
+            "w-2 h-2 rounded-full",
+            isConnected ? "bg-green-500" : "bg-gray-400",
+            connectionState === "connecting" && "animate-pulse"
+          )}
+        />
+        <span className={config.color}>{config.label}</span>
       </div>
-      
+
       {showQuality && (
         <div className="flex items-center gap-1">
-          <span className="text-xs text-gray-500">({Math.round(quality)}%)</span>
+          <span className="text-xs text-gray-500">
+            ({Math.round(quality)}%)
+          </span>
         </div>
       )}
     </div>

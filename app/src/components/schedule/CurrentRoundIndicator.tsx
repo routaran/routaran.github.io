@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Clock, AlertCircle, PlayCircle } from 'lucide-react';
-import { Card, Badge, Progress } from '../common';
-import { cn } from '../../lib/utils';
+import React, { useEffect, useState } from "react";
+import { Clock, AlertCircle, PlayCircle } from "lucide-react";
+import { Card, Badge, Progress } from "../common";
+import { cn } from "../../lib/utils";
 
 interface CurrentRoundIndicatorProps {
   currentRound: number;
@@ -14,7 +14,7 @@ export function CurrentRoundIndicator({
   currentRound,
   totalRounds,
   estimatedTimePerMatch = 15,
-  className
+  className,
 }: CurrentRoundIndicatorProps) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [roundStartTime] = useState(new Date());
@@ -52,11 +52,15 @@ export function CurrentRoundIndicator({
               <PlayCircle className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">Round {currentRound} of {totalRounds}</h3>
-              <p className="text-sm text-muted-foreground">Currently in progress</p>
+              <h3 className="font-semibold">
+                Round {currentRound} of {totalRounds}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Currently in progress
+              </p>
             </div>
           </div>
-          
+
           <Badge variant="default" className="animate-pulse">
             <Clock className="w-3 h-3 mr-1" />
             Live
@@ -84,8 +88,7 @@ export function CurrentRoundIndicator({
           <div className="space-y-1">
             <p className="text-muted-foreground">Est. Remaining</p>
             <p className="font-medium flex items-center gap-1">
-              <AlertCircle className="h-4 w-4" />
-              ~{estimatedRemainingTime}
+              <AlertCircle className="h-4 w-4" />~{estimatedRemainingTime}
             </p>
           </div>
         </div>

@@ -1,9 +1,12 @@
-import React, { useMemo } from 'react';
-import { User, Clock, AlertCircle, Calendar } from 'lucide-react';
-import { Card, Badge, Alert, AlertDescription, AlertTitle } from '../common';
-import { MatchCard } from './MatchCard';
-import { cn } from '../../lib/utils';
-import type { RoundWithScores, ScheduleMatchWithScores } from '../../hooks/useSchedule';
+import React, { useMemo } from "react";
+import { User, Clock, AlertCircle, Calendar } from "lucide-react";
+import { Card, Badge, Alert, AlertDescription, AlertTitle } from "../common";
+import { MatchCard } from "./MatchCard";
+import { cn } from "../../lib/utils";
+import type {
+  RoundWithScores,
+  ScheduleMatchWithScores,
+} from "../../hooks/useSchedule";
 
 interface PlayerScheduleProps {
   playDateId: string;
@@ -16,7 +19,7 @@ export function PlayerSchedule({
   playDateId,
   playerId,
   rounds,
-  currentRound
+  currentRound,
 }: PlayerScheduleProps) {
   // Get all matches for the player
   const playerMatches = useMemo(() => {
@@ -26,34 +29,35 @@ export function PlayerSchedule({
       isBye: boolean;
     }> = [];
 
-    rounds.forEach(round => {
+    rounds.forEach((round) => {
       // Check if player has a bye this round
-      const hasBye = round.byePartnership && (
-        round.byePartnership.player1.id === playerId ||
-        round.byePartnership.player2.id === playerId
-      );
+      const hasBye =
+        round.byePartnership &&
+        (round.byePartnership.player1.id === playerId ||
+          round.byePartnership.player2.id === playerId);
 
       if (hasBye) {
         matches.push({
           match: null,
           round: round.number,
-          isBye: true
+          isBye: true,
         });
       }
 
       // Find player's match in this round
-      const playerMatch = round.matches.find(match =>
-        match.partnership1.player1.id === playerId ||
-        match.partnership1.player2.id === playerId ||
-        match.partnership2.player1.id === playerId ||
-        match.partnership2.player2.id === playerId
+      const playerMatch = round.matches.find(
+        (match) =>
+          match.partnership1.player1.id === playerId ||
+          match.partnership1.player2.id === playerId ||
+          match.partnership2.player1.id === playerId ||
+          match.partnership2.player2.id === playerId
       );
 
       if (playerMatch) {
         matches.push({
           match: playerMatch,
           round: round.number,
-          isBye: false
+          isBye: false,
         });
       }
     });
@@ -91,15 +95,21 @@ export function PlayerSchedule({
     let pointsAgainst = 0;
 
     playerMatches.forEach(({ match, isBye }) => {
-      if (isBye || !match || match.team1_score === null || match.team2_score === null) {
+      if (
+        isBye ||
+        !match ||
+        match.team1_score === null ||
+        match.team2_score === null
+      ) {
         return;
       }
 
       played++;
 
-      const isTeam1 = match.partnership1.player1.id === playerId || 
-                      match.partnership1.player2.id === playerId;
-      
+      const isTeam1 =
+        match.partnership1.player1.id === playerId ||
+        match.partnership1.player2.id === playerId;
+
       const myScore = isTeam1 ? match.team1_score : match.team2_score;
       const theirScore = isTeam1 ? match.team2_score : match.team1_score;
 
@@ -117,7 +127,7 @@ export function PlayerSchedule({
       lost: played - won,
       pointsFor,
       pointsAgainst,
-      pointDiff: pointsFor - pointsAgainst
+      pointDiff: pointsFor - pointsAgainst,
     };
   }, [playerMatches, playerId]);
 
@@ -129,7 +139,7 @@ export function PlayerSchedule({
           <User className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold">Your Tournament Stats</h3>
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="text-center">
             <p className="text-2xl font-bold">{stats.played}</p>
@@ -152,11 +162,18 @@ export function PlayerSchedule({
             <p className="text-sm text-muted-foreground">Points Against</p>
           </div>
           <div className="text-center">
-            <p className={cn(
-              "text-2xl font-bold",
-              stats.pointDiff > 0 ? "text-success" : stats.pointDiff < 0 ? "text-destructive" : ""
-            )}>
-              {stats.pointDiff > 0 ? '+' : ''}{stats.pointDiff}
+            <p
+              className={cn(
+                "text-2xl font-bold",
+                stats.pointDiff > 0
+                  ? "text-success"
+                  : stats.pointDiff < 0
+                    ? "text-destructive"
+                    : ""
+              )}
+            >
+              {stats.pointDiff > 0 ? "+" : ""}
+              {stats.pointDiff}
             </p>
             <p className="text-sm text-muted-foreground">Point Diff</p>
           </div>
@@ -179,9 +196,7 @@ export function PlayerSchedule({
                   </Badge>
                 )}
               </p>
-              {nextMatch.match.court && (
-                <p>Court {nextMatch.match.court}</p>
-              )}
+              {nextMatch.match.court && <p>Court {nextMatch.match.court}</p>}
               <p>Partner: {getPartner(nextMatch.match).name}</p>
             </div>
           </AlertDescription>
@@ -194,11 +209,11 @@ export function PlayerSchedule({
           <Calendar className="h-5 w-5" />
           Your Match Schedule
         </h3>
-        
+
         {playerMatches.map(({ match, round, isBye }) => (
           <div key={`round-${round}`} className="space-y-2">
             <div className="flex items-center gap-2">
-              <Badge 
+              <Badge
                 variant={round === currentRound ? "default" : "outline"}
                 className="text-xs"
               >
@@ -210,7 +225,7 @@ export function PlayerSchedule({
                 </Badge>
               )}
             </div>
-            
+
             {isBye ? (
               <Card className="p-4 bg-muted/50">
                 <div className="flex items-center gap-3">

@@ -3,10 +3,14 @@
  * for the Pickleball Tracker application
  */
 
-import { logger } from './logger';
-import type { LogContext } from './logger';
+import { logger } from "./logger";
+import type { LogContext } from "./logger";
 
-export type ConnectionStatus = 'connected' | 'disconnected' | 'connecting' | 'error';
+export type ConnectionStatus =
+  | "connected"
+  | "disconnected"
+  | "connecting"
+  | "error";
 
 export interface ConnectionMetrics {
   status: ConnectionStatus;
@@ -23,13 +27,13 @@ export interface PerformanceMetrics {
   lcp: number | null; // Largest Contentful Paint
   fid: number | null; // First Input Delay
   cls: number | null; // Cumulative Layout Shift
-  
+
   // Custom metrics
   initialLoadTime: number | null;
   routeChangeTime: number | null;
   apiResponseTime: number | null;
   realtimeLatency: number | null;
-  
+
   // Resource usage
   memoryUsage: number | null;
   jsHeapSize: number | null;
@@ -46,7 +50,7 @@ export interface ErrorMetrics {
 
 class Monitor {
   private connectionMetrics: ConnectionMetrics = {
-    status: 'disconnected',
+    status: "disconnected",
     lastConnected: null,
     lastDisconnected: null,
     connectionAttempts: 0,
@@ -77,7 +81,8 @@ class Monitor {
   };
 
   private latencyMeasurements: number[] = [];
-  private connectionStatusCallbacks: ((status: ConnectionStatus) => void)[] = [];
+  private connectionStatusCallbacks: ((status: ConnectionStatus) => void)[] =
+    [];
   private performanceObserver: PerformanceObserver | null = null;
   private isMonitoring = false;
 
@@ -92,8 +97,10 @@ class Monitor {
    */
   private initializePerformanceMonitoring(): void {
     // Only initialize if PerformanceObserver is available
-    if (typeof PerformanceObserver === 'undefined') {
-      logger.warn('PerformanceObserver not available, performance monitoring disabled');
+    if (typeof PerformanceObserver === "undefined") {
+      logger.warn(
+        "PerformanceObserver not available, performance monitoring disabled"
+      );
       return;
     }
 
@@ -105,17 +112,23 @@ class Monitor {
       });
 
       // Observe different performance entry types
-      this.performanceObserver.observe({ entryTypes: ['paint', 'navigation', 'measure'] });
+      this.performanceObserver.observe({
+        entryTypes: ["paint", "navigation", "measure"],
+      });
 
       // Observe Core Web Vitals if available
-      if ('web-vitals' in window || import.meta.env.DEV) {
+      if ("web-vitals" in window || import.meta.env.DEV) {
         this.setupWebVitalsMonitoring();
       }
     } catch (error) {
-      logger.error('Failed to initialize performance monitoring', {
-        component: 'monitor',
-        action: 'initialize_performance',
-      }, error as Error);
+      logger.error(
+        "Failed to initialize performance monitoring",
+        {
+          component: "monitor",
+          action: "initialize_performance",
+        },
+        error as Error
+      );
     }
   }
 
@@ -124,22 +137,27 @@ class Monitor {
    */
   private setupWebVitalsMonitoring(): void {
     // LCP (Largest Contentful Paint)
-    this.observeWebVital('largest-contentful-paint', (entry) => {
+    this.observeWebVital("largest-contentful-paint", (entry) => {
       this.performanceMetrics.lcp = entry.value;
-      logger.performance('lcp', entry.value, 'ms', { component: 'monitor' });
+      logger.performance("lcp", entry.value, "ms", { component: "monitor" });
     });
 
     // FID (First Input Delay)
-    this.observeWebVital('first-input', (entry) => {
+    this.observeWebVital("first-input", (entry) => {
       this.performanceMetrics.fid = entry.processingStart - entry.startTime;
-      logger.performance('fid', this.performanceMetrics.fid, 'ms', { component: 'monitor' });
+      logger.performance("fid", this.performanceMetrics.fid, "ms", {
+        component: "monitor",
+      });
     });
 
     // CLS (Cumulative Layout Shift)
-    this.observeWebVital('layout-shift', (entry) => {
+    this.observeWebVital("layout-shift", (entry) => {
       if (!entry.hadRecentInput) {
-        this.performanceMetrics.cls = (this.performanceMetrics.cls || 0) + entry.value;
-        logger.performance('cls', this.performanceMetrics.cls || 0, 'count', { component: 'monitor' });
+        this.performanceMetrics.cls =
+          (this.performanceMetrics.cls || 0) + entry.value;
+        logger.performance("cls", this.performanceMetrics.cls || 0, "count", {
+          component: "monitor",
+        });
       }
     });
   }
@@ -156,7 +174,7 @@ class Monitor {
       });
       observer.observe({ entryTypes: [type] });
     } catch (_error) {
-      logger.debug(`Web vital ${type} not supported`, { component: 'monitor' });
+      logger.debug(`Web vital ${type} not supported`, { component: "monitor" });
     }
   }
 
@@ -165,21 +183,31 @@ class Monitor {
    */
   private handlePerformanceEntry(entry: PerformanceEntry): void {
     switch (entry.entryType) {
-      case 'paint':
-        if (entry.name === 'first-contentful-paint') {
-          logger.performance('fcp', entry.startTime, 'ms', { component: 'monitor' });
+      case "paint":
+        if (entry.name === "first-contentful-paint") {
+          logger.performance("fcp", entry.startTime, "ms", {
+            component: "monitor",
+          });
         }
         break;
-      
-      case 'navigation': {
+
+      case "navigation": {
         const navEntry = entry as PerformanceNavigationTiming;
-        this.performanceMetrics.initialLoadTime = navEntry.loadEventEnd - navEntry.fetchStart;
-        logger.performance('page_load', this.performanceMetrics.initialLoadTime, 'ms', { component: 'monitor' });
+        this.performanceMetrics.initialLoadTime =
+          navEntry.loadEventEnd - navEntry.fetchStart;
+        logger.performance(
+          "page_load",
+          this.performanceMetrics.initialLoadTime,
+          "ms",
+          { component: "monitor" }
+        );
         break;
       }
-      
-      case 'measure':
-        logger.performance(entry.name, entry.duration, 'ms', { component: 'monitor' });
+
+      case "measure":
+        logger.performance(entry.name, entry.duration, "ms", {
+          component: "monitor",
+        });
         break;
     }
   }
@@ -188,7 +216,7 @@ class Monitor {
    * Initialize memory monitoring
    */
   private initializeMemoryMonitoring(): void {
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       setInterval(() => {
         this.updateMemoryMetrics();
       }, 30000); // Check every 30 seconds
@@ -199,24 +227,24 @@ class Monitor {
    * Update memory metrics
    */
   private updateMemoryMetrics(): void {
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       const memory = (performance as any).memory;
       this.performanceMetrics.memoryUsage = memory.usedJSHeapSize;
       this.performanceMetrics.jsHeapSize = memory.totalJSHeapSize;
-      
+
       // Log memory usage if it's high
       const memoryUsageMB = memory.usedJSHeapSize / (1024 * 1024);
       if (memoryUsageMB > 50) {
         logger.warn(`High memory usage: ${memoryUsageMB.toFixed(2)}MB`, {
-          component: 'monitor',
-          action: 'memory_check',
+          component: "monitor",
+          action: "memory_check",
           metadata: { memoryUsageMB },
         });
       }
     }
 
     // Count DOM nodes
-    this.performanceMetrics.domNodes = document.querySelectorAll('*').length;
+    this.performanceMetrics.domNodes = document.querySelectorAll("*").length;
   }
 
   /**
@@ -224,12 +252,18 @@ class Monitor {
    */
   private initializeNetworkMonitoring(): void {
     // Monitor online/offline status
-    window.addEventListener('online', () => {
-      logger.info('Network connection restored', { component: 'monitor', action: 'network_online' });
+    window.addEventListener("online", () => {
+      logger.info("Network connection restored", {
+        component: "monitor",
+        action: "network_online",
+      });
     });
 
-    window.addEventListener('offline', () => {
-      logger.warn('Network connection lost', { component: 'monitor', action: 'network_offline' });
+    window.addEventListener("offline", () => {
+      logger.warn("Network connection lost", {
+        component: "monitor",
+        action: "network_offline",
+      });
     });
   }
 
@@ -241,39 +275,51 @@ class Monitor {
     this.connectionMetrics.status = status;
 
     const now = new Date();
-    const logContext = { component: 'monitor', action: 'connection_status', ...context };
+    const logContext = {
+      component: "monitor",
+      action: "connection_status",
+      ...context,
+    };
 
     switch (status) {
-      case 'connected':
+      case "connected":
         this.connectionMetrics.lastConnected = now;
-        if (previousStatus === 'disconnected' && this.connectionMetrics.lastDisconnected) {
-          this.connectionMetrics.totalDowntime += now.getTime() - this.connectionMetrics.lastDisconnected.getTime();
+        if (
+          previousStatus === "disconnected" &&
+          this.connectionMetrics.lastDisconnected
+        ) {
+          this.connectionMetrics.totalDowntime +=
+            now.getTime() - this.connectionMetrics.lastDisconnected.getTime();
         }
-        logger.info('Connection established', logContext);
+        logger.info("Connection established", logContext);
         break;
 
-      case 'disconnected':
+      case "disconnected":
         this.connectionMetrics.lastDisconnected = now;
-        logger.warn('Connection lost', logContext);
+        logger.warn("Connection lost", logContext);
         break;
 
-      case 'connecting':
+      case "connecting":
         this.connectionMetrics.connectionAttempts++;
-        logger.info('Attempting to connect', logContext);
+        logger.info("Attempting to connect", logContext);
         break;
 
-      case 'error':
+      case "error":
         this.connectionMetrics.errorCount++;
-        logger.error('Connection error', logContext);
+        logger.error("Connection error", logContext);
         break;
     }
 
     // Notify callbacks
-    this.connectionStatusCallbacks.forEach(callback => {
+    this.connectionStatusCallbacks.forEach((callback) => {
       try {
         callback(status);
       } catch (error) {
-        logger.error('Error in connection status callback', logContext, error as Error);
+        logger.error(
+          "Error in connection status callback",
+          logContext,
+          error as Error
+        );
       }
     });
   }
@@ -283,20 +329,21 @@ class Monitor {
    */
   recordLatency(latency: number, context?: LogContext): void {
     this.latencyMeasurements.push(latency);
-    
+
     // Keep only recent measurements
     if (this.latencyMeasurements.length > 100) {
       this.latencyMeasurements = this.latencyMeasurements.slice(-100);
     }
 
     // Calculate average latency
-    this.connectionMetrics.averageLatency = 
-      this.latencyMeasurements.reduce((sum, val) => sum + val, 0) / this.latencyMeasurements.length;
+    this.connectionMetrics.averageLatency =
+      this.latencyMeasurements.reduce((sum, val) => sum + val, 0) /
+      this.latencyMeasurements.length;
 
-    logger.performance('realtime_latency', latency, 'ms', { 
-      component: 'monitor', 
-      action: 'latency_measurement',
-      ...context 
+    logger.performance("realtime_latency", latency, "ms", {
+      component: "monitor",
+      action: "latency_measurement",
+      ...context,
     });
   }
 
@@ -308,28 +355,34 @@ class Monitor {
     this.errorMetrics.lastError = new Date();
 
     const errorType = error.constructor.name;
-    const component = context?.component || 'unknown';
+    const component = context?.component || "unknown";
 
     // Track by error type
-    this.errorMetrics.errorsByType[errorType] = (this.errorMetrics.errorsByType[errorType] || 0) + 1;
+    this.errorMetrics.errorsByType[errorType] =
+      (this.errorMetrics.errorsByType[errorType] || 0) + 1;
 
     // Track by component
-    this.errorMetrics.errorsByComponent[component] = (this.errorMetrics.errorsByComponent[component] || 0) + 1;
+    this.errorMetrics.errorsByComponent[component] =
+      (this.errorMetrics.errorsByComponent[component] || 0) + 1;
 
     // Check if it's a critical error
     if (this.isCriticalError(error)) {
       this.errorMetrics.criticalErrors++;
     }
 
-    logger.error('Error recorded', {
-      component: 'monitor',
-      action: 'error_recorded',
-      ...context,
-      metadata: {
-        errorType,
-        totalErrors: this.errorMetrics.totalErrors,
+    logger.error(
+      "Error recorded",
+      {
+        component: "monitor",
+        action: "error_recorded",
+        ...context,
+        metadata: {
+          errorType,
+          totalErrors: this.errorMetrics.totalErrors,
+        },
       },
-    }, error);
+      error
+    );
   }
 
   /**
@@ -337,14 +390,14 @@ class Monitor {
    */
   private isCriticalError(error: Error): boolean {
     const criticalPatterns = [
-      'ChunkLoadError',
-      'Network Error',
-      'Failed to fetch',
-      'TypeError: Cannot read',
-      'ReferenceError',
+      "ChunkLoadError",
+      "Network Error",
+      "Failed to fetch",
+      "TypeError: Cannot read",
+      "ReferenceError",
     ];
 
-    return criticalPatterns.some(pattern => error.message.includes(pattern));
+    return criticalPatterns.some((pattern) => error.message.includes(pattern));
   }
 
   /**
@@ -356,23 +409,27 @@ class Monitor {
     context?: LogContext
   ): Promise<T> {
     const startTime = performance.now();
-    
+
     try {
       const result = await apiCall();
       const responseTime = performance.now() - startTime;
-      
+
       this.performanceMetrics.apiResponseTime = responseTime;
-      logger.performance(`api_${name}`, responseTime, 'ms', {
-        component: 'monitor',
-        action: 'api_call',
+      logger.performance(`api_${name}`, responseTime, "ms", {
+        component: "monitor",
+        action: "api_call",
         ...context,
       });
-      
+
       return result;
     } catch (error) {
       const responseTime = performance.now() - startTime;
-      this.recordError(error as Error, { ...context, action: 'api_error' });
-      logger.error(`API call ${name} failed after ${responseTime.toFixed(2)}ms`, context, error as Error);
+      this.recordError(error as Error, { ...context, action: "api_error" });
+      logger.error(
+        `API call ${name} failed after ${responseTime.toFixed(2)}ms`,
+        context,
+        error as Error
+      );
       throw error;
     }
   }
@@ -382,15 +439,15 @@ class Monitor {
    */
   measureRouteChange(routeName: string, context?: LogContext): void {
     const startTime = performance.now();
-    
+
     // Use requestAnimationFrame to measure after render
     requestAnimationFrame(() => {
       const changeTime = performance.now() - startTime;
       this.performanceMetrics.routeChangeTime = changeTime;
-      
-      logger.performance(`route_${routeName}`, changeTime, 'ms', {
-        component: 'monitor',
-        action: 'route_change',
+
+      logger.performance(`route_${routeName}`, changeTime, "ms", {
+        component: "monitor",
+        action: "route_change",
         ...context,
       });
     });
@@ -399,9 +456,11 @@ class Monitor {
   /**
    * Subscribe to connection status changes
    */
-  onConnectionStatusChange(callback: (status: ConnectionStatus) => void): () => void {
+  onConnectionStatusChange(
+    callback: (status: ConnectionStatus) => void
+  ): () => void {
     this.connectionStatusCallbacks.push(callback);
-    
+
     // Return unsubscribe function
     return () => {
       const index = this.connectionStatusCallbacks.indexOf(callback);
@@ -452,9 +511,12 @@ class Monitor {
    */
   startMonitoring(): void {
     if (this.isMonitoring) return;
-    
+
     this.isMonitoring = true;
-    logger.info('Performance monitoring started', { component: 'monitor', action: 'start' });
+    logger.info("Performance monitoring started", {
+      component: "monitor",
+      action: "start",
+    });
   }
 
   /**
@@ -462,14 +524,17 @@ class Monitor {
    */
   stopMonitoring(): void {
     if (!this.isMonitoring) return;
-    
+
     this.isMonitoring = false;
-    
+
     if (this.performanceObserver) {
       this.performanceObserver.disconnect();
     }
-    
-    logger.info('Performance monitoring stopped', { component: 'monitor', action: 'stop' });
+
+    logger.info("Performance monitoring stopped", {
+      component: "monitor",
+      action: "stop",
+    });
   }
 
   /**
@@ -477,7 +542,7 @@ class Monitor {
    */
   resetMetrics(): void {
     this.connectionMetrics = {
-      status: 'disconnected',
+      status: "disconnected",
       lastConnected: null,
       lastDisconnected: null,
       connectionAttempts: 0,
@@ -508,8 +573,11 @@ class Monitor {
     };
 
     this.latencyMeasurements = [];
-    
-    logger.info('Monitoring metrics reset', { component: 'monitor', action: 'reset' });
+
+    logger.info("Monitoring metrics reset", {
+      component: "monitor",
+      action: "reset",
+    });
   }
 }
 

@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
-import { Button } from './Button';
-import { Card } from './Card';
-import { cn } from '../../lib/utils';
-import { FocusTrap } from './Accessibility';
+import React, { useEffect } from "react";
+import { X } from "lucide-react";
+import { Button } from "./Button";
+import { Card } from "./Card";
+import { cn } from "../../lib/utils";
+import { FocusTrap } from "./Accessibility";
 
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   className?: string;
   showCloseButton?: boolean;
   closeOnOverlayClick?: boolean;
@@ -22,7 +22,7 @@ export function Modal({
   onClose,
   title,
   children,
-  size = 'md',
+  size = "md",
   className,
   showCloseButton = true,
   closeOnOverlayClick = true,
@@ -33,25 +33,25 @@ export function Modal({
     if (!isOpen || !closeOnEscape) return;
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, closeOnEscape, onClose]);
 
   // Handle body scroll lock
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -65,10 +65,10 @@ export function Modal({
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
+    sm: "max-w-sm",
+    md: "max-w-md",
+    lg: "max-w-lg",
+    xl: "max-w-xl",
   };
 
   return (
@@ -77,12 +77,12 @@ export function Modal({
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={title ? 'modal-title' : undefined}
+      aria-labelledby={title ? "modal-title" : undefined}
     >
       <FocusTrap isActive={isOpen}>
         <Card
           className={cn(
-            'w-full max-h-[90vh] overflow-y-auto',
+            "w-full max-h-[90vh] overflow-y-auto",
             sizeClasses[size],
             className
           )}
@@ -107,10 +107,8 @@ export function Modal({
               )}
             </div>
           )}
-          
-          <div className="p-0">
-            {children}
-          </div>
+
+          <div className="p-0">{children}</div>
         </Card>
       </FocusTrap>
     </div>
@@ -123,11 +121,7 @@ export interface ModalHeaderProps {
 }
 
 export function ModalHeader({ children, className }: ModalHeaderProps) {
-  return (
-    <div className={cn('p-4 border-b', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("p-4 border-b", className)}>{children}</div>;
 }
 
 export interface ModalBodyProps {
@@ -136,11 +130,7 @@ export interface ModalBodyProps {
 }
 
 export function ModalBody({ children, className }: ModalBodyProps) {
-  return (
-    <div className={cn('p-4', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("p-4", className)}>{children}</div>;
 }
 
 export interface ModalFooterProps {
@@ -150,7 +140,7 @@ export interface ModalFooterProps {
 
 export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
-    <div className={cn('p-4 border-t flex justify-end gap-2', className)}>
+    <div className={cn("p-4 border-t flex justify-end gap-2", className)}>
       {children}
     </div>
   );
@@ -159,11 +149,11 @@ export function ModalFooter({ children, className }: ModalFooterProps) {
 // Utility hook for modal state management
 export function useModal(initialState: boolean = false) {
   const [isOpen, setIsOpen] = React.useState(initialState);
-  
+
   const openModal = React.useCallback(() => setIsOpen(true), []);
   const closeModal = React.useCallback(() => setIsOpen(false), []);
-  const toggleModal = React.useCallback(() => setIsOpen(prev => !prev), []);
-  
+  const toggleModal = React.useCallback(() => setIsOpen((prev) => !prev), []);
+
   return {
     isOpen,
     openModal,

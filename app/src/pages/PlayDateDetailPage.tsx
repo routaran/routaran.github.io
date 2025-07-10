@@ -1,101 +1,103 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Users, 
-  Trophy, 
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Calendar,
+  Users,
+  Trophy,
   Download,
   RefreshCw,
   Trash2,
   Edit,
-  AlertCircle
-} from 'lucide-react'
-import { usePlayDate } from '../hooks/usePlayDate'
-import { PlayDateForm } from '../components/playdate/PlayDateForm'
-import { Card } from '../components/common/Card'
-import { Button } from '../components/common/Button'
-import { LoadingSpinner } from '../components/common/LoadingSpinner'
-import type { PlayDateUpdate } from '../types/database'
+  AlertCircle,
+} from "lucide-react";
+import { usePlayDate } from "../hooks/usePlayDate";
+import { PlayDateForm } from "../components/playdate/PlayDateForm";
+import { Card } from "../components/common/Card";
+import { Button } from "../components/common/Button";
+import { LoadingSpinner } from "../components/common/LoadingSpinner";
+import type { PlayDateUpdate } from "../types/database";
 
 export function PlayDateDetailPage() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const { 
-    playDate, 
-    loading, 
-    canEdit, 
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const {
+    playDate,
+    loading,
+    canEdit,
     isOrganizer,
     isProjectOwner,
     updatePlayDate,
     deletePlayDate,
     regenerateSchedule,
-    exportToJson 
-  } = usePlayDate(id)
-  
-  const [isEditing, setIsEditing] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false)
-  const [actionLoading, setActionLoading] = useState(false)
+    exportToJson,
+  } = usePlayDate(id);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   if (loading || !playDate) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner size="lg" />
       </div>
-    )
+    );
   }
 
   const handleUpdate = async (data: PlayDateUpdate) => {
     try {
-      await updatePlayDate(data)
-      setIsEditing(false)
+      await updatePlayDate(data);
+      setIsEditing(false);
     } catch {
       // Error is handled in the hook
     }
-  }
+  };
 
   const handleDelete = async () => {
     try {
-      setActionLoading(true)
-      await deletePlayDate()
+      setActionLoading(true);
+      await deletePlayDate();
     } catch {
       // Error is handled in the hook
     } finally {
-      setActionLoading(false)
-      setShowDeleteConfirm(false)
+      setActionLoading(false);
+      setShowDeleteConfirm(false);
     }
-  }
+  };
 
   const handleRegenerateSchedule = () => {
-    setShowRegenerateConfirm(true)
-  }
+    setShowRegenerateConfirm(true);
+  };
 
   const confirmRegenerateSchedule = async () => {
     try {
-      setActionLoading(true)
-      await regenerateSchedule()
+      setActionLoading(true);
+      await regenerateSchedule();
     } catch {
       // Error is handled in the hook
     } finally {
-      setActionLoading(false)
-      setShowRegenerateConfirm(false)
+      setActionLoading(false);
+      setShowRegenerateConfirm(false);
     }
-  }
+  };
 
   const handleExport = async () => {
     try {
-      setActionLoading(true)
-      await exportToJson()
+      setActionLoading(true);
+      await exportToJson();
     } catch {
       // Error is handled in the hook
     } finally {
-      setActionLoading(false)
+      setActionLoading(false);
     }
-  }
+  };
 
-  const hasMatches = playDate.matches.length > 0
-  const hasScores = playDate.matches.some(m => m.team1_score !== null || m.team2_score !== null)
+  const hasMatches = playDate.matches.length > 0;
+  const hasScores = playDate.matches.some(
+    (m) => m.team1_score !== null || m.team2_score !== null
+  );
 
   if (isEditing) {
     return (
@@ -119,7 +121,7 @@ export function PlayDateDetailPage() {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -129,13 +131,13 @@ export function PlayDateDetailPage() {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate('/play-dates')}
+            onClick={() => navigate("/play-dates")}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Play Dates
           </Button>
-          
+
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -152,7 +154,10 @@ export function PlayDateDetailPage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Trophy className="h-4 w-4" />
-                  {playDate.win_condition === 'first-to-target' ? 'First to' : 'Win by 2,'} {playDate.target_score} points
+                  {playDate.win_condition === "first-to-target"
+                    ? "First to"
+                    : "Win by 2,"}{" "}
+                  {playDate.target_score} points
                 </span>
               </div>
             </div>
@@ -192,7 +197,8 @@ export function PlayDateDetailPage() {
                 Editing Restricted
               </p>
               <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">
-                Players and schedule cannot be modified after scores have been entered.
+                Players and schedule cannot be modified after scores have been
+                entered.
               </p>
             </div>
           </div>
@@ -227,31 +233,44 @@ export function PlayDateDetailPage() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Tournament Details
             </h2>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Status
+                </p>
                 <p className="font-medium text-gray-900 dark:text-white">
-                  {!hasMatches ? 'Not Started' : hasScores ? 'In Progress' : 'Scheduled'}
+                  {!hasMatches
+                    ? "Not Started"
+                    : hasScores
+                      ? "In Progress"
+                      : "Scheduled"}
                 </p>
               </div>
-              
+
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Courts</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Courts
+                </p>
                 <p className="font-medium text-gray-900 dark:text-white">
-                  {playDate.court_count} court{playDate.court_count !== 1 ? 's' : ''}
+                  {playDate.court_count} court
+                  {playDate.court_count !== 1 ? "s" : ""}
                 </p>
               </div>
-              
+
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Partnerships</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Partnerships
+                </p>
                 <p className="font-medium text-gray-900 dark:text-white">
                   {playDate.partnerships.length}
                 </p>
               </div>
-              
+
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Total Matches</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Total Matches
+                </p>
                 <p className="font-medium text-gray-900 dark:text-white">
                   {playDate.matches.length}
                 </p>
@@ -275,7 +294,7 @@ export function PlayDateDetailPage() {
                       Regenerate Schedule
                     </Button>
                   )}
-                  
+
                   {canEdit && (
                     <Button
                       variant="danger"
@@ -306,9 +325,10 @@ export function PlayDateDetailPage() {
                 View Full Schedule
               </Button>
             </div>
-            
+
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {playDate.matches.filter(m => m.team1_score !== null).length} of {playDate.matches.length} matches completed
+              {playDate.matches.filter((m) => m.team1_score !== null).length} of{" "}
+              {playDate.matches.length} matches completed
             </p>
           </Card>
         )}
@@ -321,7 +341,9 @@ export function PlayDateDetailPage() {
                 Delete Play Date?
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                This will permanently delete "{playDate.name}" and all associated data including players, matches, and scores. This action cannot be undone.
+                This will permanently delete "{playDate.name}" and all
+                associated data including players, matches, and scores. This
+                action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <Button
@@ -354,7 +376,9 @@ export function PlayDateDetailPage() {
                 Regenerate Schedule?
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                This will delete all existing matches and create a new schedule. Any scores that have been entered will be lost. This action cannot be undone.
+                This will delete all existing matches and create a new schedule.
+                Any scores that have been entered will be lost. This action
+                cannot be undone.
               </p>
               <div className="flex gap-3">
                 <Button
@@ -363,7 +387,7 @@ export function PlayDateDetailPage() {
                   disabled={actionLoading}
                   className="flex-1"
                 >
-                  {actionLoading ? 'Regenerating...' : 'Regenerate'}
+                  {actionLoading ? "Regenerating..." : "Regenerate"}
                 </Button>
                 <Button
                   variant="outline"
@@ -379,5 +403,5 @@ export function PlayDateDetailPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

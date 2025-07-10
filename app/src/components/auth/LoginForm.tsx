@@ -1,16 +1,16 @@
-import { useState, type FormEvent } from 'react';
-import { Button } from '../common/Button';
-import { Input } from '../common/Form';
-import { auth } from '../../lib/supabase';
-import { logger } from '../../lib/logger';
-import { useToast } from '../../hooks/useToast';
+import { useState, type FormEvent } from "react";
+import { Button } from "../common/Button";
+import { Input } from "../common/Form";
+import { auth } from "../../lib/supabase";
+import { logger } from "../../lib/logger";
+import { useToast } from "../../hooks/useToast";
 
 interface LoginFormProps {
   onSuccess: () => void;
 }
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const { toast } = useToast();
@@ -20,9 +20,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
     if (!email.trim()) {
       toast({
-        title: 'Email required',
-        description: 'Please enter your email address',
-        variant: 'destructive',
+        title: "Email required",
+        description: "Please enter your email address",
+        variant: "destructive",
       });
       return;
     }
@@ -31,9 +31,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast({
-        title: 'Invalid email',
-        description: 'Please enter a valid email address',
-        variant: 'destructive',
+        title: "Invalid email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
       });
       return;
     }
@@ -41,9 +41,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      logger.info('Attempting to send magic link', {
-        component: 'LoginForm',
-        action: 'sendMagicLink',
+      logger.info("Attempting to send magic link", {
+        component: "LoginForm",
+        action: "sendMagicLink",
         metadata: { email },
       });
 
@@ -53,17 +53,18 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         throw error;
       }
 
-      logger.info('Magic link sent successfully', {
-        component: 'LoginForm',
-        action: 'sendMagicLink',
+      logger.info("Magic link sent successfully", {
+        component: "LoginForm",
+        action: "sendMagicLink",
         metadata: { email },
       });
 
       setIsEmailSent(true);
       toast({
-        title: 'Check your email',
-        description: 'We sent you a login link. Click the link in your email to sign in.',
-        variant: 'success',
+        title: "Check your email",
+        description:
+          "We sent you a login link. Click the link in your email to sign in.",
+        variant: "success",
       });
 
       // Call onSuccess after a delay to allow user to see the message
@@ -71,16 +72,23 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         onSuccess();
       }, 2000);
     } catch (error) {
-      logger.error('Failed to send magic link', {
-        component: 'LoginForm',
-        action: 'sendMagicLink',
-        metadata: { email },
-      }, error as Error);
+      logger.error(
+        "Failed to send magic link",
+        {
+          component: "LoginForm",
+          action: "sendMagicLink",
+          metadata: { email },
+        },
+        error as Error
+      );
 
       toast({
-        title: 'Sign in failed',
-        description: error instanceof Error ? error.message : 'Unable to send login email. Please try again.',
-        variant: 'destructive',
+        title: "Sign in failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Unable to send login email. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -111,7 +119,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             Check your email
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            We've sent a magic link to <span className="font-medium">{email}</span>
+            We've sent a magic link to{" "}
+            <span className="font-medium">{email}</span>
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Click the link in your email to sign in.
@@ -122,7 +131,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           <button
             onClick={() => {
               setIsEmailSent(false);
-              setEmail('');
+              setEmail("");
             }}
             className="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
           >
@@ -142,7 +151,10 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Email address
             </label>
             <Input
@@ -167,7 +179,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             loading={isLoading}
             className="w-full"
           >
-            {isLoading ? 'Sending...' : 'Send magic link'}
+            {isLoading ? "Sending..." : "Send magic link"}
           </Button>
         </div>
 

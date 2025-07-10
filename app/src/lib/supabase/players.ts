@@ -1,130 +1,126 @@
-import { supabase } from '../supabase'
-import type { Player, PlayerInsert, PlayerUpdate } from '../../types/database'
+import { supabase } from "../supabase";
+import type { Player, PlayerInsert, PlayerUpdate } from "../../types/database";
 
 export async function getPlayers(playDateId?: string) {
-  const query = supabase
-    .from('players')
-    .select('*')
-    .order('name')
+  const query = supabase.from("players").select("*").order("name");
 
   if (playDateId) {
-    query.eq('play_date_id', playDateId)
+    query.eq("play_date_id", playDateId);
   }
 
-  const { data, error } = await query
+  const { data, error } = await query;
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 
 export async function getPlayerById(id: string) {
   const { data, error } = await supabase
-    .from('players')
-    .select('*')
-    .eq('id', id)
-    .single()
+    .from("players")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 
 export async function createPlayer(player: PlayerInsert) {
   const { data, error } = await supabase
-    .from('players')
+    .from("players")
     .insert(player)
     .select()
-    .single()
+    .single();
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 
 export async function createPlayers(players: PlayerInsert[]) {
   const { data, error } = await supabase
-    .from('players')
+    .from("players")
     .insert(players)
-    .select()
+    .select();
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 
 export async function updatePlayer(id: string, player: PlayerUpdate) {
   const { data, error } = await supabase
-    .from('players')
+    .from("players")
     .update(player)
-    .eq('id', id)
+    .eq("id", id)
     .select()
-    .single()
+    .single();
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 
 export async function deletePlayer(id: string) {
-  const { error } = await supabase
-    .from('players')
-    .delete()
-    .eq('id', id)
+  const { error } = await supabase.from("players").delete().eq("id", id);
 
-  if (error) throw error
+  if (error) throw error;
 }
 
 export async function searchPlayers(query: string, playDateId?: string) {
   const searchQuery = supabase
-    .from('players')
-    .select('*')
-    .ilike('name', `%${query}%`)
-    .order('name')
-    .limit(20)
+    .from("players")
+    .select("*")
+    .ilike("name", `%${query}%`)
+    .order("name")
+    .limit(20);
 
   if (playDateId) {
-    searchQuery.eq('play_date_id', playDateId)
+    searchQuery.eq("play_date_id", playDateId);
   }
 
-  const { data, error } = await searchQuery
+  const { data, error } = await searchQuery;
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 
 export async function getPlayersWithClaims(playDateId: string) {
   const { data, error } = await supabase
-    .from('players')
-    .select(`
+    .from("players")
+    .select(
+      `
       *,
       player_claims (
         id,
         auth_user_id,
         created_at
       )
-    `)
-    .eq('play_date_id', playDateId)
-    .order('name')
+    `
+    )
+    .eq("play_date_id", playDateId)
+    .order("name");
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 
 export async function checkPlayerNameExists(name: string, playDateId: string) {
   const { data, error } = await supabase
-    .from('players')
-    .select('id')
-    .eq('name', name)
-    .eq('play_date_id', playDateId)
-    .single()
+    .from("players")
+    .select("id")
+    .eq("name", name)
+    .eq("play_date_id", playDateId)
+    .single();
 
-  if (error && error.code !== 'PGRST116') throw error // PGRST116 = Row not found
-  return !!data
+  if (error && error.code !== "PGRST116") throw error; // PGRST116 = Row not found
+  return !!data;
 }
 
 export async function getProjectOwner() {
   const { data, error } = await supabase
-    .from('players')
-    .select('*')
-    .eq('project_owner', true)
-    .single()
+    .from("players")
+    .select("*")
+    .eq("project_owner", true)
+    .single();
 
-  if (error && error.code !== 'PGRST116') throw error
-  return data
+  if (error && error.code !== "PGRST116") throw error;
+  return data;
 }

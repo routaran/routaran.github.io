@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
-import { 
-  History, 
-  RefreshCw, 
-  User, 
-  Clock, 
-  Edit3, 
-  ChevronDown, 
+import React, { useState } from "react";
+import {
+  History,
+  RefreshCw,
+  User,
+  Clock,
+  Edit3,
+  ChevronDown,
   ChevronRight,
   Monitor,
   AlertCircle,
-  ArrowRight
-} from 'lucide-react';
-import { Button, Card, Badge, Alert, LoadingSpinner } from '../common';
-import { cn } from '../../lib/utils';
-import { useFormattedScoreHistory, useScoreHistoryStats } from '../../hooks/useScoreHistory';
-import type { ScoreHistoryEntry } from '../../lib/supabase/scores';
+  ArrowRight,
+} from "lucide-react";
+import { Button, Card, Badge, Alert, LoadingSpinner } from "../common";
+import { cn } from "../../lib/utils";
+import {
+  useFormattedScoreHistory,
+  useScoreHistoryStats,
+} from "../../hooks/useScoreHistory";
+import type { ScoreHistoryEntry } from "../../lib/supabase/scores";
 
 export interface ScoreHistoryProps {
   matchId: string;
@@ -27,19 +30,13 @@ export function ScoreHistory({
   matchId,
   className,
   showStats = true,
-  maxHeight = 'max-h-96',
+  maxHeight = "max-h-96",
 }: ScoreHistoryProps) {
   const [_isExpanded, _setIsExpanded] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  
-  const { 
-    history, 
-    loading, 
-    error, 
-    hasHistory, 
-    refreshHistory, 
-    clearError 
-  } = useFormattedScoreHistory(matchId);
+
+  const { history, loading, error, hasHistory, refreshHistory, clearError } =
+    useFormattedScoreHistory(matchId);
 
   const { stats } = useScoreHistoryStats(matchId);
 
@@ -48,7 +45,9 @@ export function ScoreHistory({
       <Card className={cn("p-6", className)}>
         <div className="flex items-center justify-center">
           <LoadingSpinner size="sm" />
-          <span className="ml-2 text-sm text-muted-foreground">Loading history...</span>
+          <span className="ml-2 text-sm text-muted-foreground">
+            Loading history...
+          </span>
         </div>
       </Card>
     );
@@ -100,10 +99,10 @@ export function ScoreHistory({
             <History className="h-5 w-5 text-muted-foreground" />
             <h3 className="font-medium">Score History</h3>
             <Badge variant="secondary" className="text-xs">
-              {history.length} {history.length === 1 ? 'change' : 'changes'}
+              {history.length} {history.length === 1 ? "change" : "changes"}
             </Badge>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -111,9 +110,9 @@ export function ScoreHistory({
               onClick={() => setShowDetails(!showDetails)}
               className="text-xs"
             >
-              {showDetails ? 'Hide' : 'Show'} Details
+              {showDetails ? "Hide" : "Show"} Details
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -130,11 +129,13 @@ export function ScoreHistory({
           <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <User className="h-3 w-3" />
-              {stats.uniqueEditors} {stats.uniqueEditors === 1 ? 'editor' : 'editors'}
+              {stats.uniqueEditors}{" "}
+              {stats.uniqueEditors === 1 ? "editor" : "editors"}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              {stats.lastEdit && `Last: ${new Date(stats.lastEdit).toLocaleTimeString()}`}
+              {stats.lastEdit &&
+                `Last: ${new Date(stats.lastEdit).toLocaleTimeString()}`}
             </span>
           </div>
         )}
@@ -172,29 +173,28 @@ interface ScoreHistoryItemProps {
   isLast: boolean;
 }
 
-function ScoreHistoryItem({ 
-  entry, 
-  showDetails, 
-  isFirst, 
-  isLast 
+function ScoreHistoryItem({
+  entry,
+  showDetails,
+  isFirst,
+  isLast,
 }: ScoreHistoryItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className={cn(
-      "p-4 border-b last:border-b-0",
-      isFirst && "bg-muted/30"
-    )}>
+    <div
+      className={cn("p-4 border-b last:border-b-0", isFirst && "bg-muted/30")}
+    >
       <div className="flex items-start gap-3">
         {/* Timeline indicator */}
         <div className="flex flex-col items-center">
-          <div className={cn(
-            "w-2 h-2 rounded-full",
-            isFirst ? "bg-primary" : "bg-muted-foreground"
-          )}></div>
-          {!isLast && (
-            <div className="w-px h-8 bg-border mt-2"></div>
-          )}
+          <div
+            className={cn(
+              "w-2 h-2 rounded-full",
+              isFirst ? "bg-primary" : "bg-muted-foreground"
+            )}
+          ></div>
+          {!isLast && <div className="w-px h-8 bg-border mt-2"></div>}
         </div>
 
         {/* Content */}
@@ -209,7 +209,7 @@ function ScoreHistoryItem({
                 {entry.relativeTime}
               </Badge>
             </div>
-            
+
             {showDetails && (
               <Button
                 variant="ghost"
@@ -241,7 +241,7 @@ function ScoreHistoryItem({
           <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
             <User className="h-3 w-3" />
             <span>
-              {entry.playerName || 'Unknown'} • {entry.formattedTime}
+              {entry.playerName || "Unknown"} • {entry.formattedTime}
             </span>
             {entry.reason && (
               <>
@@ -257,21 +257,23 @@ function ScoreHistoryItem({
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="font-medium">Version:</span>
-                  <span className="ml-2">{entry.oldValues.version} → {entry.newValues.version}</span>
+                  <span className="ml-2">
+                    {entry.oldValues.version} → {entry.newValues.version}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Change ID:</span>
                   <span className="ml-2 font-mono">{entry.id.slice(-8)}</span>
                 </div>
               </div>
-              
+
               {entry.userAgent && (
                 <div className="flex items-center gap-2 text-xs">
                   <Monitor className="h-3 w-3" />
                   <span className="truncate">{entry.userAgent}</span>
                 </div>
               )}
-              
+
               {entry.ipAddress && (
                 <div className="text-xs">
                   <span className="font-medium">IP:</span>
@@ -328,7 +330,7 @@ export function ScoreHistoryInline({
           <span className="text-muted-foreground">by {entry.playerName}</span>
         </div>
       ))}
-      
+
       {history.length > maxEntries && (
         <div className="text-xs text-muted-foreground">
           + {history.length - maxEntries} more changes

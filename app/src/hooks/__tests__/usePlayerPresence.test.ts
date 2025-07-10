@@ -1,14 +1,18 @@
-import { renderHook, act } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { usePlayerPresence, usePlayerPresenceStatus, useOnlinePlayersCount } from '../usePlayerPresence';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../useAuth';
+import { renderHook, act } from "@testing-library/react";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import {
+  usePlayerPresence,
+  usePlayerPresenceStatus,
+  useOnlinePlayersCount,
+} from "../usePlayerPresence";
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../useAuth";
 
 // Mock dependencies
-vi.mock('../../lib/supabase');
-vi.mock('../useAuth');
-vi.mock('../../lib/logger');
-vi.mock('../../lib/monitoring');
+vi.mock("../../lib/supabase");
+vi.mock("../useAuth");
+vi.mock("../../lib/logger");
+vi.mock("../../lib/monitoring");
 
 // Mock Supabase channel
 const mockChannel = {
@@ -16,7 +20,7 @@ const mockChannel = {
   track: vi.fn(),
   subscribe: vi.fn(),
   presenceState: vi.fn(),
-  state: 'subscribed',
+  state: "subscribed",
 };
 
 const mockSupabaseChannel = vi.fn(() => mockChannel);
@@ -27,12 +31,12 @@ const mockRemoveChannel = vi.fn();
 
 const mockAuth = useAuth as vi.MockedFunction<typeof useAuth>;
 
-describe('usePlayerPresence', () => {
+describe("usePlayerPresence", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockAuth.mockReturnValue({
-      user: { id: 'user-123', email: 'test@example.com' },
-      currentPlayerId: 'player-123',
+      user: { id: "user-123", email: "test@example.com" },
+      currentPlayerId: "player-123",
       isAuthenticated: true,
     } as any);
   });
@@ -42,123 +46,137 @@ describe('usePlayerPresence', () => {
     vi.useRealTimers();
   });
 
-  describe('basic functionality', () => {
-    it('should initialize with empty presence state', () => {
-      const { result } = renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123' })
+  describe("basic functionality", () => {
+    it("should initialize with empty presence state", () => {
+      const { result } = renderHook(() =>
+        usePlayerPresence({ playDateId: "play-date-123" })
       );
 
       expect(result.current.playerPresence).toEqual({});
       expect(result.current.isActive).toBe(false);
-      expect(result.current.connectionState).toBe('disconnected');
+      expect(result.current.connectionState).toBe("disconnected");
     });
 
-    it('should set up channel subscription when enabled', () => {
-      renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123', enabled: true })
+    it("should set up channel subscription when enabled", () => {
+      renderHook(() =>
+        usePlayerPresence({ playDateId: "play-date-123", enabled: true })
       );
 
-      expect(mockSupabaseChannel).toHaveBeenCalledWith('presence:play_date:play-date-123');
-      expect(mockChannel.on).toHaveBeenCalledWith('presence', { event: 'sync' }, expect.any(Function));
-      expect(mockChannel.on).toHaveBeenCalledWith('presence', { event: 'join' }, expect.any(Function));
-      expect(mockChannel.on).toHaveBeenCalledWith('presence', { event: 'leave' }, expect.any(Function));
+      expect(mockSupabaseChannel).toHaveBeenCalledWith(
+        "presence:play_date:play-date-123"
+      );
+      expect(mockChannel.on).toHaveBeenCalledWith(
+        "presence",
+        { event: "sync" },
+        expect.any(Function)
+      );
+      expect(mockChannel.on).toHaveBeenCalledWith(
+        "presence",
+        { event: "join" },
+        expect.any(Function)
+      );
+      expect(mockChannel.on).toHaveBeenCalledWith(
+        "presence",
+        { event: "leave" },
+        expect.any(Function)
+      );
       expect(mockChannel.subscribe).toHaveBeenCalledWith(expect.any(Function));
     });
 
-    it('should not set up subscription when disabled', () => {
-      renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123', enabled: false })
+    it("should not set up subscription when disabled", () => {
+      renderHook(() =>
+        usePlayerPresence({ playDateId: "play-date-123", enabled: false })
       );
 
       expect(mockSupabaseChannel).not.toHaveBeenCalled();
     });
 
-    it('should not set up subscription when no user', () => {
+    it("should not set up subscription when no user", () => {
       mockAuth.mockReturnValue({
         user: null,
         currentPlayerId: null,
         isAuthenticated: false,
       } as any);
 
-      renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123' })
-      );
+      renderHook(() => usePlayerPresence({ playDateId: "play-date-123" }));
 
       expect(mockSupabaseChannel).not.toHaveBeenCalled();
     });
   });
 
-  describe('presence tracking', () => {
-    it('should track initial presence on subscription', async () => {
+  describe("presence tracking", () => {
+    it("should track initial presence on subscription", async () => {
       const mockTrack = vi.fn().mockResolvedValue(undefined);
       mockChannel.track = mockTrack;
 
       const mockSubscribe = vi.fn((callback) => {
-        callback('SUBSCRIBED');
-        return 'success';
+        callback("SUBSCRIBED");
+        return "success";
       });
       mockChannel.subscribe = mockSubscribe;
 
-      renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123', enabled: true })
+      renderHook(() =>
+        usePlayerPresence({ playDateId: "play-date-123", enabled: true })
       );
 
       await act(async () => {
         // Wait for subscription callback
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       expect(mockTrack).toHaveBeenCalledWith({
-        player_id: 'player-123',
-        player_name: 'test@example.com',
+        player_id: "player-123",
+        player_name: "test@example.com",
         current_match_id: undefined,
         is_playing: false,
         last_seen: expect.any(String),
       });
     });
 
-    it('should update playing status', async () => {
+    it("should update playing status", async () => {
       const mockTrack = vi.fn().mockResolvedValue(undefined);
       mockChannel.track = mockTrack;
 
-      const { result } = renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123', enabled: true })
+      const { result } = renderHook(() =>
+        usePlayerPresence({ playDateId: "play-date-123", enabled: true })
       );
 
       await act(async () => {
-        result.current.updatePlayingStatus('match-456');
+        result.current.updatePlayingStatus("match-456");
       });
 
       expect(mockTrack).toHaveBeenCalledWith({
-        player_id: 'player-123',
-        player_name: 'test@example.com',
-        current_match_id: 'match-456',
+        player_id: "player-123",
+        player_name: "test@example.com",
+        current_match_id: "match-456",
         is_playing: true,
         last_seen: expect.any(String),
       });
     });
 
-    it('should process presence state updates', () => {
+    it("should process presence state updates", () => {
       const mockPresenceState = {
-        'user-123': [{
-          player_id: 'player-123',
-          player_name: 'Test User',
-          is_playing: false,
-          last_seen: new Date().toISOString(),
-        }],
+        "user-123": [
+          {
+            player_id: "player-123",
+            player_name: "Test User",
+            is_playing: false,
+            last_seen: new Date().toISOString(),
+          },
+        ],
       };
 
       let syncCallback: () => void;
       mockChannel.on = vi.fn((event, options, callback) => {
-        if (event === 'presence' && options.event === 'sync') {
+        if (event === "presence" && options.event === "sync") {
           syncCallback = callback;
         }
       });
 
       mockChannel.presenceState = vi.fn(() => mockPresenceState);
 
-      const { result } = renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123', enabled: true })
+      const { result } = renderHook(() =>
+        usePlayerPresence({ playDateId: "play-date-123", enabled: true })
       );
 
       // Simulate sync event
@@ -167,9 +185,9 @@ describe('usePlayerPresence', () => {
       });
 
       expect(result.current.playerPresence).toEqual({
-        'player-123': {
-          player_id: 'player-123',
-          player_name: 'Test User',
+        "player-123": {
+          player_id: "player-123",
+          player_name: "Test User",
           is_online: true,
           last_seen: expect.any(String),
           current_match_id: undefined,
@@ -179,24 +197,24 @@ describe('usePlayerPresence', () => {
     });
   });
 
-  describe('heartbeat functionality', () => {
+  describe("heartbeat functionality", () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });
 
-    it('should start heartbeat on successful subscription', async () => {
+    it("should start heartbeat on successful subscription", async () => {
       const mockTrack = vi.fn().mockResolvedValue(undefined);
       mockChannel.track = mockTrack;
 
       const mockSubscribe = vi.fn((callback) => {
-        callback('SUBSCRIBED');
-        return 'success';
+        callback("SUBSCRIBED");
+        return "success";
       });
       mockChannel.subscribe = mockSubscribe;
 
-      renderHook(() => 
-        usePlayerPresence({ 
-          playDateId: 'play-date-123', 
+      renderHook(() =>
+        usePlayerPresence({
+          playDateId: "play-date-123",
           enabled: true,
           heartbeatInterval: 1000,
         })
@@ -204,7 +222,7 @@ describe('usePlayerPresence', () => {
 
       await act(async () => {
         // Wait for subscription callback
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
 
       // Clear initial track call
@@ -216,18 +234,18 @@ describe('usePlayerPresence', () => {
       });
 
       expect(mockTrack).toHaveBeenCalledWith({
-        player_id: 'player-123',
-        player_name: 'test@example.com',
+        player_id: "player-123",
+        player_name: "test@example.com",
         current_match_id: undefined,
         is_playing: false,
         last_seen: expect.any(String),
       });
     });
 
-    it('should stop heartbeat on cleanup', () => {
-      const { unmount } = renderHook(() => 
-        usePlayerPresence({ 
-          playDateId: 'play-date-123', 
+    it("should stop heartbeat on cleanup", () => {
+      const { unmount } = renderHook(() =>
+        usePlayerPresence({
+          playDateId: "play-date-123",
           enabled: true,
           heartbeatInterval: 1000,
         })
@@ -239,64 +257,66 @@ describe('usePlayerPresence', () => {
     });
   });
 
-  describe('connection state management', () => {
-    it('should update connection state based on subscription status', async () => {
+  describe("connection state management", () => {
+    it("should update connection state based on subscription status", async () => {
       let subscriptionCallback: (event: any) => void;
       const mockSubscribe = vi.fn((callback) => {
         subscriptionCallback = callback;
-        return 'success';
+        return "success";
       });
       mockChannel.subscribe = mockSubscribe;
 
-      const { result } = renderHook(() => 
-        usePlayerPresence({ playDateId: 'play-date-123', enabled: true })
+      const { result } = renderHook(() =>
+        usePlayerPresence({ playDateId: "play-date-123", enabled: true })
       );
 
       // Initially disconnected
-      expect(result.current.connectionState).toBe('disconnected');
+      expect(result.current.connectionState).toBe("disconnected");
 
       // Simulate successful subscription
       await act(async () => {
-        subscriptionCallback('SUBSCRIBED');
+        subscriptionCallback("SUBSCRIBED");
       });
 
-      expect(result.current.connectionState).toBe('connected');
+      expect(result.current.connectionState).toBe("connected");
       expect(result.current.isActive).toBe(true);
 
       // Simulate error
       await act(async () => {
-        subscriptionCallback('CHANNEL_ERROR');
+        subscriptionCallback("CHANNEL_ERROR");
       });
 
-      expect(result.current.connectionState).toBe('error');
+      expect(result.current.connectionState).toBe("error");
       expect(result.current.isActive).toBe(false);
     });
   });
 
-  describe('offline detection', () => {
-    it('should mark players as offline after timeout', () => {
+  describe("offline detection", () => {
+    it("should mark players as offline after timeout", () => {
       const oldDate = new Date(Date.now() - 120000); // 2 minutes ago
       const mockPresenceState = {
-        'user-123': [{
-          player_id: 'player-123',
-          player_name: 'Test User',
-          is_playing: false,
-          last_seen: oldDate.toISOString(),
-        }],
+        "user-123": [
+          {
+            player_id: "player-123",
+            player_name: "Test User",
+            is_playing: false,
+            last_seen: oldDate.toISOString(),
+          },
+        ],
       };
 
       let syncCallback: () => void;
       mockChannel.on = vi.fn((event, options, callback) => {
-        if (event === 'presence' && options.event === 'sync') {
+        if (event === "presence" && options.event === "sync") {
           syncCallback = callback;
         }
       });
 
       mockChannel.presenceState = vi.fn(() => mockPresenceState);
 
-      const { result } = renderHook(() => 
-        usePlayerPresence({ 
-          playDateId: 'play-date-123', 
+      const { result } = renderHook(() =>
+        usePlayerPresence({
+          playDateId: "play-date-123",
           enabled: true,
           offlineTimeout: 60000, // 1 minute
         })
@@ -307,50 +327,50 @@ describe('usePlayerPresence', () => {
         syncCallback();
       });
 
-      expect(result.current.playerPresence['player-123'].is_online).toBe(false);
+      expect(result.current.playerPresence["player-123"].is_online).toBe(false);
     });
   });
 });
 
-describe('usePlayerPresenceStatus', () => {
-  it('should return status for specific player', () => {
+describe("usePlayerPresenceStatus", () => {
+  it("should return status for specific player", () => {
     // Mock the main hook
     const mockPlayerPresence = {
-      'player-123': {
-        player_id: 'player-123',
-        player_name: 'Test User',
+      "player-123": {
+        player_id: "player-123",
+        player_name: "Test User",
         is_online: true,
         last_seen: new Date().toISOString(),
-        current_match_id: 'match-456',
+        current_match_id: "match-456",
         is_playing: true,
       },
     };
 
-    vi.doMock('../usePlayerPresence', () => ({
+    vi.doMock("../usePlayerPresence", () => ({
       usePlayerPresence: () => ({
         playerPresence: mockPlayerPresence,
       }),
     }));
 
-    const { result } = renderHook(() => 
-      usePlayerPresenceStatus('play-date-123', 'player-123')
+    const { result } = renderHook(() =>
+      usePlayerPresenceStatus("play-date-123", "player-123")
     );
 
     expect(result.current.isOnline).toBe(true);
     expect(result.current.isPlaying).toBe(true);
-    expect(result.current.currentMatchId).toBe('match-456');
+    expect(result.current.currentMatchId).toBe("match-456");
     expect(result.current.lastSeen).toBeDefined();
   });
 
-  it('should return false values for non-existent player', () => {
-    vi.doMock('../usePlayerPresence', () => ({
+  it("should return false values for non-existent player", () => {
+    vi.doMock("../usePlayerPresence", () => ({
       usePlayerPresence: () => ({
         playerPresence: {},
       }),
     }));
 
-    const { result } = renderHook(() => 
-      usePlayerPresenceStatus('play-date-123', 'non-existent-player')
+    const { result } = renderHook(() =>
+      usePlayerPresenceStatus("play-date-123", "non-existent-player")
     );
 
     expect(result.current.isOnline).toBe(false);
@@ -360,28 +380,28 @@ describe('usePlayerPresenceStatus', () => {
   });
 });
 
-describe('useOnlinePlayersCount', () => {
-  it('should return correct counts', () => {
+describe("useOnlinePlayersCount", () => {
+  it("should return correct counts", () => {
     const mockPlayerPresence = {
-      'player-1': {
-        player_id: 'player-1',
-        player_name: 'Player 1',
+      "player-1": {
+        player_id: "player-1",
+        player_name: "Player 1",
         is_online: true,
         last_seen: new Date().toISOString(),
-        current_match_id: 'match-1',
+        current_match_id: "match-1",
         is_playing: true,
       },
-      'player-2': {
-        player_id: 'player-2',
-        player_name: 'Player 2',
+      "player-2": {
+        player_id: "player-2",
+        player_name: "Player 2",
         is_online: true,
         last_seen: new Date().toISOString(),
         current_match_id: undefined,
         is_playing: false,
       },
-      'player-3': {
-        player_id: 'player-3',
-        player_name: 'Player 3',
+      "player-3": {
+        player_id: "player-3",
+        player_name: "Player 3",
         is_online: false,
         last_seen: new Date().toISOString(),
         current_match_id: undefined,
@@ -389,15 +409,13 @@ describe('useOnlinePlayersCount', () => {
       },
     };
 
-    vi.doMock('../usePlayerPresence', () => ({
+    vi.doMock("../usePlayerPresence", () => ({
       usePlayerPresence: () => ({
         playerPresence: mockPlayerPresence,
       }),
     }));
 
-    const { result } = renderHook(() => 
-      useOnlinePlayersCount('play-date-123')
-    );
+    const { result } = renderHook(() => useOnlinePlayersCount("play-date-123"));
 
     expect(result.current.onlineCount).toBe(2);
     expect(result.current.playingCount).toBe(1);

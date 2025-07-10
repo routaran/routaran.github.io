@@ -1,12 +1,12 @@
-import { Label } from '../common/Form'
-import type { WinCondition } from '../../types/database'
+import { Label } from "../common/Form";
+import type { WinCondition } from "../../types/database";
 
 interface WinConditionSelectorProps {
-  winCondition: WinCondition
-  targetScore: number
-  onWinConditionChange: (value: WinCondition) => void
-  onTargetScoreChange: (value: number) => void
-  disabled?: boolean
+  winCondition: WinCondition;
+  targetScore: number;
+  onWinConditionChange: (value: WinCondition) => void;
+  onTargetScoreChange: (value: number) => void;
+  disabled?: boolean;
 }
 
 export function WinConditionSelector({
@@ -14,7 +14,7 @@ export function WinConditionSelector({
   targetScore,
   onWinConditionChange,
   onTargetScoreChange,
-  disabled = false
+  disabled = false,
 }: WinConditionSelectorProps) {
   return (
     <div className="space-y-4">
@@ -31,9 +31,9 @@ export function WinConditionSelector({
           <option value="win-by-2">Win by 2</option>
         </select>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          {winCondition === 'first-to-target' 
-            ? 'First team to reach the target score wins'
-            : 'Must reach target score and lead by at least 2 points'}
+          {winCondition === "first-to-target"
+            ? "First team to reach the target score wins"
+            : "Must reach target score and lead by at least 2 points"}
         </p>
       </div>
 
@@ -54,5 +54,5 @@ export function WinConditionSelector({
         </p>
       </div>
     </div>
-  )
+  );
 }

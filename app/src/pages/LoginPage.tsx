@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Card } from '../components/common/Card';
-import { LoginForm } from '../components/auth/LoginForm';
-import { PlayerClaim } from '../components/auth/PlayerClaim';
-import { useAuthStore } from '../stores/authStore';
-import { useAuth } from '../hooks/useAuth';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { logger } from '../lib/logger';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Card } from "../components/common/Card";
+import { LoginForm } from "../components/auth/LoginForm";
+import { PlayerClaim } from "../components/auth/PlayerClaim";
+import { useAuthStore } from "../stores/authStore";
+import { useAuth } from "../hooks/useAuth";
+import { LoadingSpinner } from "../components/common/LoadingSpinner";
+import { logger } from "../lib/logger";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -17,12 +17,12 @@ export function LoginPage() {
   const [checkingClaim, setCheckingClaim] = useState(false);
 
   // Get redirect path from location state
-  const from = (location.state as any)?.from?.pathname || '/';
+  const from = (location.state as any)?.from?.pathname || "/";
 
   useEffect(() => {
-    logger.info('Login page mounted', {
-      component: 'LoginPage',
-      action: 'mount',
+    logger.info("Login page mounted", {
+      component: "LoginPage",
+      action: "mount",
       metadata: { redirectPath: from },
     });
 
@@ -31,17 +31,17 @@ export function LoginPage() {
       setCheckingClaim(true);
       checkPlayerClaim().then((hasClaim) => {
         if (hasClaim) {
-          logger.info('User already authenticated with claim', {
-            component: 'LoginPage',
-            action: 'redirect',
+          logger.info("User already authenticated with claim", {
+            component: "LoginPage",
+            action: "redirect",
             userId: user.id,
             metadata: { redirectPath: from },
           });
           navigate(from, { replace: true });
         } else {
-          logger.info('User authenticated but needs to claim player', {
-            component: 'LoginPage',
-            action: 'showClaim',
+          logger.info("User authenticated but needs to claim player", {
+            component: "LoginPage",
+            action: "showClaim",
             userId: user.id,
           });
           setShowPlayerClaim(true);
@@ -52,9 +52,9 @@ export function LoginPage() {
   }, [user, player, navigate, from, checkPlayerClaim, checkingClaim]);
 
   const handleLoginSuccess = () => {
-    logger.info('Login successful, checking for player claim', {
-      component: 'LoginPage',
-      action: 'loginSuccess',
+    logger.info("Login successful, checking for player claim", {
+      component: "LoginPage",
+      action: "loginSuccess",
       userId: user?.id,
     });
     // After successful login, check if user needs to claim a player
@@ -62,9 +62,9 @@ export function LoginPage() {
   };
 
   const handleClaimSuccess = () => {
-    logger.info('Player claim successful, redirecting', {
-      component: 'LoginPage',
-      action: 'claimSuccess',
+    logger.info("Player claim successful, redirecting", {
+      component: "LoginPage",
+      action: "claimSuccess",
       userId: user?.id,
       metadata: { redirectPath: from },
     });
@@ -111,7 +111,7 @@ export function LoginPage() {
         {/* Help Text */}
         <div className="text-center text-sm text-gray-600 dark:text-gray-400">
           <p>
-            New to Pickleball Tracker?{' '}
+            New to Pickleball Tracker?{" "}
             <span className="font-medium text-gray-900 dark:text-white">
               Enter your email above to get started
             </span>

@@ -1,8 +1,8 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { useAuthStore } from '../../stores/authStore';
-import { LoadingSpinner } from '../common/LoadingSpinner';
-import { ROUTES } from '../../router';
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { useAuthStore } from "../../stores/authStore";
+import { LoadingSpinner } from "../common/LoadingSpinner";
+import { ROUTES } from "../../router";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -11,7 +11,12 @@ interface ProtectedRouteProps {
   requiredRole?: string;
 }
 
-export function ProtectedRoute({ children, requiresPlayer = true, roles, requiredRole }: ProtectedRouteProps) {
+export function ProtectedRoute({
+  children,
+  requiresPlayer = true,
+  roles,
+  requiredRole,
+}: ProtectedRouteProps) {
   const location = useLocation();
   const { isAuthenticated, isLoading, isInitialized, player } = useAuth();
   const { role } = useAuthStore();
@@ -37,7 +42,11 @@ export function ProtectedRoute({ children, requiresPlayer = true, roles, require
 
   // Check role-based access (support both roles array and requiredRole)
   const requiredRoles = requiredRole ? [requiredRole] : roles;
-  if (requiredRoles && requiredRoles.length > 0 && !requiredRoles.includes(role)) {
+  if (
+    requiredRoles &&
+    requiredRoles.length > 0 &&
+    !requiredRoles.includes(role)
+  ) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 

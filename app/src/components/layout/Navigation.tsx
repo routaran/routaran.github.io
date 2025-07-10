@@ -1,11 +1,11 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { useIsRealtimeConnected } from '../../contexts/RealtimeContext';
-import { cn } from '../../lib/utils';
-import { FocusTrap, useFocusManagement } from '../common/Accessibility';
-import { User, Crown, LogOut, Wifi, WifiOff } from 'lucide-react';
-import { ROUTES } from '../../router';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { useIsRealtimeConnected } from "../../contexts/RealtimeContext";
+import { cn } from "../../lib/utils";
+import { FocusTrap, useFocusManagement } from "../common/Accessibility";
+import { User, Crown, LogOut, Wifi, WifiOff } from "lucide-react";
+import { ROUTES } from "../../router";
 
 export function Navigation() {
   const location = useLocation();
@@ -23,14 +23,14 @@ export function Navigation() {
   // Close mobile menu on escape key
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isMobileMenuOpen) {
+      if (event.key === "Escape" && isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
         restoreFocus();
       }
     };
 
-    document.addEventListener('keydown', handleEscapeKey);
-    return () => document.removeEventListener('keydown', handleEscapeKey);
+    document.addEventListener("keydown", handleEscapeKey);
+    return () => document.removeEventListener("keydown", handleEscapeKey);
   }, [isMobileMenuOpen, restoreFocus]);
 
   const handleMobileMenuToggle = () => {
@@ -45,26 +45,26 @@ export function Navigation() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Sign out failed:', error);
+      console.error("Sign out failed:", error);
     }
   };
 
   const navItems = [
     {
-      href: '/dashboard',
-      label: 'Dashboard',
+      href: "/dashboard",
+      label: "Dashboard",
       requiresAuth: false,
     },
     {
-      href: '/play-dates',
-      label: 'Play Dates',
+      href: "/play-dates",
+      label: "Play Dates",
       requiresAuth: false,
     },
     {
-      href: '/profile',
-      label: 'Profile',
+      href: "/profile",
+      label: "Profile",
       requiresAuth: true,
     },
   ];
@@ -72,8 +72,8 @@ export function Navigation() {
   // Add admin items for project owners
   if (player?.project_owner) {
     navItems.push({
-      href: '/admin',
-      label: 'Admin',
+      href: "/admin",
+      label: "Admin",
       requiresAuth: true,
     });
   }
@@ -137,11 +137,11 @@ export function Navigation() {
                 key={item.href}
                 to={item.href}
                 className={cn(
-                  'px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+                  "px-3 py-2 rounded-md text-sm font-medium transition-colors min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
                   location.pathname === item.href ||
                     location.pathname.startsWith(item.href)
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? "bg-primary-100 text-primary-700"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 )}
               >
                 {item.label}
@@ -156,15 +156,17 @@ export function Navigation() {
                 <span className="text-sm text-gray-600 hidden sm:block">
                   {player?.name || user?.email}
                 </span>
-                
+
                 {/* Role Badge */}
                 {player && (
-                  <span className={cn(
-                    "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
-                    player.project_owner 
-                      ? "bg-purple-100 text-purple-800" 
-                      : "bg-blue-100 text-blue-800"
-                  )}>
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
+                      player.project_owner
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-blue-100 text-blue-800"
+                    )}
+                  >
                     {player.project_owner ? (
                       <>
                         <Crown className="w-3 h-3" />
@@ -178,7 +180,7 @@ export function Navigation() {
                     )}
                   </span>
                 )}
-                
+
                 <button
                   onClick={handleSignOut}
                   className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px]"
@@ -245,7 +247,7 @@ export function Navigation() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <FocusTrap 
+        <FocusTrap
           isActive={isMobileMenuOpen}
           onEscape={() => setIsMobileMenuOpen(false)}
         >
@@ -256,18 +258,18 @@ export function Navigation() {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    'block px-3 py-3 rounded-md text-base font-medium transition-colors motion-reduce:transition-none min-h-[44px] flex items-center',
+                    "block px-3 py-3 rounded-md text-base font-medium transition-colors motion-reduce:transition-none min-h-[44px] flex items-center",
                     location.pathname === item.href ||
                       location.pathname.startsWith(item.href)
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      ? "bg-primary-100 text-primary-700"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}
                 </Link>
               ))}
-              
+
               {/* Mobile User Menu */}
               {isAuthenticated && (
                 <div className="border-t border-gray-200 pt-3 mt-3">
@@ -276,12 +278,14 @@ export function Navigation() {
                       {player?.name || user?.email}
                     </div>
                     {player && (
-                      <div className={cn(
-                        "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
-                        player.project_owner 
-                          ? "bg-purple-100 text-purple-800" 
-                          : "bg-blue-100 text-blue-800"
-                      )}>
+                      <div
+                        className={cn(
+                          "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium",
+                          player.project_owner
+                            ? "bg-purple-100 text-purple-800"
+                            : "bg-blue-100 text-blue-800"
+                        )}
+                      >
                         {player.project_owner ? (
                           <>
                             <Crown className="w-3 h-3" />
@@ -315,12 +319,14 @@ export function Navigation() {
       )}
 
       {/* Connection Status Indicator */}
-      <div className={cn(
-        "border-t px-4 py-1 transition-colors",
-        isRealtimeConnected 
-          ? "bg-green-50 border-green-100" 
-          : "bg-yellow-50 border-yellow-100"
-      )}>
+      <div
+        className={cn(
+          "border-t px-4 py-1 transition-colors",
+          isRealtimeConnected
+            ? "bg-green-50 border-green-100"
+            : "bg-yellow-50 border-yellow-100"
+        )}
+      >
         <div className="container mx-auto">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center space-x-2">
@@ -332,13 +338,13 @@ export function Navigation() {
               ) : (
                 <>
                   <WifiOff className="w-3 h-3 text-yellow-600" />
-                  <span className="text-yellow-700">Real-time Disconnected</span>
+                  <span className="text-yellow-700">
+                    Real-time Disconnected
+                  </span>
                 </>
               )}
             </div>
-            <span className="text-gray-600">
-              Pickleball Tracker
-            </span>
+            <span className="text-gray-600">Pickleball Tracker</span>
           </div>
         </div>
       </div>

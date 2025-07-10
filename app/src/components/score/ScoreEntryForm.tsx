@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
-import { Trophy, Plus, Minus, RotateCcw, Save, AlertTriangle, Info } from 'lucide-react';
-import { Button, Card, Alert, Input, Badge } from '../common';
-import { cn } from '../../lib/utils';
-import { useScoreEntry, useCommonScores, useScoreKeyboard } from '../../hooks/useScoreEntry';
-import { formatScore } from '../../lib/validation/scoreValidation';
-import type { Match, WinCondition } from '../../types/database';
+import React, { useState } from "react";
+import {
+  Trophy,
+  Plus,
+  Minus,
+  RotateCcw,
+  Save,
+  AlertTriangle,
+  Info,
+} from "lucide-react";
+import { Button, Card, Alert, Input, Badge } from "../common";
+import { cn } from "../../lib/utils";
+import {
+  useScoreEntry,
+  useCommonScores,
+  useScoreKeyboard,
+} from "../../hooks/useScoreEntry";
+import { formatScore } from "../../lib/validation/scoreValidation";
+import type { Match, WinCondition } from "../../types/database";
 
 export interface ScoreEntryFormProps {
   match: Match;
@@ -26,7 +38,7 @@ export function ScoreEntryForm({
   className,
 }: ScoreEntryFormProps) {
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
-  
+
   const scoreEntry = useScoreEntry({
     match,
     playDateId,
@@ -37,7 +49,7 @@ export function ScoreEntryForm({
   });
 
   const commonScores = useCommonScores(targetScore);
-  
+
   // Enable keyboard shortcuts
   useScoreKeyboard(
     {
@@ -104,8 +116,8 @@ export function ScoreEntryForm({
         <div>
           <h3 className="text-lg font-semibold">Enter Score</h3>
           <p className="text-sm text-muted-foreground">
-            {winCondition === 'first-to-target' 
-              ? `First to ${targetScore}` 
+            {winCondition === "first-to-target"
+              ? `First to ${targetScore}`
               : `First to ${targetScore}, win by 2`}
           </p>
         </div>
@@ -168,22 +180,26 @@ export function ScoreEntryForm({
       {/* Score Entry */}
       <div className="space-y-4">
         {/* Team 1 */}
-        <div className={cn(
-          "flex items-center justify-between p-4 rounded-lg border-2 transition-colors",
-          scoreEntry.winner === 1 && "border-green-500 bg-green-50 dark:bg-green-900/20"
-        )}>
+        <div
+          className={cn(
+            "flex items-center justify-between p-4 rounded-lg border-2 transition-colors",
+            scoreEntry.winner === 1 &&
+              "border-green-500 bg-green-50 dark:bg-green-900/20"
+          )}
+        >
           <div className="flex items-center gap-3">
             {scoreEntry.winner === 1 && (
               <Trophy className="h-5 w-5 text-green-600" />
             )}
             <div>
               <p className="font-medium">
-                {match.partnership1?.player1?.name || 'Player 1'} & {match.partnership1?.player2?.name || 'Player 2'}
+                {match.partnership1?.player1?.name || "Player 1"} &{" "}
+                {match.partnership1?.player2?.name || "Player 2"}
               </p>
               <p className="text-sm text-muted-foreground">Team 1</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -194,7 +210,7 @@ export function ScoreEntryForm({
             >
               <Minus className="h-4 w-4" />
             </Button>
-            
+
             <div className="flex items-center gap-2">
               <Input
                 type="number"
@@ -205,7 +221,7 @@ export function ScoreEntryForm({
                 max={30}
               />
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -219,22 +235,26 @@ export function ScoreEntryForm({
         </div>
 
         {/* Team 2 */}
-        <div className={cn(
-          "flex items-center justify-between p-4 rounded-lg border-2 transition-colors",
-          scoreEntry.winner === 2 && "border-green-500 bg-green-50 dark:bg-green-900/20"
-        )}>
+        <div
+          className={cn(
+            "flex items-center justify-between p-4 rounded-lg border-2 transition-colors",
+            scoreEntry.winner === 2 &&
+              "border-green-500 bg-green-50 dark:bg-green-900/20"
+          )}
+        >
           <div className="flex items-center gap-3">
             {scoreEntry.winner === 2 && (
               <Trophy className="h-5 w-5 text-green-600" />
             )}
             <div>
               <p className="font-medium">
-                {match.partnership2?.player1?.name || 'Player 3'} & {match.partnership2?.player2?.name || 'Player 4'}
+                {match.partnership2?.player1?.name || "Player 3"} &{" "}
+                {match.partnership2?.player2?.name || "Player 4"}
               </p>
               <p className="text-sm text-muted-foreground">Team 2</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -245,7 +265,7 @@ export function ScoreEntryForm({
             >
               <Minus className="h-4 w-4" />
             </Button>
-            
+
             <div className="flex items-center gap-2">
               <Input
                 type="number"
@@ -256,7 +276,7 @@ export function ScoreEntryForm({
                 max={30}
               />
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -293,7 +313,10 @@ export function ScoreEntryForm({
       {/* Score Status */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div className="flex items-center gap-4">
-          <span>Current: {formatScore(match.team1_score)}-{formatScore(match.team2_score)}</span>
+          <span>
+            Current: {formatScore(match.team1_score)}-
+            {formatScore(match.team2_score)}
+          </span>
           {scoreEntry.hasChanges && (
             <Badge variant="secondary" className="text-xs">
               Modified
@@ -318,14 +341,18 @@ export function ScoreEntryForm({
           <RotateCcw className="h-4 w-4" />
           Reset
         </Button>
-        
+
         <Button
           onClick={scoreEntry.submitScore}
-          disabled={scoreEntry.isSubmitting || !scoreEntry.isValid || !scoreEntry.hasChanges}
+          disabled={
+            scoreEntry.isSubmitting ||
+            !scoreEntry.isValid ||
+            !scoreEntry.hasChanges
+          }
           className="gap-2"
         >
           <Save className="h-4 w-4" />
-          {scoreEntry.isSubmitting ? 'Saving...' : 'Save Score'}
+          {scoreEntry.isSubmitting ? "Saving..." : "Save Score"}
         </Button>
       </div>
     </Card>

@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { useConflictResolution, type ConflictInfo, type ConflictResolutionStrategy } from '../../hooks/useConflictResolution';
-import { cn } from '../../lib/utils';
-import { Button } from '../common/Button';
-import { Card } from '../common/Card';
-import { Badge } from '../common/Badge';
+import React, { useState } from "react";
+import {
+  useConflictResolution,
+  type ConflictInfo,
+  type ConflictResolutionStrategy,
+} from "../../hooks/useConflictResolution";
+import { cn } from "../../lib/utils";
+import { Button } from "../common/Button";
+import { Card } from "../common/Card";
+import { Badge } from "../common/Badge";
 
 export interface ConflictResolutionDialogProps {
   /** Conflict to resolve */
@@ -28,7 +32,8 @@ export function ConflictResolutionDialog({
   onResolved,
   className,
 }: ConflictResolutionDialogProps) {
-  const [selectedStrategy, setSelectedStrategy] = useState<ConflictResolutionStrategy>({ name: 'latest-wins' });
+  const [selectedStrategy, setSelectedStrategy] =
+    useState<ConflictResolutionStrategy>({ name: "latest-wins" });
   const [isResolving, setIsResolving] = useState(false);
 
   if (!open) return null;
@@ -44,20 +49,25 @@ export function ConflictResolutionDialog({
   };
 
   const strategies: ConflictResolutionStrategy[] = [
-    { name: 'latest-wins' },
-    { name: 'user-wins' },
-    { name: 'merge' },
+    { name: "latest-wins" },
+    { name: "user-wins" },
+    { name: "merge" },
   ];
 
   const strategyDescriptions = {
-    'latest-wins': 'Use the most recent version from the server',
-    'user-wins': 'Keep your local changes',
-    'merge': 'Attempt to merge both versions',
+    "latest-wins": "Use the most recent version from the server",
+    "user-wins": "Keep your local changes",
+    merge: "Attempt to merge both versions",
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <Card className={cn('max-w-2xl w-full max-h-[90vh] overflow-y-auto', className)}>
+      <Card
+        className={cn(
+          "max-w-2xl w-full max-h-[90vh] overflow-y-auto",
+          className
+        )}
+      >
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -66,7 +76,8 @@ export function ConflictResolutionDialog({
                 Conflict Resolution Required
               </h2>
               <p className="text-sm text-gray-600 mt-1">
-                Someone else has updated this match. Choose how to resolve the conflict.
+                Someone else has updated this match. Choose how to resolve the
+                conflict.
               </p>
             </div>
             <Button
@@ -92,7 +103,8 @@ export function ConflictResolutionDialog({
                 Match ID: {conflict.matchId}
               </div>
               <div className="text-sm text-yellow-700">
-                Your version: {conflict.localVersion} → Server version: {conflict.remoteVersion}
+                Your version: {conflict.localVersion} → Server version:{" "}
+                {conflict.remoteVersion}
               </div>
             </div>
           </div>
@@ -105,16 +117,24 @@ export function ConflictResolutionDialog({
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="info">Your Changes</Badge>
-                  <span className="text-sm text-gray-600">Version {conflict.localVersion}</span>
+                  <span className="text-sm text-gray-600">
+                    Version {conflict.localVersion}
+                  </span>
                 </div>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <div className="space-y-1">
-                    {Object.entries(conflict.localChanges).map(([key, value]) => (
-                      <div key={key} className="text-sm">
-                        <span className="font-medium text-blue-800">{key}:</span>{' '}
-                        <span className="text-blue-700">{JSON.stringify(value)}</span>
-                      </div>
-                    ))}
+                    {Object.entries(conflict.localChanges).map(
+                      ([key, value]) => (
+                        <div key={key} className="text-sm">
+                          <span className="font-medium text-blue-800">
+                            {key}:
+                          </span>{" "}
+                          <span className="text-blue-700">
+                            {JSON.stringify(value)}
+                          </span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -123,16 +143,24 @@ export function ConflictResolutionDialog({
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="warning">Server Changes</Badge>
-                  <span className="text-sm text-gray-600">Version {conflict.remoteVersion}</span>
+                  <span className="text-sm text-gray-600">
+                    Version {conflict.remoteVersion}
+                  </span>
                 </div>
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
                   <div className="space-y-1">
-                    {Object.entries(conflict.remoteChanges).map(([key, value]) => (
-                      <div key={key} className="text-sm">
-                        <span className="font-medium text-orange-800">{key}:</span>{' '}
-                        <span className="text-orange-700">{JSON.stringify(value)}</span>
-                      </div>
-                    ))}
+                    {Object.entries(conflict.remoteChanges).map(
+                      ([key, value]) => (
+                        <div key={key} className="text-sm">
+                          <span className="font-medium text-orange-800">
+                            {key}:
+                          </span>{" "}
+                          <span className="text-orange-700">
+                            {JSON.stringify(value)}
+                          </span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -147,10 +175,10 @@ export function ConflictResolutionDialog({
                 <label
                   key={strategy.name}
                   className={cn(
-                    'flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors',
+                    "flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors",
                     selectedStrategy.name === strategy.name
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:border-gray-300"
                   )}
                 >
                   <input
@@ -158,12 +186,14 @@ export function ConflictResolutionDialog({
                     name="strategy"
                     value={strategy.name}
                     checked={selectedStrategy.name === strategy.name}
-                    onChange={(e) => setSelectedStrategy({ name: e.target.value as any })}
+                    onChange={(e) =>
+                      setSelectedStrategy({ name: e.target.value as any })
+                    }
                     className="mt-1"
                   />
                   <div className="flex-1">
                     <div className="font-medium text-gray-900 capitalize">
-                      {strategy.name.replace('-', ' ')}
+                      {strategy.name.replace("-", " ")}
                     </div>
                     <div className="text-sm text-gray-600">
                       {strategyDescriptions[strategy.name]}
@@ -182,24 +212,27 @@ export function ConflictResolutionDialog({
                 After resolution with "{selectedStrategy.name}":
               </div>
               <div className="space-y-1">
-                {selectedStrategy.name === 'latest-wins' && (
+                {selectedStrategy.name === "latest-wins" && (
                   <div className="text-sm">
                     <span className="text-gray-700">
-                      All server changes will be kept. Your local changes will be discarded.
+                      All server changes will be kept. Your local changes will
+                      be discarded.
                     </span>
                   </div>
                 )}
-                {selectedStrategy.name === 'user-wins' && (
+                {selectedStrategy.name === "user-wins" && (
                   <div className="text-sm">
                     <span className="text-gray-700">
-                      Your local changes will be kept. Server changes will be overwritten.
+                      Your local changes will be kept. Server changes will be
+                      overwritten.
                     </span>
                   </div>
                 )}
-                {selectedStrategy.name === 'merge' && (
+                {selectedStrategy.name === "merge" && (
                   <div className="text-sm">
                     <span className="text-gray-700">
-                      Both sets of changes will be merged. This may result in unexpected values.
+                      Both sets of changes will be merged. This may result in
+                      unexpected values.
                     </span>
                   </div>
                 )}
@@ -209,11 +242,7 @@ export function ConflictResolutionDialog({
 
           {/* Actions */}
           <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isResolving}
-            >
+            <Button variant="outline" onClick={onClose} disabled={isResolving}>
               Cancel
             </Button>
             <Button
@@ -221,7 +250,7 @@ export function ConflictResolutionDialog({
               disabled={isResolving}
               className="min-w-[120px]"
             >
-              {isResolving ? 'Resolving...' : 'Resolve Conflict'}
+              {isResolving ? "Resolving..." : "Resolve Conflict"}
             </Button>
           </div>
         </div>
@@ -250,10 +279,14 @@ export function ConflictResolutionManager({
   maxConflicts = 5,
   autoResolveStrategy,
 }: ConflictResolutionManagerProps) {
-  const [selectedConflict, setSelectedConflict] = useState<ConflictInfo | null>(null);
-  const { conflicts, resolveConflict, dismissConflict } = useConflictResolution({
-    defaultStrategy: autoResolveStrategy,
-  });
+  const [selectedConflict, setSelectedConflict] = useState<ConflictInfo | null>(
+    null
+  );
+  const { conflicts, resolveConflict, dismissConflict } = useConflictResolution(
+    {
+      defaultStrategy: autoResolveStrategy,
+    }
+  );
 
   const handleConflictClick = (conflict: ConflictInfo) => {
     setSelectedConflict(conflict);
@@ -278,7 +311,7 @@ export function ConflictResolutionManager({
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Conflict list */}
       <div className="space-y-2">
         {displayConflicts.map((conflict) => (
@@ -349,7 +382,7 @@ export function ConflictIndicator({ className }: { className?: string }) {
   if (conflicts.length === 0) return null;
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn("relative", className)}>
       <Button
         variant="ghost"
         size="sm"

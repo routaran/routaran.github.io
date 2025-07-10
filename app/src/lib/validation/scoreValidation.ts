@@ -1,4 +1,4 @@
-import type { WinCondition } from '../../types/database';
+import type { WinCondition } from "../../types/database";
 
 export interface ScoreValidationResult {
   isValid: boolean;
@@ -16,7 +16,10 @@ export interface ScoreValidationConfig {
 /**
  * Validates individual score values
  */
-export function validateScoreValue(score: number, config: ScoreValidationConfig): ScoreValidationResult {
+export function validateScoreValue(
+  score: number,
+  config: ScoreValidationConfig
+): ScoreValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -24,20 +27,20 @@ export function validateScoreValue(score: number, config: ScoreValidationConfig)
   if (score < config.minScore) {
     errors.push(`Score cannot be less than ${config.minScore}`);
   }
-  
+
   if (score > config.maxScore) {
     errors.push(`Score cannot be greater than ${config.maxScore}`);
   }
 
   // Check if score is an integer
   if (!Number.isInteger(score)) {
-    errors.push('Score must be a whole number');
+    errors.push("Score must be a whole number");
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -72,7 +75,7 @@ export function validateMatchScore(
   return {
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -86,7 +89,7 @@ export function validateWinCondition(
 ): ScoreValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
+
   const { winCondition, targetScore } = config;
   const maxScore = Math.max(team1Score, team2Score);
   const minScore = Math.min(team1Score, team2Score);
@@ -94,45 +97,52 @@ export function validateWinCondition(
 
   // Check if neither team has won
   if (team1Score === team2Score) {
-    errors.push('Match cannot end in a tie');
+    errors.push("Match cannot end in a tie");
     return { isValid: false, errors, warnings };
   }
 
-  if (winCondition === 'first-to-target') {
+  if (winCondition === "first-to-target") {
     // First-to-target: winner must reach target score
     if (maxScore < targetScore) {
       errors.push(`Winning team must reach ${targetScore} points`);
     }
-  } else if (winCondition === 'win-by-2') {
+  } else if (winCondition === "win-by-2") {
     // Win-by-2: winner must reach target and win by at least 2
     if (maxScore < targetScore) {
       errors.push(`Winning team must reach ${targetScore} points`);
     } else if (scoreDiff < 2) {
-      errors.push('Winning team must win by at least 2 points');
+      errors.push("Winning team must win by at least 2 points");
     }
   }
 
   // Check for unusually high scores
   if (maxScore > targetScore + 10) {
-    warnings.push(`Score of ${maxScore} is unusually high for target of ${targetScore}`);
+    warnings.push(
+      `Score of ${maxScore} is unusually high for target of ${targetScore}`
+    );
   }
 
   // Check for large score differences (might indicate data entry error)
   if (scoreDiff > 15) {
-    warnings.push(`Large score difference (${scoreDiff}) - please verify scores are correct`);
+    warnings.push(
+      `Large score difference (${scoreDiff}) - please verify scores are correct`
+    );
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
 /**
  * Determines the winner of a match based on scores
  */
-export function determineWinner(team1Score: number, team2Score: number): 1 | 2 | null {
+export function determineWinner(
+  team1Score: number,
+  team2Score: number
+): 1 | 2 | null {
   if (team1Score > team2Score) return 1;
   if (team2Score > team1Score) return 2;
   return null;
@@ -141,27 +151,53 @@ export function determineWinner(team1Score: number, team2Score: number): 1 | 2 |
 /**
  * Checks if a match is complete (has valid scores for both teams)
  */
-export function isMatchComplete(team1Score: number | null, team2Score: number | null): boolean {
-  return team1Score !== null && team2Score !== null && team1Score >= 0 && team2Score >= 0;
+export function isMatchComplete(
+  team1Score: number | null,
+  team2Score: number | null
+): boolean {
+  return (
+    team1Score !== null &&
+    team2Score !== null &&
+    team1Score >= 0 &&
+    team2Score >= 0
+  );
 }
 
 /**
  * Gets common score suggestions based on target score
  */
-export function getCommonScores(targetScore: number): Array<{ team1: number; team2: number; label: string }> {
+export function getCommonScores(
+  targetScore: number
+): Array<{ team1: number; team2: number; label: string }> {
   const scores = [
     { team1: targetScore, team2: 0, label: `${targetScore}-0` },
     { team1: targetScore, team2: 1, label: `${targetScore}-1` },
     { team1: targetScore, team2: 2, label: `${targetScore}-2` },
-    { team1: targetScore, team2: targetScore - 1, label: `${targetScore}-${targetScore - 1}` },
-    { team1: targetScore, team2: targetScore - 2, label: `${targetScore}-${targetScore - 2}` },
+    {
+      team1: targetScore,
+      team2: targetScore - 1,
+      label: `${targetScore}-${targetScore - 1}`,
+    },
+    {
+      team1: targetScore,
+      team2: targetScore - 2,
+      label: `${targetScore}-${targetScore - 2}`,
+    },
   ];
 
   // Add win-by-2 scores if target is high enough
   if (targetScore >= 11) {
     scores.push(
-      { team1: targetScore + 1, team2: targetScore - 1, label: `${targetScore + 1}-${targetScore - 1}` },
-      { team1: targetScore + 2, team2: targetScore, label: `${targetScore + 2}-${targetScore}` }
+      {
+        team1: targetScore + 1,
+        team2: targetScore - 1,
+        label: `${targetScore + 1}-${targetScore - 1}`,
+      },
+      {
+        team1: targetScore + 2,
+        team2: targetScore,
+        label: `${targetScore + 2}-${targetScore}`,
+      }
     );
   }
 
@@ -172,7 +208,7 @@ export function getCommonScores(targetScore: number): Array<{ team1: number; tea
  * Formats a score for display
  */
 export function formatScore(score: number | null): string {
-  return score === null ? '-' : score.toString();
+  return score === null ? "-" : score.toString();
 }
 
 /**
@@ -183,7 +219,7 @@ export function parseScore(scoreStr: string): number | null {
   if (!/^\d+$/.test(scoreStr.trim())) {
     return null;
   }
-  
+
   const parsed = parseInt(scoreStr, 10);
   return isNaN(parsed) ? null : parsed;
 }
@@ -192,8 +228,8 @@ export function parseScore(scoreStr: string): number | null {
  * Default validation configuration
  */
 export const DEFAULT_SCORE_CONFIG: ScoreValidationConfig = {
-  winCondition: 'first-to-target',
+  winCondition: "first-to-target",
   targetScore: 11,
   minScore: 0,
-  maxScore: 21
+  maxScore: 21,
 };

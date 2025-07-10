@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import { X, Plus, Search } from 'lucide-react'
-import { Label } from '../common/Form'
-import { Button } from '../common/Button'
-import type { PlayerInsert } from '../../types/database'
+import { useState } from "react";
+import { X, Plus, Search } from "lucide-react";
+import { Label } from "../common/Form";
+import { Button } from "../common/Button";
+import type { PlayerInsert } from "../../types/database";
 
 interface PlayerSelectorProps {
-  players: PlayerInsert[]
-  onChange: (players: PlayerInsert[]) => void
-  disabled?: boolean
-  minPlayers?: number
-  maxPlayers?: number
+  players: PlayerInsert[];
+  onChange: (players: PlayerInsert[]) => void;
+  disabled?: boolean;
+  minPlayers?: number;
+  maxPlayers?: number;
 }
 
 export function PlayerSelector({
@@ -17,79 +17,90 @@ export function PlayerSelector({
   onChange,
   disabled = false,
   minPlayers = 4,
-  maxPlayers = 16
+  maxPlayers = 16,
 }: PlayerSelectorProps) {
-  const [newPlayerName, setNewPlayerName] = useState('')
-  const [newPlayerEmail, setNewPlayerEmail] = useState('')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [newPlayerName, setNewPlayerName] = useState("");
+  const [newPlayerEmail, setNewPlayerEmail] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Filter players based on search query
-  const filteredPlayers = players.filter(player =>
-    player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    player.email.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredPlayers = players.filter(
+    (player) =>
+      player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      player.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAddPlayer = () => {
-    setError(null)
+    setError(null);
 
     if (!newPlayerName.trim()) {
-      setError('Player name is required')
-      return
+      setError("Player name is required");
+      return;
     }
 
     if (!newPlayerEmail.trim()) {
-      setError('Player email is required')
-      return
+      setError("Player email is required");
+      return;
     }
 
     // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newPlayerEmail)) {
-      setError('Please enter a valid email address')
-      return
+      setError("Please enter a valid email address");
+      return;
     }
 
     // Check for duplicate names
-    if (players.some(p => p.name.toLowerCase() === newPlayerName.trim().toLowerCase())) {
-      setError('A player with this name already exists')
-      return
+    if (
+      players.some(
+        (p) => p.name.toLowerCase() === newPlayerName.trim().toLowerCase()
+      )
+    ) {
+      setError("A player with this name already exists");
+      return;
     }
 
     // Check for duplicate emails
-    if (players.some(p => p.email.toLowerCase() === newPlayerEmail.trim().toLowerCase())) {
-      setError('A player with this email already exists')
-      return
+    if (
+      players.some(
+        (p) => p.email.toLowerCase() === newPlayerEmail.trim().toLowerCase()
+      )
+    ) {
+      setError("A player with this email already exists");
+      return;
     }
 
     // Check max players
     if (players.length >= maxPlayers) {
-      setError(`Maximum ${maxPlayers} players allowed`)
-      return
+      setError(`Maximum ${maxPlayers} players allowed`);
+      return;
     }
 
     const newPlayer: PlayerInsert = {
       name: newPlayerName.trim(),
       email: newPlayerEmail.trim().toLowerCase(),
-      play_date_id: '' // Will be set when creating the play date
-    }
+      play_date_id: "", // Will be set when creating the play date
+    };
 
-    onChange([...players, newPlayer])
-    setNewPlayerName('')
-    setNewPlayerEmail('')
-    setShowAddForm(false)
-  }
+    onChange([...players, newPlayer]);
+    setNewPlayerName("");
+    setNewPlayerEmail("");
+    setShowAddForm(false);
+  };
 
   const handleRemovePlayer = (index: number) => {
-    const updatedPlayers = players.filter((_, i) => i !== index)
-    onChange(updatedPlayers)
-  }
+    const updatedPlayers = players.filter((_, i) => i !== index);
+    onChange(updatedPlayers);
+  };
 
   return (
     <div className="space-y-4">
       <div>
-        <Label>Players ({players.length}/{maxPlayers})</Label>
+        <Label>
+          Players ({players.length}/{maxPlayers})
+        </Label>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Add between {minPlayers} and {maxPlayers} players for this play date
         </p>
@@ -160,8 +171,10 @@ export function PlayerSelector({
             </Button>
           ) : (
             <div className="space-y-3 p-4 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-md">
-              <h4 className="font-medium text-gray-900 dark:text-white">Add New Player</h4>
-              
+              <h4 className="font-medium text-gray-900 dark:text-white">
+                Add New Player
+              </h4>
+
               <div>
                 <Label htmlFor="new-player-name">Name</Label>
                 <input
@@ -187,7 +200,9 @@ export function PlayerSelector({
               </div>
 
               {error && (
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </p>
               )}
 
               <div className="flex gap-2">
@@ -203,10 +218,10 @@ export function PlayerSelector({
                   type="button"
                   variant="secondary"
                   onClick={() => {
-                    setShowAddForm(false)
-                    setNewPlayerName('')
-                    setNewPlayerEmail('')
-                    setError(null)
+                    setShowAddForm(false);
+                    setNewPlayerName("");
+                    setNewPlayerEmail("");
+                    setError(null);
                   }}
                   className="flex-1"
                 >
@@ -221,9 +236,10 @@ export function PlayerSelector({
       {/* Validation message */}
       {players.length < minPlayers && (
         <p className="text-sm text-amber-600 dark:text-amber-400">
-          Add at least {minPlayers - players.length} more player{minPlayers - players.length !== 1 ? 's' : ''}
+          Add at least {minPlayers - players.length} more player
+          {minPlayers - players.length !== 1 ? "s" : ""}
         </p>
       )}
     </div>
-  )
+  );
 }

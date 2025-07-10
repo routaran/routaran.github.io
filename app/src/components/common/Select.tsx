@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import React, { useState, useRef, useEffect } from "react";
+import { ChevronDown, Check } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 export interface SelectProps {
   value?: string;
@@ -18,33 +18,37 @@ interface SelectContextValue {
   setOpen: (open: boolean) => void;
 }
 
-const SelectContext = React.createContext<SelectContextValue | undefined>(undefined);
+const SelectContext = React.createContext<SelectContextValue | undefined>(
+  undefined
+);
 
-export function DropdownSelect({ value, onValueChange, children }: SelectProps) {
+export function DropdownSelect({
+  value,
+  onValueChange,
+  children,
+}: SelectProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <SelectContext.Provider value={{ value, onValueChange, open, setOpen }}>
-      <div className="relative">
-        {children}
-      </div>
+      <div className="relative">{children}</div>
     </SelectContext.Provider>
   );
 }
 
-export function SelectTrigger({ 
-  className, 
-  placeholder = 'Select...',
+export function SelectTrigger({
+  className,
+  placeholder = "Select...",
   disabled,
-  children 
-}: { 
-  className?: string; 
+  children,
+}: {
+  className?: string;
   placeholder?: string;
   disabled?: boolean;
   children?: React.ReactNode;
 }) {
   const context = React.useContext(SelectContext);
-  if (!context) throw new Error('SelectTrigger must be used within Select');
+  if (!context) throw new Error("SelectTrigger must be used within Select");
 
   const { open, setOpen } = context;
 
@@ -54,7 +58,7 @@ export function SelectTrigger({
       onClick={() => !disabled && setOpen(!open)}
       disabled={disabled}
       className={cn(
-        'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+        "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       aria-expanded={open}
@@ -68,26 +72,22 @@ export function SelectTrigger({
 
 export function SelectValue({ placeholder }: { placeholder?: string }) {
   const context = React.useContext(SelectContext);
-  if (!context) throw new Error('SelectValue must be used within Select');
+  if (!context) throw new Error("SelectValue must be used within Select");
 
   const { value } = context;
 
-  return (
-    <span>
-      {value || placeholder || 'Select...'}
-    </span>
-  );
+  return <span>{value || placeholder || "Select..."}</span>;
 }
 
-export function SelectContent({ 
+export function SelectContent({
   children,
-  className 
-}: { 
+  className,
+}: {
   children: React.ReactNode;
   className?: string;
 }) {
   const context = React.useContext(SelectContext);
-  if (!context) throw new Error('SelectContent must be used within Select');
+  if (!context) throw new Error("SelectContent must be used within Select");
 
   const { open, setOpen } = context;
   const ref = useRef<HTMLDivElement>(null);
@@ -101,11 +101,11 @@ export function SelectContent({
     };
 
     if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [open, setOpen]);
 
@@ -115,7 +115,7 @@ export function SelectContent({
     <div
       ref={ref}
       className={cn(
-        'absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95',
+        "absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
         className
       )}
       role="listbox"
@@ -125,19 +125,19 @@ export function SelectContent({
   );
 }
 
-export function SelectItem({ 
-  value, 
+export function SelectItem({
+  value,
   disabled,
   children,
-  className 
-}: { 
+  className,
+}: {
   value: string;
   disabled?: boolean;
   children: React.ReactNode;
   className?: string;
 }) {
   const context = React.useContext(SelectContext);
-  if (!context) throw new Error('SelectItem must be used within Select');
+  if (!context) throw new Error("SelectItem must be used within Select");
 
   const { value: selectedValue, onValueChange, setOpen } = context;
   const isSelected = selectedValue === value;
@@ -152,8 +152,8 @@ export function SelectItem({
   return (
     <div
       className={cn(
-        'relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-        isSelected && 'bg-accent text-accent-foreground',
+        "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        isSelected && "bg-accent text-accent-foreground",
         className
       )}
       onClick={handleSelect}

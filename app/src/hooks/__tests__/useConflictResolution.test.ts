@@ -1,42 +1,45 @@
-import { renderHook, act } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { useConflictResolution, useOptimisticMatchUpdate } from '../useConflictResolution';
-import { supabase } from '../../lib/supabase';
+import { renderHook, act } from "@testing-library/react";
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import {
+  useConflictResolution,
+  useOptimisticMatchUpdate,
+} from "../useConflictResolution";
+import { supabase } from "../../lib/supabase";
 
 // Mock dependencies
-vi.mock('../../lib/supabase');
-vi.mock('../../lib/logger');
-vi.mock('../../lib/monitoring');
+vi.mock("../../lib/supabase");
+vi.mock("../../lib/logger");
+vi.mock("../../lib/monitoring");
 
 const mockSupabase = supabase as any;
 
-describe('useConflictResolution', () => {
+describe("useConflictResolution", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('basic functionality', () => {
-    it('should initialize with no conflicts', () => {
+  describe("basic functionality", () => {
+    it("should initialize with no conflicts", () => {
       const { result } = renderHook(() => useConflictResolution());
 
       expect(result.current.conflicts).toEqual([]);
       expect(result.current.hasConflicts).toBe(false);
     });
 
-    it('should provide expected methods', () => {
+    it("should provide expected methods", () => {
       const { result } = renderHook(() => useConflictResolution());
 
-      expect(typeof result.current.updateMatch).toBe('function');
-      expect(typeof result.current.resolveConflict).toBe('function');
-      expect(typeof result.current.dismissConflict).toBe('function');
-      expect(typeof result.current.clearConflicts).toBe('function');
+      expect(typeof result.current.updateMatch).toBe("function");
+      expect(typeof result.current.resolveConflict).toBe("function");
+      expect(typeof result.current.dismissConflict).toBe("function");
+      expect(typeof result.current.clearConflicts).toBe("function");
     });
   });
 
-  describe('updateMatch functionality', () => {
-    it('should successfully update match without conflicts', async () => {
+  describe("updateMatch functionality", () => {
+    it("should successfully update match without conflicts", async () => {
       const mockCurrentMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 1,
         team1_score: 10,
         team2_score: 8,
@@ -76,7 +79,7 @@ describe('useConflictResolution', () => {
       const { result } = renderHook(() => useConflictResolution());
 
       const updateResult = await act(async () => {
-        return result.current.updateMatch('match-123', {
+        return result.current.updateMatch("match-123", {
           team1_score: 15,
           team2_score: 10,
         });
@@ -86,23 +89,24 @@ describe('useConflictResolution', () => {
       expect(updateResult.conflict).toBeUndefined();
     });
 
-    it('should detect version conflicts', async () => {
+    it("should detect version conflicts", async () => {
       const mockCurrentMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 1,
         team1_score: 10,
         team2_score: 8,
       };
 
       const mockLatestMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 2,
         team1_score: 12,
         team2_score: 11,
       };
 
       // Mock initial fetch
-      mockSupabase.from = vi.fn()
+      mockSupabase.from = vi
+        .fn()
         .mockReturnValueOnce({
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -121,7 +125,7 @@ describe('useConflictResolution', () => {
                 select: vi.fn(() => ({
                   single: vi.fn(() => ({
                     data: null,
-                    error: { message: 'version conflict', code: '23505' },
+                    error: { message: "version conflict", code: "23505" },
                   })),
                 })),
               })),
@@ -143,7 +147,7 @@ describe('useConflictResolution', () => {
       const { result } = renderHook(() => useConflictResolution());
 
       const updateResult = await act(async () => {
-        return result.current.updateMatch('match-123', {
+        return result.current.updateMatch("match-123", {
           team1_score: 15,
           team2_score: 10,
         });
@@ -151,20 +155,20 @@ describe('useConflictResolution', () => {
 
       expect(updateResult.success).toBe(false);
       expect(updateResult.conflict).toBeDefined();
-      expect(updateResult.conflict?.matchId).toBe('match-123');
+      expect(updateResult.conflict?.matchId).toBe("match-123");
       expect(updateResult.conflict?.localVersion).toBe(1);
       expect(updateResult.conflict?.remoteVersion).toBe(2);
       expect(result.current.hasConflicts).toBe(true);
     });
 
-    it('should handle database errors', async () => {
+    it("should handle database errors", async () => {
       // Mock failed fetch
       mockSupabase.from = vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(() => ({
               data: null,
-              error: { message: 'Match not found' },
+              error: { message: "Match not found" },
             })),
           })),
         })),
@@ -172,20 +176,22 @@ describe('useConflictResolution', () => {
 
       const { result } = renderHook(() => useConflictResolution());
 
-      await expect(act(async () => {
-        return result.current.updateMatch('match-123', {
-          team1_score: 15,
-          team2_score: 10,
-        });
-      })).rejects.toThrow('Match not found');
+      await expect(
+        act(async () => {
+          return result.current.updateMatch("match-123", {
+            team1_score: 15,
+            team2_score: 10,
+          });
+        })
+      ).rejects.toThrow("Match not found");
     });
   });
 
-  describe('conflict resolution', () => {
-    it('should resolve conflict with latest-wins strategy', async () => {
+  describe("conflict resolution", () => {
+    it("should resolve conflict with latest-wins strategy", async () => {
       const mockConflict = {
-        conflictId: 'conflict-123',
-        matchId: 'match-123',
+        conflictId: "conflict-123",
+        matchId: "match-123",
         localVersion: 1,
         remoteVersion: 2,
         localChanges: { team1_score: 15, team2_score: 10 },
@@ -194,7 +200,7 @@ describe('useConflictResolution', () => {
       };
 
       const mockCurrentMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 2,
         team1_score: 12,
         team2_score: 11,
@@ -206,7 +212,8 @@ describe('useConflictResolution', () => {
       };
 
       // Mock successful resolution
-      mockSupabase.from = vi.fn()
+      mockSupabase.from = vi
+        .fn()
         .mockReturnValueOnce({
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -240,17 +247,19 @@ describe('useConflictResolution', () => {
       });
 
       const resolved = await act(async () => {
-        return result.current.resolveConflict('conflict-123', { name: 'latest-wins' });
+        return result.current.resolveConflict("conflict-123", {
+          name: "latest-wins",
+        });
       });
 
       expect(resolved).toBe(true);
       expect(result.current.hasConflicts).toBe(false);
     });
 
-    it('should resolve conflict with user-wins strategy', async () => {
+    it("should resolve conflict with user-wins strategy", async () => {
       const mockConflict = {
-        conflictId: 'conflict-123',
-        matchId: 'match-123',
+        conflictId: "conflict-123",
+        matchId: "match-123",
         localVersion: 1,
         remoteVersion: 2,
         localChanges: { team1_score: 15, team2_score: 10 },
@@ -259,7 +268,7 @@ describe('useConflictResolution', () => {
       };
 
       const mockCurrentMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 2,
         team1_score: 12,
         team2_score: 11,
@@ -272,7 +281,8 @@ describe('useConflictResolution', () => {
         team2_score: 10,
       };
 
-      mockSupabase.from = vi.fn()
+      mockSupabase.from = vi
+        .fn()
         .mockReturnValueOnce({
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -306,16 +316,18 @@ describe('useConflictResolution', () => {
       });
 
       const resolved = await act(async () => {
-        return result.current.resolveConflict('conflict-123', { name: 'user-wins' });
+        return result.current.resolveConflict("conflict-123", {
+          name: "user-wins",
+        });
       });
 
       expect(resolved).toBe(true);
     });
 
-    it('should handle merge strategy with custom merge function', async () => {
+    it("should handle merge strategy with custom merge function", async () => {
       const mockConflict = {
-        conflictId: 'conflict-123',
-        matchId: 'match-123',
+        conflictId: "conflict-123",
+        matchId: "match-123",
         localVersion: 1,
         remoteVersion: 2,
         localChanges: { team1_score: 15, team2_score: 10 },
@@ -324,7 +336,7 @@ describe('useConflictResolution', () => {
       };
 
       const mockCurrentMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 2,
         team1_score: 12,
         team2_score: 11,
@@ -337,7 +349,8 @@ describe('useConflictResolution', () => {
         team2_score: 15,
       };
 
-      mockSupabase.from = vi.fn()
+      mockSupabase.from = vi
+        .fn()
         .mockReturnValueOnce({
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -377,8 +390,8 @@ describe('useConflictResolution', () => {
       });
 
       const resolved = await act(async () => {
-        return result.current.resolveConflict('conflict-123', { 
-          name: 'merge',
+        return result.current.resolveConflict("conflict-123", {
+          name: "merge",
           mergeFunction: customMerge,
         });
       });
@@ -386,10 +399,10 @@ describe('useConflictResolution', () => {
       expect(resolved).toBe(true);
     });
 
-    it('should handle resolution failures', async () => {
+    it("should handle resolution failures", async () => {
       const mockConflict = {
-        conflictId: 'conflict-123',
-        matchId: 'match-123',
+        conflictId: "conflict-123",
+        matchId: "match-123",
         localVersion: 1,
         remoteVersion: 2,
         localChanges: { team1_score: 15, team2_score: 10 },
@@ -403,7 +416,7 @@ describe('useConflictResolution', () => {
           eq: vi.fn(() => ({
             single: vi.fn(() => ({
               data: null,
-              error: { message: 'Database error' },
+              error: { message: "Database error" },
             })),
           })),
         })),
@@ -417,17 +430,19 @@ describe('useConflictResolution', () => {
       });
 
       const resolved = await act(async () => {
-        return result.current.resolveConflict('conflict-123', { name: 'latest-wins' });
+        return result.current.resolveConflict("conflict-123", {
+          name: "latest-wins",
+        });
       });
 
       expect(resolved).toBe(false);
       expect(result.current.hasConflicts).toBe(true);
     });
 
-    it('should respect max retry attempts', async () => {
+    it("should respect max retry attempts", async () => {
       const mockConflict = {
-        conflictId: 'conflict-123',
-        matchId: 'match-123',
+        conflictId: "conflict-123",
+        matchId: "match-123",
         localVersion: 1,
         remoteVersion: 2,
         localChanges: { team1_score: 15, team2_score: 10 },
@@ -443,16 +458,18 @@ describe('useConflictResolution', () => {
           eq: vi.fn(() => ({
             single: vi.fn(() => ({
               data: null,
-              error: { message: 'Database error' },
+              error: { message: "Database error" },
             })),
           })),
         })),
       }));
 
-      const { result } = renderHook(() => useConflictResolution({
-        maxRetries: 2,
-        onResolutionFailed: mockOnResolutionFailed,
-      }));
+      const { result } = renderHook(() =>
+        useConflictResolution({
+          maxRetries: 2,
+          onResolutionFailed: mockOnResolutionFailed,
+        })
+      );
 
       // Add conflict manually
       act(() => {
@@ -461,31 +478,37 @@ describe('useConflictResolution', () => {
 
       // Try resolving multiple times
       await act(async () => {
-        await result.current.resolveConflict('conflict-123', { name: 'latest-wins' });
+        await result.current.resolveConflict("conflict-123", {
+          name: "latest-wins",
+        });
       });
 
       await act(async () => {
-        await result.current.resolveConflict('conflict-123', { name: 'latest-wins' });
+        await result.current.resolveConflict("conflict-123", {
+          name: "latest-wins",
+        });
       });
 
       // Third attempt should fail due to max retries
       const resolved = await act(async () => {
-        return result.current.resolveConflict('conflict-123', { name: 'latest-wins' });
+        return result.current.resolveConflict("conflict-123", {
+          name: "latest-wins",
+        });
       });
 
       expect(resolved).toBe(false);
       expect(mockOnResolutionFailed).toHaveBeenCalledWith(
-        expect.objectContaining({ conflictId: 'conflict-123' }),
+        expect.objectContaining({ conflictId: "conflict-123" }),
         expect.any(Error)
       );
     });
   });
 
-  describe('conflict management', () => {
-    it('should dismiss conflicts', () => {
+  describe("conflict management", () => {
+    it("should dismiss conflicts", () => {
       const mockConflict = {
-        conflictId: 'conflict-123',
-        matchId: 'match-123',
+        conflictId: "conflict-123",
+        matchId: "match-123",
         localVersion: 1,
         remoteVersion: 2,
         localChanges: { team1_score: 15, team2_score: 10 },
@@ -504,17 +527,17 @@ describe('useConflictResolution', () => {
 
       // Dismiss conflict
       act(() => {
-        result.current.dismissConflict('conflict-123');
+        result.current.dismissConflict("conflict-123");
       });
 
       expect(result.current.hasConflicts).toBe(false);
     });
 
-    it('should clear all conflicts', () => {
+    it("should clear all conflicts", () => {
       const mockConflicts = [
         {
-          conflictId: 'conflict-1',
-          matchId: 'match-1',
+          conflictId: "conflict-1",
+          matchId: "match-1",
           localVersion: 1,
           remoteVersion: 2,
           localChanges: {},
@@ -522,8 +545,8 @@ describe('useConflictResolution', () => {
           timestamp: new Date(),
         },
         {
-          conflictId: 'conflict-2',
-          matchId: 'match-2',
+          conflictId: "conflict-2",
+          matchId: "match-2",
           localVersion: 1,
           remoteVersion: 2,
           localChanges: {},
@@ -550,25 +573,26 @@ describe('useConflictResolution', () => {
     });
   });
 
-  describe('callbacks', () => {
-    it('should call onConflictDetected callback', async () => {
+  describe("callbacks", () => {
+    it("should call onConflictDetected callback", async () => {
       const mockOnConflictDetected = vi.fn();
 
       const mockCurrentMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 1,
         team1_score: 10,
         team2_score: 8,
       };
 
       const mockLatestMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 2,
         team1_score: 12,
         team2_score: 11,
       };
 
-      mockSupabase.from = vi.fn()
+      mockSupabase.from = vi
+        .fn()
         .mockReturnValueOnce({
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -586,7 +610,7 @@ describe('useConflictResolution', () => {
                 select: vi.fn(() => ({
                   single: vi.fn(() => ({
                     data: null,
-                    error: { message: 'version conflict', code: '23505' },
+                    error: { message: "version conflict", code: "23505" },
                   })),
                 })),
               })),
@@ -604,12 +628,14 @@ describe('useConflictResolution', () => {
           })),
         });
 
-      const { result } = renderHook(() => useConflictResolution({
-        onConflictDetected: mockOnConflictDetected,
-      }));
+      const { result } = renderHook(() =>
+        useConflictResolution({
+          onConflictDetected: mockOnConflictDetected,
+        })
+      );
 
       await act(async () => {
-        await result.current.updateMatch('match-123', {
+        await result.current.updateMatch("match-123", {
           team1_score: 15,
           team2_score: 10,
         });
@@ -617,19 +643,19 @@ describe('useConflictResolution', () => {
 
       expect(mockOnConflictDetected).toHaveBeenCalledWith(
         expect.objectContaining({
-          matchId: 'match-123',
+          matchId: "match-123",
           localVersion: 1,
           remoteVersion: 2,
         })
       );
     });
 
-    it('should call onConflictResolved callback', async () => {
+    it("should call onConflictResolved callback", async () => {
       const mockOnConflictResolved = vi.fn();
 
       const mockConflict = {
-        conflictId: 'conflict-123',
-        matchId: 'match-123',
+        conflictId: "conflict-123",
+        matchId: "match-123",
         localVersion: 1,
         remoteVersion: 2,
         localChanges: { team1_score: 15, team2_score: 10 },
@@ -638,7 +664,7 @@ describe('useConflictResolution', () => {
       };
 
       const mockCurrentMatch = {
-        id: 'match-123',
+        id: "match-123",
         version: 2,
         team1_score: 12,
         team2_score: 11,
@@ -649,7 +675,8 @@ describe('useConflictResolution', () => {
         version: 3,
       };
 
-      mockSupabase.from = vi.fn()
+      mockSupabase.from = vi
+        .fn()
         .mockReturnValueOnce({
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -675,9 +702,11 @@ describe('useConflictResolution', () => {
           })),
         });
 
-      const { result } = renderHook(() => useConflictResolution({
-        onConflictResolved: mockOnConflictResolved,
-      }));
+      const { result } = renderHook(() =>
+        useConflictResolution({
+          onConflictResolved: mockOnConflictResolved,
+        })
+      );
 
       // Add conflict manually
       act(() => {
@@ -685,49 +714,52 @@ describe('useConflictResolution', () => {
       });
 
       await act(async () => {
-        await result.current.resolveConflict('conflict-123', { name: 'latest-wins' });
+        await result.current.resolveConflict("conflict-123", {
+          name: "latest-wins",
+        });
       });
 
       expect(mockOnConflictResolved).toHaveBeenCalledWith(
-        expect.objectContaining({ conflictId: 'conflict-123' }),
-        expect.objectContaining({ name: 'latest-wins' })
+        expect.objectContaining({ conflictId: "conflict-123" }),
+        expect.objectContaining({ name: "latest-wins" })
       );
     });
   });
 });
 
-describe('useOptimisticMatchUpdate', () => {
-  it('should provide simplified match update interface', () => {
+describe("useOptimisticMatchUpdate", () => {
+  it("should provide simplified match update interface", () => {
     const { result } = renderHook(() => useOptimisticMatchUpdate());
 
-    expect(typeof result.current.updateMatch).toBe('function');
+    expect(typeof result.current.updateMatch).toBe("function");
     expect(Array.isArray(result.current.conflicts)).toBe(true);
-    expect(typeof result.current.resolveConflict).toBe('function');
+    expect(typeof result.current.resolveConflict).toBe("function");
   });
 
-  it('should automatically resolve conflicts with default strategy', async () => {
+  it("should automatically resolve conflicts with default strategy", async () => {
     const mockCurrentMatch = {
-      id: 'match-123',
+      id: "match-123",
       version: 1,
       team1_score: 10,
       team2_score: 8,
     };
 
     const mockLatestMatch = {
-      id: 'match-123',
+      id: "match-123",
       version: 2,
       team1_score: 12,
       team2_score: 11,
     };
 
     const mockFinalMatch = {
-      id: 'match-123',
+      id: "match-123",
       version: 3,
       team1_score: 12,
       team2_score: 11,
     };
 
-    mockSupabase.from = vi.fn()
+    mockSupabase.from = vi
+      .fn()
       .mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
@@ -745,7 +777,7 @@ describe('useOptimisticMatchUpdate', () => {
               select: vi.fn(() => ({
                 single: vi.fn(() => ({
                   data: null,
-                  error: { message: 'version conflict', code: '23505' },
+                  error: { message: "version conflict", code: "23505" },
                 })),
               })),
             })),
@@ -787,10 +819,12 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       });
 
-    const { result } = renderHook(() => useOptimisticMatchUpdate({ name: 'latest-wins' }));
+    const { result } = renderHook(() =>
+      useOptimisticMatchUpdate({ name: "latest-wins" })
+    );
 
     const success = await act(async () => {
-      return result.current.updateMatch('match-123', {
+      return result.current.updateMatch("match-123", {
         team1_score: 15,
         team2_score: 10,
       });
@@ -799,22 +833,23 @@ describe('useOptimisticMatchUpdate', () => {
     expect(success).toBe(true);
   });
 
-  it('should return false for manual conflicts', async () => {
+  it("should return false for manual conflicts", async () => {
     const mockCurrentMatch = {
-      id: 'match-123',
+      id: "match-123",
       version: 1,
       team1_score: 10,
       team2_score: 8,
     };
 
     const mockLatestMatch = {
-      id: 'match-123',
+      id: "match-123",
       version: 2,
       team1_score: 12,
       team2_score: 11,
     };
 
-    mockSupabase.from = vi.fn()
+    mockSupabase.from = vi
+      .fn()
       .mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
@@ -832,7 +867,7 @@ describe('useOptimisticMatchUpdate', () => {
               select: vi.fn(() => ({
                 single: vi.fn(() => ({
                   data: null,
-                  error: { message: 'version conflict', code: '23505' },
+                  error: { message: "version conflict", code: "23505" },
                 })),
               })),
             })),
@@ -850,10 +885,12 @@ describe('useOptimisticMatchUpdate', () => {
         })),
       });
 
-    const { result } = renderHook(() => useOptimisticMatchUpdate({ name: 'manual' }));
+    const { result } = renderHook(() =>
+      useOptimisticMatchUpdate({ name: "manual" })
+    );
 
     const success = await act(async () => {
-      return result.current.updateMatch('match-123', {
+      return result.current.updateMatch("match-123", {
         team1_score: 15,
         team2_score: 10,
       });

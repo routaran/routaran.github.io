@@ -1,7 +1,7 @@
-import React from 'react';
-import { Modal, ModalBody } from '../common/Modal';
-import { ScoreEntryForm } from './ScoreEntryForm';
-import type { Match, WinCondition } from '../../types/database';
+import React from "react";
+import { Modal, ModalBody } from "../common/Modal";
+import { ScoreEntryForm } from "./ScoreEntryForm";
+import type { Match, WinCondition } from "../../types/database";
 
 export interface ScoreEntryModalProps {
   isOpen: boolean;

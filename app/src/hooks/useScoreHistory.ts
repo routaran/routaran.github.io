@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useToast } from './useToast';
-import { getScoreHistory, type ScoreHistoryEntry } from '../lib/supabase/scores';
-import { logger } from '../lib/logger';
+import { useState, useEffect, useCallback } from "react";
+import { useToast } from "./useToast";
+import {
+  getScoreHistory,
+  type ScoreHistoryEntry,
+} from "../lib/supabase/scores";
+import { logger } from "../lib/logger";
 
 export interface UseScoreHistoryProps {
   matchId: string;
@@ -35,33 +38,38 @@ export function useScoreHistory({
     try {
       setLoading(true);
       setError(null);
-      
-      logger.debug('Fetching score history', {
-        component: 'useScoreHistory',
+
+      logger.debug("Fetching score history", {
+        component: "useScoreHistory",
         matchId,
       });
 
       const historyData = await getScoreHistory(matchId);
       setHistory(historyData);
-      
-      logger.info('Score history loaded successfully', {
-        component: 'useScoreHistory',
+
+      logger.info("Score history loaded successfully", {
+        component: "useScoreHistory",
         matchId,
         metadata: { entryCount: historyData.length },
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load score history';
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load score history";
       setError(errorMessage);
-      
-      logger.error('Failed to fetch score history', {
-        component: 'useScoreHistory',
-        matchId,
-      }, err);
+
+      logger.error(
+        "Failed to fetch score history",
+        {
+          component: "useScoreHistory",
+          matchId,
+        },
+        err
+      );
 
       showToast({
-        title: 'Error',
+        title: "Error",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -101,28 +109,33 @@ export function useScoreHistory({
 
 // Helper hook for formatted history display
 export function useFormattedScoreHistory(matchId: string) {
-  const { history, loading, error, hasHistory, refreshHistory, clearError } = useScoreHistory({
-    matchId,
-    autoRefresh: true,
-  });
+  const { history, loading, error, hasHistory, refreshHistory, clearError } =
+    useScoreHistory({
+      matchId,
+      autoRefresh: true,
+    });
 
-  const formattedHistory = history.map(entry => ({
+  const formattedHistory = history.map((entry) => ({
     ...entry,
     // Format timestamps
     formattedDate: new Date(entry.changedAt).toLocaleDateString(),
     formattedTime: new Date(entry.changedAt).toLocaleTimeString(),
     relativeTime: getRelativeTime(entry.changedAt),
-    
+
     // Format score changes
     scoreChange: {
-      from: entry.oldValues.team1Score !== null && entry.oldValues.team2Score !== null
-        ? `${entry.oldValues.team1Score}-${entry.oldValues.team2Score}`
-        : 'No score',
-      to: entry.newValues.team1Score !== null && entry.newValues.team2Score !== null
-        ? `${entry.newValues.team1Score}-${entry.newValues.team2Score}`
-        : 'No score',
+      from:
+        entry.oldValues.team1Score !== null &&
+        entry.oldValues.team2Score !== null
+          ? `${entry.oldValues.team1Score}-${entry.oldValues.team2Score}`
+          : "No score",
+      to:
+        entry.newValues.team1Score !== null &&
+        entry.newValues.team2Score !== null
+          ? `${entry.newValues.team1Score}-${entry.newValues.team2Score}`
+          : "No score",
     },
-    
+
     // Determine change type
     changeDescription: getChangeDescription(entry),
   }));
@@ -146,28 +159,31 @@ function getRelativeTime(timestamp: string): string {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMins < 1) return 'Just now';
+  if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
-  
+
   return date.toLocaleDateString();
 }
 
 // Helper function to get change description
 function getChangeDescription(entry: ScoreHistoryEntry): string {
   switch (entry.changeType) {
-    case 'score_update':
-      if (entry.oldValues.team1Score === null && entry.oldValues.team2Score === null) {
-        return 'Score entered';
+    case "score_update":
+      if (
+        entry.oldValues.team1Score === null &&
+        entry.oldValues.team2Score === null
+      ) {
+        return "Score entered";
       }
-      return 'Score updated';
-    case 'score_correction':
-      return 'Score corrected';
-    case 'score_reset':
-      return 'Score reset';
+      return "Score updated";
+    case "score_correction":
+      return "Score corrected";
+    case "score_reset":
+      return "Score reset";
     default:
-      return 'Score changed';
+      return "Score changed";
   }
 }
 
@@ -188,7 +204,7 @@ export function useRealtimeScoreHistory(matchId: string) {
 
     // This would integrate with your real-time subscription system
     // For now, we're using polling with auto-refresh
-    
+
     return () => {
       // Cleanup any real-time subscriptions
     };
@@ -203,8 +219,9 @@ export function useScoreHistoryStats(matchId: string) {
 
   const stats = {
     totalChanges: history.length,
-    uniqueEditors: new Set(history.map(entry => entry.changedBy)).size,
-    firstEdit: history.length > 0 ? history[history.length - 1].changedAt : null,
+    uniqueEditors: new Set(history.map((entry) => entry.changedBy)).size,
+    firstEdit:
+      history.length > 0 ? history[history.length - 1].changedAt : null,
     lastEdit: history.length > 0 ? history[0].changedAt : null,
     editFrequency: history.length > 0 ? getEditFrequency(history) : 0,
   };
@@ -222,6 +239,6 @@ function getEditFrequency(history: ScoreHistoryEntry[]): number {
   const first = new Date(history[history.length - 1].changedAt);
   const last = new Date(history[0].changedAt);
   const timeDiffHours = (last.getTime() - first.getTime()) / (1000 * 60 * 60);
-  
+
   return history.length / Math.max(timeDiffHours, 1);
 }

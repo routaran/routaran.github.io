@@ -1,19 +1,23 @@
 /**
  * ExportButton Component
- * 
+ *
  * Provides export functionality for rankings data with format options
  * and user-friendly interface
  */
 
-import { useState } from 'react'
-import { Button } from '@/components/common/Button'
-import { Modal } from '@/components/common/Modal'
-import { Select } from '@/components/common/Form'
-import { Alert } from '@/components/common/Alert'
-import { useToast } from '@/hooks/useToast'
-import type { PlayerRanking, TournamentSummary, PartnershipStats } from '@/lib/calculations/rankings'
-import type { PlayerStatistics } from '@/hooks/usePlayerStats'
-import type { PlayDate } from '@/types/database'
+import { useState } from "react";
+import { Button } from "@/components/common/Button";
+import { Modal } from "@/components/common/Modal";
+import { Select } from "@/components/common/Form";
+import { Alert } from "@/components/common/Alert";
+import { useToast } from "@/hooks/useToast";
+import type {
+  PlayerRanking,
+  TournamentSummary,
+  PartnershipStats,
+} from "@/lib/calculations/rankings";
+import type { PlayerStatistics } from "@/hooks/usePlayerStats";
+import type { PlayDate } from "@/types/database";
 import {
   exportRankingsData,
   exportPlayerStatistics,
@@ -21,27 +25,27 @@ import {
   exportTournamentSummary,
   validateExportData,
   getExportStats,
-  type ExportOptions
-} from '@/lib/export/rankingsExport'
-import { 
-  ArrowDownTrayIcon, 
+  type ExportOptions,
+} from "@/lib/export/rankingsExport";
+import {
+  ArrowDownTrayIcon,
   DocumentArrowDownIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon
-} from '@heroicons/react/24/outline'
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 
 interface ExportButtonProps {
-  rankings: PlayerRanking[]
-  playDate: PlayDate
-  tournamentSummary: TournamentSummary
-  partnershipStats?: PartnershipStats[]
-  playerStats?: PlayerStatistics
-  playerName?: string
-  type?: 'rankings' | 'player-stats' | 'partnerships' | 'tournament-summary'
-  variant?: 'primary' | 'secondary' | 'outline'
-  size?: 'sm' | 'md' | 'lg'
-  disabled?: boolean
-  className?: string
+  rankings: PlayerRanking[];
+  playDate: PlayDate;
+  tournamentSummary: TournamentSummary;
+  partnershipStats?: PartnershipStats[];
+  playerStats?: PlayerStatistics;
+  playerName?: string;
+  type?: "rankings" | "player-stats" | "partnerships" | "tournament-summary";
+  variant?: "primary" | "secondary" | "outline";
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  className?: string;
 }
 
 export function ExportButton({
@@ -51,121 +55,136 @@ export function ExportButton({
   partnershipStats,
   playerStats,
   playerName,
-  type = 'rankings',
-  variant = 'outline',
-  size = 'md',
+  type = "rankings",
+  variant = "outline",
+  size = "md",
   disabled = false,
-  className = ''
+  className = "",
 }: ExportButtonProps) {
-  const [showModal, setShowModal] = useState(false)
-  const [exporting, setExporting] = useState(false)
-  const [exportFormat, setExportFormat] = useState<'csv' | 'json'>('csv')
-  const [includePersonalData, setIncludePersonalData] = useState(false)
-  const [includeTimestamps, setIncludeTimestamps] = useState(true)
-  const [validationErrors, setValidationErrors] = useState<string[]>([])
-  
-  const { showToast } = useToast()
+  const [showModal, setShowModal] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"csv" | "json">("csv");
+  const [includePersonalData, setIncludePersonalData] = useState(false);
+  const [includeTimestamps, setIncludeTimestamps] = useState(true);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  const { showToast } = useToast();
 
   /**
    * Validate data before export
    */
   const validateData = () => {
-    if (type === 'rankings') {
-      const validation = validateExportData(rankings, playDate)
-      setValidationErrors(validation.errors)
-      return validation.valid
+    if (type === "rankings") {
+      const validation = validateExportData(rankings, playDate);
+      setValidationErrors(validation.errors);
+      return validation.valid;
     }
-    
-    setValidationErrors([])
-    return true
-  }
+
+    setValidationErrors([]);
+    return true;
+  };
 
   /**
    * Handle export action
    */
   const handleExport = async () => {
     if (!validateData()) {
-      return
+      return;
     }
 
-    setExporting(true)
-    
+    setExporting(true);
+
     try {
       const options: ExportOptions = {
         format: exportFormat,
         includePersonalData,
-        includeTimestamps
-      }
+        includeTimestamps,
+      };
 
       switch (type) {
-        case 'rankings':
-          await exportRankingsData(rankings, playDate, tournamentSummary, partnershipStats, options)
-          break
-        case 'player-stats':
+        case "rankings":
+          await exportRankingsData(
+            rankings,
+            playDate,
+            tournamentSummary,
+            partnershipStats,
+            options
+          );
+          break;
+        case "player-stats":
           if (playerStats && playerName) {
-            await exportPlayerStatistics(playerStats, playerName, playDate, options)
+            await exportPlayerStatistics(
+              playerStats,
+              playerName,
+              playDate,
+              options
+            );
           }
-          break
-        case 'partnerships':
+          break;
+        case "partnerships":
           if (partnershipStats) {
-            await exportPartnershipStatistics(partnershipStats, playDate, options)
+            await exportPartnershipStatistics(
+              partnershipStats,
+              playDate,
+              options
+            );
           }
-          break
-        case 'tournament-summary':
-          await exportTournamentSummary(tournamentSummary, playDate, options)
-          break
+          break;
+        case "tournament-summary":
+          await exportTournamentSummary(tournamentSummary, playDate, options);
+          break;
       }
 
       showToast({
-        variant: 'success',
-        title: 'Export Successful',
-        description: `${type.replace('-', ' ')} data exported successfully.`,
-        duration: 3000
-      })
+        variant: "success",
+        title: "Export Successful",
+        description: `${type.replace("-", " ")} data exported successfully.`,
+        duration: 3000,
+      });
 
-      setShowModal(false)
+      setShowModal(false);
     } catch (error) {
-      console.error('Export failed:', error)
+      console.error("Export failed:", error);
       showToast({
-        variant: 'destructive',
-        title: 'Export Failed',
-        description: 'Failed to export data. Please try again.',
-        duration: 5000
-      })
+        variant: "destructive",
+        title: "Export Failed",
+        description: "Failed to export data. Please try again.",
+        duration: 5000,
+      });
     } finally {
-      setExporting(false)
+      setExporting(false);
     }
-  }
+  };
 
   /**
    * Get export statistics for display
    */
   const getDisplayStats = () => {
-    if (type === 'rankings') {
-      return getExportStats(rankings)
+    if (type === "rankings") {
+      return getExportStats(rankings);
     }
-    return null
-  }
+    return null;
+  };
 
   /**
    * Get export type label
    */
   const getTypeLabel = () => {
     switch (type) {
-      case 'rankings':
-        return 'Rankings'
-      case 'player-stats':
-        return 'Player Statistics'
-      case 'partnerships':
-        return 'Partnership Statistics'
-      case 'tournament-summary':
-        return 'Tournament Summary'
+      case "rankings":
+        return "Rankings";
+      case "player-stats":
+        return "Player Statistics";
+      case "partnerships":
+        return "Partnership Statistics";
+      case "tournament-summary":
+        return "Tournament Summary";
       default:
-        return 'Data'
+        return "Data";
     }
-  }
+  };
 
-  const stats = getDisplayStats()
+  const stats = getDisplayStats();
 
   return (
     <>
@@ -188,13 +207,17 @@ export function ExportButton({
         <div className="space-y-6">
           {/* Export Preview */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Export Preview</h3>
+            <h3 className="text-sm font-medium text-gray-900 mb-3">
+              Export Preview
+            </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Tournament Date:</span>
-                <span className="font-medium">{new Date(playDate.date).toLocaleDateString()}</span>
+                <span className="font-medium">
+                  {new Date(playDate.date).toLocaleDateString()}
+                </span>
               </div>
-              
+
               {stats && (
                 <>
                   <div className="flex justify-between">
@@ -211,15 +234,15 @@ export function ExportButton({
                   </div>
                 </>
               )}
-              
-              {type === 'player-stats' && playerName && (
+
+              {type === "player-stats" && playerName && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Player:</span>
                   <span className="font-medium">{playerName}</span>
                 </div>
               )}
-              
-              {type === 'partnerships' && partnershipStats && (
+
+              {type === "partnerships" && partnershipStats && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Partnerships:</span>
                   <span className="font-medium">{partnershipStats.length}</span>
@@ -236,10 +259,12 @@ export function ExportButton({
               </label>
               <Select
                 value={exportFormat}
-                onChange={(e) => setExportFormat(e.target.value as 'csv' | 'json')}
+                onChange={(e) =>
+                  setExportFormat(e.target.value as "csv" | "json")
+                }
                 options={[
-                  { value: 'csv', label: 'CSV (Spreadsheet)' },
-                  { value: 'json', label: 'JSON (Data Archive)' }
+                  { value: "csv", label: "CSV (Spreadsheet)" },
+                  { value: "json", label: "JSON (Data Archive)" },
                 ]}
               />
             </div>
@@ -248,7 +273,7 @@ export function ExportButton({
               <label className="block text-sm font-medium text-gray-700">
                 Export Options
               </label>
-              
+
               <div className="space-y-2">
                 <label className="flex items-center">
                   <input
@@ -257,9 +282,11 @@ export function ExportButton({
                     onChange={(e) => setIncludeTimestamps(e.target.checked)}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Include timestamps</span>
+                  <span className="ml-2 text-sm text-gray-600">
+                    Include timestamps
+                  </span>
                 </label>
-                
+
                 <label className="flex items-center">
                   <input
                     type="checkbox"
@@ -267,7 +294,9 @@ export function ExportButton({
                     onChange={(e) => setIncludePersonalData(e.target.checked)}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Include personal data</span>
+                  <span className="ml-2 text-sm text-gray-600">
+                    Include personal data
+                  </span>
                 </label>
               </div>
             </div>
@@ -293,10 +322,9 @@ export function ExportButton({
             <div className="flex items-center">
               <CheckCircleIcon className="w-5 h-5 text-blue-600 mr-2" />
               <p className="text-sm text-blue-800">
-                {exportFormat === 'csv' 
-                  ? 'CSV files can be opened in Excel, Google Sheets, or other spreadsheet applications.'
-                  : 'JSON files contain complete data structure and can be imported back into the system.'
-                }
+                {exportFormat === "csv"
+                  ? "CSV files can be opened in Excel, Google Sheets, or other spreadsheet applications."
+                  : "JSON files contain complete data structure and can be imported back into the system."}
               </p>
             </div>
           </div>
@@ -310,7 +338,7 @@ export function ExportButton({
             >
               Cancel
             </Button>
-            
+
             <Button
               onClick={handleExport}
               disabled={exporting || validationErrors.length > 0}
@@ -332,7 +360,7 @@ export function ExportButton({
         </div>
       </Modal>
     </>
-  )
+  );
 }
 
 /**
@@ -343,13 +371,13 @@ export function QuickExportButtons({
   playDate,
   tournamentSummary,
   partnershipStats,
-  className = ''
+  className = "",
 }: {
-  rankings: PlayerRanking[]
-  playDate: PlayDate
-  tournamentSummary: TournamentSummary
-  partnershipStats?: PartnershipStats[]
-  className?: string
+  rankings: PlayerRanking[];
+  playDate: PlayDate;
+  tournamentSummary: TournamentSummary;
+  partnershipStats?: PartnershipStats[];
+  className?: string;
 }) {
   return (
     <div className={`flex space-x-2 ${className}`}>
@@ -362,7 +390,7 @@ export function QuickExportButtons({
         variant="outline"
         size="sm"
       />
-      
+
       {partnershipStats && partnershipStats.length > 0 && (
         <ExportButton
           rankings={rankings}
@@ -374,7 +402,7 @@ export function QuickExportButtons({
           size="sm"
         />
       )}
-      
+
       <ExportButton
         rankings={rankings}
         playDate={playDate}
@@ -384,5 +412,5 @@ export function QuickExportButtons({
         size="sm"
       />
     </div>
-  )
+  );
 }

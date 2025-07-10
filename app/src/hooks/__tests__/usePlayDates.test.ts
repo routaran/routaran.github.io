@@ -1,16 +1,16 @@
-import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { usePlayDates } from '../usePlayDates';
-import { useAuth } from '../useAuth';
-import { useRealtime } from '../../contexts/RealtimeContext';
-import * as playDatesLib from '../../lib/supabase/playDates';
-import * as realtimeLib from '../../lib/supabase/realtime';
+import { renderHook, act } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { usePlayDates } from "../usePlayDates";
+import { useAuth } from "../useAuth";
+import { useRealtime } from "../../contexts/RealtimeContext";
+import * as playDatesLib from "../../lib/supabase/playDates";
+import * as realtimeLib from "../../lib/supabase/realtime";
 
 // Mock dependencies
-vi.mock('../useAuth');
-vi.mock('../../contexts/RealtimeContext');
-vi.mock('../../lib/supabase/playDates');
-vi.mock('../../lib/supabase/realtime');
+vi.mock("../useAuth");
+vi.mock("../../contexts/RealtimeContext");
+vi.mock("../../lib/supabase/playDates");
+vi.mock("../../lib/supabase/realtime");
 
 const mockUseAuth = useAuth as any;
 const mockUseRealtime = useRealtime as any;
@@ -18,52 +18,52 @@ const mockGetPlayDates = vi.mocked(playDatesLib.getPlayDates);
 const mockSubscribeToTable = vi.mocked(realtimeLib.subscribeToTable);
 const mockUnsubscribeFromTable = vi.mocked(realtimeLib.unsubscribeFromTable);
 
-describe('usePlayDates', () => {
+describe("usePlayDates", () => {
   const mockPlayer = {
-    id: 'player1',
-    name: 'Test Player',
-    email: 'test@example.com',
+    id: "player1",
+    name: "Test Player",
+    email: "test@example.com",
     project_owner: false,
   };
 
   const mockPlayDates = [
     {
-      id: '1',
-      date: '2024-01-15',
-      organizer_id: 'org1',
+      id: "1",
+      date: "2024-01-15",
+      organizer_id: "org1",
       num_courts: 2,
-      win_condition: 'first_to_target' as const,
+      win_condition: "first_to_target" as const,
       target_score: 11,
-      status: 'scheduled' as const,
+      status: "scheduled" as const,
       schedule_locked: false,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z',
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
       version: 1,
       organizer: {
-        id: 'org1',
-        name: 'John Organizer',
-        email: 'john@example.com',
+        id: "org1",
+        name: "John Organizer",
+        email: "john@example.com",
       },
       player_count: 8,
       match_count: 10,
       completed_matches: 0,
     },
     {
-      id: '2',
-      date: '2024-01-16',
-      organizer_id: 'org2',
+      id: "2",
+      date: "2024-01-16",
+      organizer_id: "org2",
       num_courts: 3,
-      win_condition: 'win_by_2' as const,
+      win_condition: "win_by_2" as const,
       target_score: 15,
-      status: 'active' as const,
+      status: "active" as const,
       schedule_locked: true,
-      created_at: '2024-01-02T00:00:00Z',
-      updated_at: '2024-01-02T00:00:00Z',
+      created_at: "2024-01-02T00:00:00Z",
+      updated_at: "2024-01-02T00:00:00Z",
       version: 1,
       organizer: {
-        id: 'org2',
-        name: 'Jane Organizer',
-        email: 'jane@example.com',
+        id: "org2",
+        name: "Jane Organizer",
+        email: "jane@example.com",
       },
       player_count: 12,
       match_count: 15,
@@ -73,7 +73,7 @@ describe('usePlayDates', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     mockUseAuth.mockReturnValue({
       player: mockPlayer,
       isAuthenticated: true,
@@ -88,17 +88,17 @@ describe('usePlayDates', () => {
       error: null,
     });
 
-    mockSubscribeToTable.mockResolvedValue('subscription-id');
+    mockSubscribeToTable.mockResolvedValue("subscription-id");
     mockUnsubscribeFromTable.mockImplementation(() => {});
   });
 
-  it('fetches play dates on mount', async () => {
+  it("fetches play dates on mount", async () => {
     const { result } = renderHook(() => usePlayDates());
 
     expect(result.current.isLoading).toBe(true);
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(mockGetPlayDates).toHaveBeenCalledWith({
@@ -112,44 +112,48 @@ describe('usePlayDates', () => {
     expect(result.current.error).toBeNull();
   });
 
-  it('applies filters correctly', async () => {
-    const { result } = renderHook(() => usePlayDates({
-      status: 'active',
-      onlyMyPlayDates: true,
-      limit: 5,
-    }));
+  it("applies filters correctly", async () => {
+    const { result } = renderHook(() =>
+      usePlayDates({
+        status: "active",
+        onlyMyPlayDates: true,
+        limit: 5,
+      })
+    );
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(mockGetPlayDates).toHaveBeenCalledWith({
-      status: 'active',
-      playerId: 'player1',
+      status: "active",
+      playerId: "player1",
       limit: 5,
       offset: 0,
     });
   });
 
-  it('applies organizer filter', async () => {
-    const { result } = renderHook(() => usePlayDates({
-      onlyOrganizing: true,
-    }));
+  it("applies organizer filter", async () => {
+    const { result } = renderHook(() =>
+      usePlayDates({
+        onlyOrganizing: true,
+      })
+    );
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(mockGetPlayDates).toHaveBeenCalledWith({
       status: undefined,
-      organizerId: 'player1',
+      organizerId: "player1",
       limit: 10,
       offset: 0,
     });
   });
 
-  it('handles errors', async () => {
-    const error = { message: 'Failed to fetch', code: 'FETCH_ERROR' };
+  it("handles errors", async () => {
+    const error = { message: "Failed to fetch", code: "FETCH_ERROR" };
     mockGetPlayDates.mockResolvedValue({
       data: null,
       error,
@@ -158,7 +162,7 @@ describe('usePlayDates', () => {
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(result.current.playDates).toEqual([]);
@@ -166,11 +170,11 @@ describe('usePlayDates', () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it('refetches data when refetch is called', async () => {
+  it("refetches data when refetch is called", async () => {
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     vi.clearAllMocks();
@@ -182,7 +186,7 @@ describe('usePlayDates', () => {
     expect(mockGetPlayDates).toHaveBeenCalledTimes(1);
   });
 
-  it('loads more data when loadMore is called', async () => {
+  it("loads more data when loadMore is called", async () => {
     mockGetPlayDates.mockResolvedValueOnce({
       data: [mockPlayDates[0]],
       error: null,
@@ -191,7 +195,7 @@ describe('usePlayDates', () => {
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(result.current.hasMore).toBe(true);
@@ -213,15 +217,15 @@ describe('usePlayDates', () => {
     });
   });
 
-  it('sets up realtime subscriptions when connected', async () => {
+  it("sets up realtime subscriptions when connected", async () => {
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(mockSubscribeToTable).toHaveBeenCalledWith({
-      table: 'play_dates',
+      table: "play_dates",
       filter: undefined,
       onInsert: expect.any(Function),
       onUpdate: expect.any(Function),
@@ -229,28 +233,28 @@ describe('usePlayDates', () => {
     });
 
     expect(mockSubscribeToTable).toHaveBeenCalledWith({
-      table: 'matches',
+      table: "matches",
       filter: undefined,
       onUpdate: expect.any(Function),
     });
   });
 
-  it('handles realtime updates', async () => {
+  it("handles realtime updates", async () => {
     let onUpdate: (data: any) => void;
     mockSubscribeToTable.mockImplementation((config) => {
-      if (config.table === 'play_dates') {
+      if (config.table === "play_dates") {
         onUpdate = config.onUpdate!;
       }
-      return Promise.resolve('subscription-id');
+      return Promise.resolve("subscription-id");
     });
 
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
-    const updatedPlayDate = { ...mockPlayDates[0], status: 'active' as const };
+    const updatedPlayDate = { ...mockPlayDates[0], status: "active" as const };
 
     await act(async () => {
       onUpdate!({
@@ -259,22 +263,22 @@ describe('usePlayDates', () => {
       });
     });
 
-    expect(result.current.playDates[0].status).toBe('active');
+    expect(result.current.playDates[0].status).toBe("active");
   });
 
-  it('handles realtime deletes', async () => {
+  it("handles realtime deletes", async () => {
     let onDelete: (data: any) => void;
     mockSubscribeToTable.mockImplementation((config) => {
-      if (config.table === 'play_dates') {
+      if (config.table === "play_dates") {
         onDelete = config.onDelete!;
       }
-      return Promise.resolve('subscription-id');
+      return Promise.resolve("subscription-id");
     });
 
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     await act(async () => {
@@ -284,10 +288,10 @@ describe('usePlayDates', () => {
     });
 
     expect(result.current.playDates).toHaveLength(1);
-    expect(result.current.playDates[0].id).toBe('2');
+    expect(result.current.playDates[0].id).toBe("2");
   });
 
-  it('does not set up subscriptions when not connected', async () => {
+  it("does not set up subscriptions when not connected", async () => {
     mockUseRealtime.mockReturnValue({
       isConnected: false,
     });
@@ -295,13 +299,13 @@ describe('usePlayDates', () => {
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(mockSubscribeToTable).not.toHaveBeenCalled();
   });
 
-  it('prevents loadMore when already loading', async () => {
+  it("prevents loadMore when already loading", async () => {
     const { result } = renderHook(() => usePlayDates());
 
     // Call loadMore while initial load is happening
@@ -313,7 +317,7 @@ describe('usePlayDates', () => {
     expect(mockGetPlayDates).toHaveBeenCalledTimes(1);
   });
 
-  it('prevents loadMore when hasMore is false', async () => {
+  it("prevents loadMore when hasMore is false", async () => {
     mockGetPlayDates.mockResolvedValue({
       data: [], // Empty result indicates no more data
       error: null,
@@ -322,7 +326,7 @@ describe('usePlayDates', () => {
     const { result } = renderHook(() => usePlayDates());
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(result.current.hasMore).toBe(false);
@@ -336,18 +340,20 @@ describe('usePlayDates', () => {
     expect(mockGetPlayDates).not.toHaveBeenCalled();
   });
 
-  it('handles unauthenticated user', async () => {
+  it("handles unauthenticated user", async () => {
     mockUseAuth.mockReturnValue({
       player: null,
       isAuthenticated: false,
     });
 
-    const { result } = renderHook(() => usePlayDates({
-      onlyMyPlayDates: true,
-    }));
+    const { result } = renderHook(() =>
+      usePlayDates({
+        onlyMyPlayDates: true,
+      })
+    );
 
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     expect(mockGetPlayDates).toHaveBeenCalledWith({

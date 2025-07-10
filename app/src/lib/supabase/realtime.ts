@@ -1,30 +1,32 @@
-import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { supabase } from '../supabase';
-import { logger } from '../logger';
-import { monitor } from '../monitoring';
-import type { Database } from '../../types/database';
+import type {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
+import { supabase } from "../supabase";
+import { logger } from "../logger";
+import { monitor } from "../monitoring";
+import type { Database } from "../../types/database";
 
 // Type definitions for realtime events
-export type TableName = keyof Database['public']['Tables'];
-export type ViewName = keyof Database['public']['Views'];
+export type TableName = keyof Database["public"]["Tables"];
+export type ViewName = keyof Database["public"]["Views"];
 
-export type RealtimeEventType = 'INSERT' | 'UPDATE' | 'DELETE' | '*';
+export type RealtimeEventType = "INSERT" | "UPDATE" | "DELETE" | "*";
 
-export type RealtimePayload<T extends TableName> = RealtimePostgresChangesPayload<
-  Database['public']['Tables'][T]['Row']
->;
+export type RealtimePayload<T extends TableName> =
+  RealtimePostgresChangesPayload<Database["public"]["Tables"][T]["Row"]>;
 
 export type RealtimeCallback<T extends TableName> = (
   payload: RealtimePayload<T>
 ) => void | Promise<void>;
 
 // Connection states
-export type ConnectionState = 
-  | 'connecting'
-  | 'connected'
-  | 'disconnected'
-  | 'reconnecting'
-  | 'error';
+export type ConnectionState =
+  | "connecting"
+  | "connected"
+  | "disconnected"
+  | "reconnecting"
+  | "error";
 
 // Subscription configuration
 export interface SubscriptionConfig<T extends TableName> {
@@ -44,10 +46,10 @@ interface ReconnectionConfig {
 }
 
 const DEFAULT_RECONNECTION_CONFIG: ReconnectionConfig = {
-  initialDelay: 1000,      // 1 second
-  maxDelay: 30000,         // 30 seconds
-  multiplier: 2,           // Exponential backoff
-  maxRetries: 10,          // Maximum retry attempts
+  initialDelay: 1000, // 1 second
+  maxDelay: 30000, // 30 seconds
+  multiplier: 2, // Exponential backoff
+  maxRetries: 10, // Maximum retry attempts
 };
 
 /**
@@ -57,14 +59,18 @@ const DEFAULT_RECONNECTION_CONFIG: ReconnectionConfig = {
 export class RealtimeManager {
   private channels: Map<string, RealtimeChannel> = new Map();
   private subscriptions: Map<string, SubscriptionConfig<any>> = new Map();
-  private connectionState: ConnectionState = 'disconnected';
-  private connectionStateListeners: Set<(state: ConnectionState) => void> = new Set();
+  private connectionState: ConnectionState = "disconnected";
+  private connectionStateListeners: Set<(state: ConnectionState) => void> =
+    new Set();
   private reconnectionConfig: ReconnectionConfig;
   private reconnectTimer: NodeJS.Timeout | null = null;
   private reconnectAttempts = 0;
 
   constructor(reconnectionConfig: Partial<ReconnectionConfig> = {}) {
-    this.reconnectionConfig = { ...DEFAULT_RECONNECTION_CONFIG, ...reconnectionConfig };
+    this.reconnectionConfig = {
+      ...DEFAULT_RECONNECTION_CONFIG,
+      ...reconnectionConfig,
+    };
     this.setupGlobalErrorHandling();
   }
 
@@ -73,21 +79,21 @@ export class RealtimeManager {
    */
   private setupGlobalErrorHandling(): void {
     // Monitor WebSocket errors globally
-    if (typeof window !== 'undefined') {
-      window.addEventListener('online', () => {
-        logger.info('Network connection restored', {
-          component: 'realtime',
-          action: 'networkOnline',
+    if (typeof window !== "undefined") {
+      window.addEventListener("online", () => {
+        logger.info("Network connection restored", {
+          component: "realtime",
+          action: "networkOnline",
         });
         this.handleReconnection();
       });
 
-      window.addEventListener('offline', () => {
-        logger.warn('Network connection lost', {
-          component: 'realtime',
-          action: 'networkOffline',
+      window.addEventListener("offline", () => {
+        logger.warn("Network connection lost", {
+          component: "realtime",
+          action: "networkOffline",
         });
-        this.updateConnectionState('disconnected');
+        this.updateConnectionState("disconnected");
       });
     }
   }
@@ -99,13 +105,13 @@ export class RealtimeManager {
     subscriptionId: string,
     config: SubscriptionConfig<T>
   ): () => void {
-    logger.info('Creating realtime subscription', {
-      component: 'realtime',
-      action: 'subscribe',
+    logger.info("Creating realtime subscription", {
+      component: "realtime",
+      action: "subscribe",
       metadata: {
         subscriptionId,
         table: config.table,
-        event: config.event || '*',
+        event: config.event || "*",
         filter: config.filter,
       },
     });
@@ -124,17 +130,17 @@ export class RealtimeManager {
 
     // Set up the subscription
     const subscription = channel.on(
-      'postgres_changes',
+      "postgres_changes",
       {
-        event: config.event || '*',
-        schema: 'public',
+        event: config.event || "*",
+        schema: "public",
         table: config.table,
         filter: config.filter,
       },
       (payload: RealtimePayload<T>) => {
-        logger.debug('Realtime event received', {
-          component: 'realtime',
-          action: 'eventReceived',
+        logger.debug("Realtime event received", {
+          component: "realtime",
+          action: "eventReceived",
           metadata: {
             subscriptionId,
             table: config.table,
@@ -145,18 +151,19 @@ export class RealtimeManager {
 
         // Record latency if available
         if (payload.commit_timestamp) {
-          const latency = Date.now() - new Date(payload.commit_timestamp).getTime();
+          const latency =
+            Date.now() - new Date(payload.commit_timestamp).getTime();
           monitor.recordLatency(latency, {
-            component: 'realtime',
+            component: "realtime",
             table: config.table,
             event: payload.eventType,
           });
 
           // Log warning if latency exceeds 1 second (NFR-08)
           if (latency > 1000) {
-            logger.warn('Realtime latency exceeded 1 second', {
-              component: 'realtime',
-              action: 'highLatency',
+            logger.warn("Realtime latency exceeded 1 second", {
+              component: "realtime",
+              action: "highLatency",
               metadata: {
                 latency,
                 table: config.table,
@@ -181,7 +188,7 @@ export class RealtimeManager {
     );
 
     // Subscribe the channel if not already subscribed
-    if (channel.state !== 'subscribed' && channel.state !== 'subscribing') {
+    if (channel.state !== "subscribed" && channel.state !== "subscribing") {
       this.subscribeChannel(channel, channelName);
     }
 
@@ -195,17 +202,17 @@ export class RealtimeManager {
    * Unsubscribe from a specific subscription
    */
   public unsubscribe(subscriptionId: string): void {
-    logger.info('Removing realtime subscription', {
-      component: 'realtime',
-      action: 'unsubscribe',
+    logger.info("Removing realtime subscription", {
+      component: "realtime",
+      action: "unsubscribe",
       metadata: { subscriptionId },
     });
 
     const config = this.subscriptions.get(subscriptionId);
     if (!config) {
-      logger.warn('Attempted to unsubscribe from non-existent subscription', {
-        component: 'realtime',
-        action: 'unsubscribeError',
+      logger.warn("Attempted to unsubscribe from non-existent subscription", {
+        component: "realtime",
+        action: "unsubscribeError",
         metadata: { subscriptionId },
       });
       return;
@@ -225,9 +232,9 @@ export class RealtimeManager {
       if (channel) {
         supabase.removeChannel(channel);
         this.channels.delete(channelName);
-        logger.info('Removed unused channel', {
-          component: 'realtime',
-          action: 'channelRemoved',
+        logger.info("Removed unused channel", {
+          component: "realtime",
+          action: "channelRemoved",
           metadata: { channelName },
         });
       }
@@ -238,9 +245,9 @@ export class RealtimeManager {
    * Unsubscribe from all active subscriptions
    */
   public unsubscribeAll(): void {
-    logger.info('Removing all realtime subscriptions', {
-      component: 'realtime',
-      action: 'unsubscribeAll',
+    logger.info("Removing all realtime subscriptions", {
+      component: "realtime",
+      action: "unsubscribeAll",
       metadata: { count: this.subscriptions.size },
     });
 
@@ -253,7 +260,7 @@ export class RealtimeManager {
     }
     this.channels.clear();
 
-    this.updateConnectionState('disconnected');
+    this.updateConnectionState("disconnected");
   }
 
   /**
@@ -270,7 +277,7 @@ export class RealtimeManager {
     callback: (state: ConnectionState) => void
   ): () => void {
     this.connectionStateListeners.add(callback);
-    
+
     // Immediately call with current state
     callback(this.connectionState);
 
@@ -284,9 +291,9 @@ export class RealtimeManager {
    * Manually trigger reconnection attempt
    */
   public reconnect(): void {
-    logger.info('Manual reconnection requested', {
-      component: 'realtime',
-      action: 'manualReconnect',
+    logger.info("Manual reconnection requested", {
+      component: "realtime",
+      action: "manualReconnect",
     });
     this.handleReconnection();
   }
@@ -298,23 +305,23 @@ export class RealtimeManager {
     const channel = supabase.channel(channelName);
 
     // Set up channel-level error handling
-    channel.on('system', { event: 'error' }, (payload) => {
-      logger.error('Channel error', {
-        component: 'realtime',
-        action: 'channelError',
+    channel.on("system", { event: "error" }, (payload) => {
+      logger.error("Channel error", {
+        component: "realtime",
+        action: "channelError",
         metadata: { channelName, error: payload },
       });
-      this.updateConnectionState('error');
+      this.updateConnectionState("error");
       this.scheduleReconnection();
     });
 
-    channel.on('system', { event: 'close' }, () => {
-      logger.info('Channel closed', {
-        component: 'realtime',
-        action: 'channelClosed',
+    channel.on("system", { event: "close" }, () => {
+      logger.info("Channel closed", {
+        component: "realtime",
+        action: "channelClosed",
         metadata: { channelName },
       });
-      this.updateConnectionState('disconnected');
+      this.updateConnectionState("disconnected");
       this.scheduleReconnection();
     });
 
@@ -329,35 +336,39 @@ export class RealtimeManager {
     channelName: string
   ): Promise<void> {
     try {
-      this.updateConnectionState('connecting');
+      this.updateConnectionState("connecting");
 
       const result = await channel.subscribe((status) => {
-        logger.info('Channel subscription status changed', {
-          component: 'realtime',
-          action: 'subscriptionStatus',
+        logger.info("Channel subscription status changed", {
+          component: "realtime",
+          action: "subscriptionStatus",
           metadata: { channelName, status },
         });
 
-        if (status === 'SUBSCRIBED') {
-          this.updateConnectionState('connected');
+        if (status === "SUBSCRIBED") {
+          this.updateConnectionState("connected");
           this.reconnectAttempts = 0; // Reset on successful connection
-        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-          this.updateConnectionState('error');
+        } else if (status === "CLOSED" || status === "CHANNEL_ERROR") {
+          this.updateConnectionState("error");
           this.scheduleReconnection();
         }
       });
 
-      if (result === 'error') {
-        throw new Error('Failed to subscribe to channel');
+      if (result === "error") {
+        throw new Error("Failed to subscribe to channel");
       }
     } catch (error) {
-      logger.error('Failed to subscribe channel', {
-        component: 'realtime',
-        action: 'subscribeError',
-        metadata: { channelName },
-      }, error as Error);
-      
-      this.updateConnectionState('error');
+      logger.error(
+        "Failed to subscribe channel",
+        {
+          component: "realtime",
+          action: "subscribeError",
+          metadata: { channelName },
+        },
+        error as Error
+      );
+
+      this.updateConnectionState("error");
       this.scheduleReconnection();
     }
   }
@@ -370,18 +381,22 @@ export class RealtimeManager {
     error: Error,
     config: SubscriptionConfig<T>
   ): void {
-    logger.error('Realtime callback error', {
-      component: 'realtime',
-      action: 'callbackError',
-      metadata: {
-        subscriptionId,
-        table: config.table,
-        error: error.message,
+    logger.error(
+      "Realtime callback error",
+      {
+        component: "realtime",
+        action: "callbackError",
+        metadata: {
+          subscriptionId,
+          table: config.table,
+          error: error.message,
+        },
       },
-    }, error);
+      error
+    );
 
     monitor.recordError(error, {
-      component: 'realtime',
+      component: "realtime",
       subscriptionId,
       table: config.table,
     });
@@ -397,13 +412,13 @@ export class RealtimeManager {
   private getChannelName<T extends TableName>(
     config: SubscriptionConfig<T>
   ): string {
-    const parts = ['realtime', config.table];
+    const parts = ["realtime", config.table];
     if (config.filter) {
       // Create a hash of the filter for uniqueness
       const filterHash = this.hashString(config.filter);
       parts.push(filterHash);
     }
-    return parts.join(':');
+    return parts.join(":");
   }
 
   /**
@@ -413,7 +428,7 @@ export class RealtimeManager {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
@@ -428,9 +443,9 @@ export class RealtimeManager {
     const previousState = this.connectionState;
     this.connectionState = state;
 
-    logger.info('Connection state changed', {
-      component: 'realtime',
-      action: 'connectionStateChange',
+    logger.info("Connection state changed", {
+      component: "realtime",
+      action: "connectionStateChange",
       metadata: { previousState, newState: state },
     });
 
@@ -439,10 +454,14 @@ export class RealtimeManager {
       try {
         listener(state);
       } catch (error) {
-        logger.error('Connection state listener error', {
-          component: 'realtime',
-          action: 'listenerError',
-        }, error as Error);
+        logger.error(
+          "Connection state listener error",
+          {
+            component: "realtime",
+            action: "listenerError",
+          },
+          error as Error
+        );
       }
     }
   }
@@ -459,32 +478,32 @@ export class RealtimeManager {
 
     // Check if we've exceeded max retries
     if (this.reconnectAttempts >= this.reconnectionConfig.maxRetries) {
-      logger.error('Max reconnection attempts reached', {
-        component: 'realtime',
-        action: 'maxRetriesExceeded',
+      logger.error("Max reconnection attempts reached", {
+        component: "realtime",
+        action: "maxRetriesExceeded",
         metadata: { attempts: this.reconnectAttempts },
       });
-      this.updateConnectionState('error');
+      this.updateConnectionState("error");
       return;
     }
 
     // Calculate delay with exponential backoff
     const delay = Math.min(
-      this.reconnectionConfig.initialDelay * 
+      this.reconnectionConfig.initialDelay *
         Math.pow(this.reconnectionConfig.multiplier, this.reconnectAttempts),
       this.reconnectionConfig.maxDelay
     );
 
-    logger.info('Scheduling reconnection', {
-      component: 'realtime',
-      action: 'scheduleReconnect',
+    logger.info("Scheduling reconnection", {
+      component: "realtime",
+      action: "scheduleReconnect",
       metadata: {
         attempt: this.reconnectAttempts + 1,
         delay,
       },
     });
 
-    this.updateConnectionState('reconnecting');
+    this.updateConnectionState("reconnecting");
     this.reconnectTimer = setTimeout(() => {
       this.handleReconnection();
     }, delay);
@@ -496,9 +515,9 @@ export class RealtimeManager {
    * Handle reconnection logic
    */
   private async handleReconnection(): Promise<void> {
-    logger.info('Attempting reconnection', {
-      component: 'realtime',
-      action: 'reconnect',
+    logger.info("Attempting reconnection", {
+      component: "realtime",
+      action: "reconnect",
       metadata: {
         attempt: this.reconnectAttempts,
         subscriptions: this.subscriptions.size,
@@ -520,19 +539,23 @@ export class RealtimeManager {
         this.subscribe(subscriptionId, config);
       }
 
-      logger.info('Reconnection successful', {
-        component: 'realtime',
-        action: 'reconnectSuccess',
+      logger.info("Reconnection successful", {
+        component: "realtime",
+        action: "reconnectSuccess",
         metadata: {
           subscriptions: subscriptionEntries.length,
         },
       });
     } catch (error) {
-      logger.error('Reconnection failed', {
-        component: 'realtime',
-        action: 'reconnectError',
-      }, error as Error);
-      
+      logger.error(
+        "Reconnection failed",
+        {
+          component: "realtime",
+          action: "reconnectError",
+        },
+        error as Error
+      );
+
       this.scheduleReconnection();
     }
   }
@@ -601,7 +624,10 @@ export class OptimizedRealtimeManager extends RealtimeManager {
     performanceConfig: Partial<PerformanceConfig> = {}
   ) {
     super(reconnectionConfig);
-    this.performanceConfig = { ...DEFAULT_PERFORMANCE_CONFIG, ...performanceConfig };
+    this.performanceConfig = {
+      ...DEFAULT_PERFORMANCE_CONFIG,
+      ...performanceConfig,
+    };
     this.setupPerformanceMonitoring();
   }
 
@@ -610,15 +636,16 @@ export class OptimizedRealtimeManager extends RealtimeManager {
    */
   private setupPerformanceMonitoring(): void {
     // Monitor memory usage
-    if (typeof window !== 'undefined' && 'performance' in window) {
+    if (typeof window !== "undefined" && "performance" in window) {
       setInterval(() => {
         this.checkMemoryUsage();
       }, 30000); // Check every 30 seconds
     }
 
     // Enable compression if supported
-    if (typeof window !== 'undefined' && 'CompressionStream' in window) {
-      this.compressionEnabled = this.performanceConfig.enableCompression || false;
+    if (typeof window !== "undefined" && "CompressionStream" in window) {
+      this.compressionEnabled =
+        this.performanceConfig.enableCompression || false;
     }
   }
 
@@ -626,15 +653,15 @@ export class OptimizedRealtimeManager extends RealtimeManager {
    * Check memory usage and cleanup if needed
    */
   private checkMemoryUsage(): void {
-    if (typeof window !== 'undefined' && 'performance' in window) {
+    if (typeof window !== "undefined" && "performance" in window) {
       const memory = (window.performance as any).memory;
       if (memory) {
         this.memoryUsage = memory.usedJSHeapSize / (1024 * 1024); // MB
-        
+
         if (this.memoryUsage > (this.performanceConfig.memoryThreshold || 50)) {
-          logger.warn('High memory usage detected, cleaning up', {
-            component: 'optimizedRealtime',
-            action: 'memoryCleanup',
+          logger.warn("High memory usage detected, cleaning up", {
+            component: "optimizedRealtime",
+            action: "memoryCleanup",
             metadata: { memoryUsage: this.memoryUsage },
           });
           this.performMemoryCleanup();
@@ -649,15 +676,15 @@ export class OptimizedRealtimeManager extends RealtimeManager {
   private performMemoryCleanup(): void {
     // Clear query cache
     this.queryCache.clear();
-    
+
     // Force garbage collection if available
-    if (typeof window !== 'undefined' && 'gc' in window) {
+    if (typeof window !== "undefined" && "gc" in window) {
       (window as any).gc();
     }
-    
-    logger.info('Memory cleanup completed', {
-      component: 'optimizedRealtime',
-      action: 'memoryCleanupComplete',
+
+    logger.info("Memory cleanup completed", {
+      component: "optimizedRealtime",
+      action: "memoryCleanupComplete",
     });
   }
 
@@ -682,12 +709,14 @@ export class OptimizedRealtimeManager extends RealtimeManager {
     config: SubscriptionConfig<T>
   ): () => void {
     const channelName = this.getChannelName(config);
-    
+
     // Add to batch
     if (!this.subscriptionBatch.has(channelName)) {
       this.subscriptionBatch.set(channelName, []);
     }
-    this.subscriptionBatch.get(channelName)!.push({ ...config, subscriptionId });
+    this.subscriptionBatch
+      .get(channelName)!
+      .push({ ...config, subscriptionId });
 
     // Process batch if full or start timer
     const batch = this.subscriptionBatch.get(channelName)!;
@@ -722,14 +751,14 @@ export class OptimizedRealtimeManager extends RealtimeManager {
     const batch = this.subscriptionBatch.get(channelName);
     if (!batch || batch.length === 0) return;
 
-    logger.info('Processing subscription batch', {
-      component: 'optimizedRealtime',
-      action: 'processBatch',
+    logger.info("Processing subscription batch", {
+      component: "optimizedRealtime",
+      action: "processBatch",
       metadata: { channelName, batchSize: batch.length },
     });
 
     // Process each subscription in batch
-    batch.forEach(config => {
+    batch.forEach((config) => {
       const { subscriptionId, ...subscriptionConfig } = config as any;
       super.subscribe(subscriptionId, subscriptionConfig);
     });
@@ -752,9 +781,9 @@ export class OptimizedRealtimeManager extends RealtimeManager {
 
     const cached = this.queryCache.get(queryKey);
     if (cached && Date.now() - cached.timestamp < ttl) {
-      logger.debug('Query cache hit', {
-        component: 'optimizedRealtime',
-        action: 'cacheHit',
+      logger.debug("Query cache hit", {
+        component: "optimizedRealtime",
+        action: "cacheHit",
         metadata: { queryKey },
       });
       return cached.data;
@@ -766,9 +795,9 @@ export class OptimizedRealtimeManager extends RealtimeManager {
       timestamp: Date.now(),
     });
 
-    logger.debug('Query executed and cached', {
-      component: 'optimizedRealtime',
-      action: 'queryExecuted',
+    logger.debug("Query executed and cached", {
+      component: "optimizedRealtime",
+      action: "queryExecuted",
       metadata: { queryKey },
     });
 
@@ -793,9 +822,9 @@ export class OptimizedRealtimeManager extends RealtimeManager {
    */
   public clearCache(): void {
     this.queryCache.clear();
-    logger.info('Performance cache cleared', {
-      component: 'optimizedRealtime',
-      action: 'cacheCleared',
+    logger.info("Performance cache cleared", {
+      component: "optimizedRealtime",
+      action: "cacheCleared",
     });
   }
 }
@@ -830,10 +859,10 @@ export class EnhancedPresenceManager {
   private presenceHistory: Array<{
     playerId: string;
     timestamp: Date;
-    action: 'join' | 'leave' | 'update';
+    action: "join" | "leave" | "update";
     data: any;
   }> = [];
-  private persistenceKey = 'pickleball_presence_history';
+  private persistenceKey = "pickleball_presence_history";
 
   constructor(config: Partial<PresenceConfig> = {}) {
     this.config = { ...DEFAULT_PRESENCE_CONFIG, ...config };
@@ -844,7 +873,7 @@ export class EnhancedPresenceManager {
    * Load persisted presence history
    */
   private loadPersistedHistory(): void {
-    if (!this.config.enablePersistence || typeof window === 'undefined') return;
+    if (!this.config.enablePersistence || typeof window === "undefined") return;
 
     try {
       const stored = localStorage.getItem(this.persistenceKey);
@@ -856,10 +885,14 @@ export class EnhancedPresenceManager {
         }));
       }
     } catch (error) {
-      logger.warn('Failed to load presence history', {
-        component: 'enhancedPresence',
-        action: 'loadHistory',
-      }, error as Error);
+      logger.warn(
+        "Failed to load presence history",
+        {
+          component: "enhancedPresence",
+          action: "loadHistory",
+        },
+        error as Error
+      );
     }
   }
 
@@ -867,15 +900,22 @@ export class EnhancedPresenceManager {
    * Save presence history
    */
   private savePresenceHistory(): void {
-    if (!this.config.enablePersistence || typeof window === 'undefined') return;
+    if (!this.config.enablePersistence || typeof window === "undefined") return;
 
     try {
-      localStorage.setItem(this.persistenceKey, JSON.stringify(this.presenceHistory));
+      localStorage.setItem(
+        this.persistenceKey,
+        JSON.stringify(this.presenceHistory)
+      );
     } catch (error) {
-      logger.warn('Failed to save presence history', {
-        component: 'enhancedPresence',
-        action: 'saveHistory',
-      }, error as Error);
+      logger.warn(
+        "Failed to save presence history",
+        {
+          component: "enhancedPresence",
+          action: "saveHistory",
+        },
+        error as Error
+      );
     }
   }
 
@@ -884,7 +924,7 @@ export class EnhancedPresenceManager {
    */
   public recordPresenceEvent(
     playerId: string,
-    action: 'join' | 'leave' | 'update',
+    action: "join" | "leave" | "update",
     data: any
   ): void {
     const event = {
@@ -898,14 +938,17 @@ export class EnhancedPresenceManager {
 
     // Limit history length
     if (this.presenceHistory.length > (this.config.maxHistoryLength || 100)) {
-      this.presenceHistory = this.presenceHistory.slice(0, this.config.maxHistoryLength);
+      this.presenceHistory = this.presenceHistory.slice(
+        0,
+        this.config.maxHistoryLength
+      );
     }
 
     this.savePresenceHistory();
 
-    logger.debug('Presence event recorded', {
-      component: 'enhancedPresence',
-      action: 'recordEvent',
+    logger.debug("Presence event recorded", {
+      component: "enhancedPresence",
+      action: "recordEvent",
       metadata: { playerId, action, dataKeys: Object.keys(data) },
     });
   }
@@ -916,15 +959,17 @@ export class EnhancedPresenceManager {
   public getPresenceAnalytics(playDateId: string) {
     const now = new Date();
     const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    
+
     const recentEvents = this.presenceHistory.filter(
-      event => event.timestamp >= last24Hours &&
-      event.data.play_date_id === playDateId
+      (event) =>
+        event.timestamp >= last24Hours && event.data.play_date_id === playDateId
     );
 
-    const uniquePlayers = new Set(recentEvents.map(event => event.playerId));
-    const joinEvents = recentEvents.filter(event => event.action === 'join');
-    const leaveEvents = recentEvents.filter(event => event.action === 'leave');
+    const uniquePlayers = new Set(recentEvents.map((event) => event.playerId));
+    const joinEvents = recentEvents.filter((event) => event.action === "join");
+    const leaveEvents = recentEvents.filter(
+      (event) => event.action === "leave"
+    );
 
     return {
       totalEvents: recentEvents.length,
@@ -939,13 +984,15 @@ export class EnhancedPresenceManager {
   /**
    * Calculate average session duration
    */
-  private calculateAvgSessionDuration(events: typeof this.presenceHistory): number {
+  private calculateAvgSessionDuration(
+    events: typeof this.presenceHistory
+  ): number {
     const sessions = new Map<string, { join: Date; leave?: Date }>();
-    
-    events.forEach(event => {
-      if (event.action === 'join') {
+
+    events.forEach((event) => {
+      if (event.action === "join") {
         sessions.set(event.playerId, { join: event.timestamp });
-      } else if (event.action === 'leave') {
+      } else if (event.action === "leave") {
         const session = sessions.get(event.playerId);
         if (session) {
           session.leave = event.timestamp;
@@ -953,13 +1000,16 @@ export class EnhancedPresenceManager {
       }
     });
 
-    const completedSessions = Array.from(sessions.values())
-      .filter(session => session.leave);
+    const completedSessions = Array.from(sessions.values()).filter(
+      (session) => session.leave
+    );
 
     if (completedSessions.length === 0) return 0;
 
-    const totalDuration = completedSessions.reduce((sum, session) => 
-      sum + (session.leave!.getTime() - session.join.getTime()), 0
+    const totalDuration = completedSessions.reduce(
+      (sum, session) =>
+        sum + (session.leave!.getTime() - session.join.getTime()),
+      0
     );
 
     return totalDuration / completedSessions.length;
@@ -970,18 +1020,19 @@ export class EnhancedPresenceManager {
    */
   private findPeakOnlineTime(events: typeof this.presenceHistory): Date | null {
     const hourlyActivity = new Map<string, number>();
-    
-    events.forEach(event => {
+
+    events.forEach((event) => {
       const hour = event.timestamp.toISOString().slice(0, 13);
       hourlyActivity.set(hour, (hourlyActivity.get(hour) || 0) + 1);
     });
 
     if (hourlyActivity.size === 0) return null;
 
-    const peakHour = Array.from(hourlyActivity.entries())
-      .sort(([,a], [,b]) => b - a)[0][0];
+    const peakHour = Array.from(hourlyActivity.entries()).sort(
+      ([, a], [, b]) => b - a
+    )[0][0];
 
-    return new Date(peakHour + ':00:00Z');
+    return new Date(peakHour + ":00:00Z");
   }
 
   /**
@@ -990,10 +1041,10 @@ export class EnhancedPresenceManager {
   public clearHistory(): void {
     this.presenceHistory = [];
     this.savePresenceHistory();
-    
-    logger.info('Presence history cleared', {
-      component: 'enhancedPresence',
-      action: 'clearHistory',
+
+    logger.info("Presence history cleared", {
+      component: "enhancedPresence",
+      action: "clearHistory",
     });
   }
 
@@ -1020,11 +1071,14 @@ export const executeOptimizedQuery = <T>(
   ttl?: number
 ) => optimizedRealtimeManager.executeQuery(queryKey, queryFn, ttl);
 
-export const getPerformanceMetrics = () => optimizedRealtimeManager.getPerformanceMetrics();
+export const getPerformanceMetrics = () =>
+  optimizedRealtimeManager.getPerformanceMetrics();
 
-export const clearPerformanceCache = () => optimizedRealtimeManager.clearCache();
+export const clearPerformanceCache = () =>
+  optimizedRealtimeManager.clearCache();
 
-export const getPresenceAnalytics = (playDateId: string) => 
+export const getPresenceAnalytics = (playDateId: string) =>
   enhancedPresenceManager.getPresenceAnalytics(playDateId);
 
-export const clearPresenceHistory = () => enhancedPresenceManager.clearHistory();
+export const clearPresenceHistory = () =>
+  enhancedPresenceManager.clearHistory();

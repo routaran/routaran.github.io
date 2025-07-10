@@ -1,23 +1,26 @@
-import React, { useMemo, useState } from 'react';
-import { ChevronDown, ChevronUp, Calendar, Users, Trophy } from 'lucide-react';
-import { Card } from '../common/Card';
-import { Button } from '../common/Button';
-import { Badge } from '../common/Badge';
-import { cn } from '../../lib/utils';
-import { useSchedule } from '../../hooks/useSchedule';
-import { useAuthStore } from '../../stores/authStore';
-import { RoundView } from './RoundView';
-import { CurrentRoundIndicator } from './CurrentRoundIndicator';
-import { PlayerSchedule } from './PlayerSchedule';
-import { CourtGrid } from './CourtGrid';
-import type { RoundWithScores } from '../../hooks/useSchedule';
+import React, { useMemo, useState } from "react";
+import { ChevronDown, ChevronUp, Calendar, Users, Trophy } from "lucide-react";
+import { Card } from "../common/Card";
+import { Button } from "../common/Button";
+import { Badge } from "../common/Badge";
+import { cn } from "../../lib/utils";
+import { useSchedule } from "../../hooks/useSchedule";
+import { useAuthStore } from "../../stores/authStore";
+import { RoundView } from "./RoundView";
+import { CurrentRoundIndicator } from "./CurrentRoundIndicator";
+import { PlayerSchedule } from "./PlayerSchedule";
+import { CourtGrid } from "./CourtGrid";
+import type { RoundWithScores } from "../../hooks/useSchedule";
 
 interface ScheduleViewProps {
   playDateId: string;
-  viewMode?: 'full' | 'player' | 'courts';
+  viewMode?: "full" | "player" | "courts";
 }
 
-export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProps) {
+export function ScheduleView({
+  playDateId,
+  viewMode = "full",
+}: ScheduleViewProps) {
   const { rounds, currentRound, isLoading, error } = useSchedule(playDateId);
   const { player, isAuthenticated } = useAuthStore();
   const [expandedRounds, setExpandedRounds] = useState<Set<number>>(new Set());
@@ -26,12 +29,12 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
   // Auto-expand current round
   useMemo(() => {
     if (currentRound) {
-      setExpandedRounds(prev => new Set([...prev, currentRound]));
+      setExpandedRounds((prev) => new Set([...prev, currentRound]));
     }
   }, [currentRound]);
 
   const toggleRound = (roundNumber: number) => {
-    setExpandedRounds(prev => {
+    setExpandedRounds((prev) => {
       const next = new Set(prev);
       if (next.has(roundNumber)) {
         next.delete(roundNumber);
@@ -44,7 +47,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
 
   const expandAll = () => {
     if (rounds) {
-      setExpandedRounds(new Set(rounds.map(r => r.number)));
+      setExpandedRounds(new Set(rounds.map((r) => r.number)));
     }
   };
 
@@ -63,7 +66,9 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
   if (error) {
     return (
       <Card className="p-6 text-center">
-        <p className="text-destructive">Error loading schedule: {error.message}</p>
+        <p className="text-destructive">
+          Error loading schedule: {error.message}
+        </p>
       </Card>
     );
   }
@@ -83,25 +88,25 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
     return (
       <div className="flex gap-2 mb-4">
         <Button
-          variant={selectedView === 'full' ? 'primary' : 'outline'}
+          variant={selectedView === "full" ? "primary" : "outline"}
           size="sm"
-          onClick={() => setSelectedView('full')}
+          onClick={() => setSelectedView("full")}
         >
           <Calendar className="w-4 h-4 mr-2" />
           Full Schedule
         </Button>
         <Button
-          variant={selectedView === 'player' ? 'primary' : 'outline'}
+          variant={selectedView === "player" ? "primary" : "outline"}
           size="sm"
-          onClick={() => setSelectedView('player')}
+          onClick={() => setSelectedView("player")}
         >
           <Users className="w-4 h-4 mr-2" />
           My Schedule
         </Button>
         <Button
-          variant={selectedView === 'courts' ? 'primary' : 'outline'}
+          variant={selectedView === "courts" ? "primary" : "outline"}
           size="sm"
-          onClick={() => setSelectedView('courts')}
+          onClick={() => setSelectedView("courts")}
         >
           <Trophy className="w-4 h-4 mr-2" />
           Court View
@@ -111,7 +116,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
   };
 
   // Player-specific view
-  if (selectedView === 'player' && player) {
+  if (selectedView === "player" && player) {
     return (
       <div className="space-y-4">
         {renderViewSelector()}
@@ -126,7 +131,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
   }
 
   // Court grid view
-  if (selectedView === 'courts') {
+  if (selectedView === "courts") {
     return (
       <div className="space-y-4">
         {renderViewSelector()}
@@ -143,7 +148,7 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
   return (
     <div className="space-y-4">
       {renderViewSelector()}
-      
+
       {/* Current round indicator */}
       {currentRound && (
         <CurrentRoundIndicator
@@ -156,18 +161,10 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Tournament Schedule</h2>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={expandAll}
-          >
+          <Button variant="outline" size="sm" onClick={expandAll}>
             Expand All
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={collapseAll}
-          >
+          <Button variant="outline" size="sm" onClick={collapseAll}>
             Collapse All
           </Button>
         </div>
@@ -200,25 +197,19 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
                     <h3 className="text-lg font-semibold">
                       Round {round.number}
                     </h3>
-                    {isCurrentRound && (
-                      <Badge variant="default">Current</Badge>
-                    )}
-                    {roundStatus === 'completed' && (
+                    {isCurrentRound && <Badge variant="default">Current</Badge>}
+                    {roundStatus === "completed" && (
                       <Badge variant="secondary">Completed</Badge>
                     )}
-                    {roundStatus === 'upcoming' && (
+                    {roundStatus === "upcoming" && (
                       <Badge variant="outline">Upcoming</Badge>
                     )}
                     <span className="text-sm text-muted-foreground">
                       {round.matches.length} matches
-                      {round.byePartnership && ' • 1 bye'}
+                      {round.byePartnership && " • 1 bye"}
                     </span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                  >
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                     {isExpanded ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
@@ -245,15 +236,17 @@ export function ScheduleView({ playDateId, viewMode = 'full' }: ScheduleViewProp
   );
 }
 
-function getRoundStatus(round: RoundWithScores): 'completed' | 'in_progress' | 'upcoming' {
+function getRoundStatus(
+  round: RoundWithScores
+): "completed" | "in_progress" | "upcoming" {
   const allCompleted = round.matches.every(
-    match => match.team1_score !== null && match.team2_score !== null
+    (match) => match.team1_score !== null && match.team2_score !== null
   );
   const anyStarted = round.matches.some(
-    match => match.team1_score !== null || match.team2_score !== null
+    (match) => match.team1_score !== null || match.team2_score !== null
   );
 
-  if (allCompleted) return 'completed';
-  if (anyStarted) return 'in_progress';
-  return 'upcoming';
+  if (allCompleted) return "completed";
+  if (anyStarted) return "in_progress";
+  return "upcoming";
 }

@@ -1,19 +1,19 @@
-import { Label } from '../common/Form'
+import { Label } from "../common/Form";
 
 interface CourtSelectorProps {
-  courtCount: number
-  onChange: (value: number) => void
-  disabled?: boolean
-  maxCourts?: number
+  courtCount: number;
+  onChange: (value: number) => void;
+  disabled?: boolean;
+  maxCourts?: number;
 }
 
 export function CourtSelector({
   courtCount,
   onChange,
   disabled = false,
-  maxCourts = 4
+  maxCourts = 4,
 }: CourtSelectorProps) {
-  const courtOptions = Array.from({ length: maxCourts }, (_, i) => i + 1)
+  const courtOptions = Array.from({ length: maxCourts }, (_, i) => i + 1);
 
   return (
     <div>
@@ -27,7 +27,7 @@ export function CourtSelector({
       >
         {courtOptions.map((num) => (
           <option key={num} value={num}>
-            {num} {num === 1 ? 'Court' : 'Courts'}
+            {num} {num === 1 ? "Court" : "Courts"}
           </option>
         ))}
       </select>
@@ -35,5 +35,5 @@ export function CourtSelector({
         Number of courts available for simultaneous play
       </p>
     </div>
-  )
+  );
 }

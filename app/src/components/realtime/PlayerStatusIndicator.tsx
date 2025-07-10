@@ -1,7 +1,10 @@
-import React, { useMemo } from 'react';
-import { usePlayerPresence, usePlayerPresenceStatus } from '../../hooks/usePlayerPresence';
-import { cn } from '../../lib/utils';
-import { Badge } from '../common/Badge';
+import React, { useMemo } from "react";
+import {
+  usePlayerPresence,
+  usePlayerPresenceStatus,
+} from "../../hooks/usePlayerPresence";
+import { cn } from "../../lib/utils";
+import { Badge } from "../common/Badge";
 
 export interface PlayerStatusIndicatorProps {
   /** Player ID to track */
@@ -39,7 +42,8 @@ export function PlayerStatusIndicator({
   className,
   onStatusChange,
 }: PlayerStatusIndicatorProps) {
-  const { isOnline, isPlaying, lastSeen, currentMatchId } = usePlayerPresenceStatus(playDateId, playerId);
+  const { isOnline, isPlaying, lastSeen, currentMatchId } =
+    usePlayerPresenceStatus(playDateId, playerId);
 
   // Call status change callback
   React.useEffect(() => {
@@ -51,27 +55,29 @@ export function PlayerStatusIndicator({
   const statusConfig = useMemo(() => {
     if (isPlaying) {
       return {
-        color: 'bg-blue-500',
-        pulseColor: 'bg-blue-400',
-        label: 'Playing',
-        badgeVariant: 'info' as const,
+        color: "bg-blue-500",
+        pulseColor: "bg-blue-400",
+        label: "Playing",
+        badgeVariant: "info" as const,
         description: `Currently playing match ${currentMatchId}`,
       };
     } else if (isOnline) {
       return {
-        color: 'bg-green-500',
-        pulseColor: 'bg-green-400',
-        label: 'Online',
-        badgeVariant: 'success' as const,
-        description: 'Available to play',
+        color: "bg-green-500",
+        pulseColor: "bg-green-400",
+        label: "Online",
+        badgeVariant: "success" as const,
+        description: "Available to play",
       };
     } else {
       return {
-        color: 'bg-gray-400',
-        pulseColor: 'bg-gray-300',
-        label: 'Offline',
-        badgeVariant: 'secondary' as const,
-        description: lastSeen ? `Last seen: ${formatLastSeen(lastSeen)}` : 'Never seen',
+        color: "bg-gray-400",
+        pulseColor: "bg-gray-300",
+        label: "Offline",
+        badgeVariant: "secondary" as const,
+        description: lastSeen
+          ? `Last seen: ${formatLastSeen(lastSeen)}`
+          : "Never seen",
       };
     }
   }, [isOnline, isPlaying, currentMatchId, lastSeen]);
@@ -84,7 +90,7 @@ export function PlayerStatusIndicator({
     const diffHours = Math.floor(diffMinutes / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 1) return "Just now";
     if (diffMinutes < 60) return `${diffMinutes}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
@@ -93,32 +99,32 @@ export function PlayerStatusIndicator({
 
   if (compact) {
     return (
-      <div className={cn('flex items-center gap-2', className)}>
+      <div className={cn("flex items-center gap-2", className)}>
         {/* Status dot */}
         <div className="relative flex items-center justify-center">
           {isPlaying && (
             <span
               className={cn(
-                'absolute inline-flex h-3 w-3 rounded-full opacity-75 animate-ping',
+                "absolute inline-flex h-3 w-3 rounded-full opacity-75 animate-ping",
                 statusConfig.pulseColor
               )}
             />
           )}
           <span
             className={cn(
-              'relative inline-flex h-3 w-3 rounded-full',
+              "relative inline-flex h-3 w-3 rounded-full",
               statusConfig.color
             )}
           />
         </div>
-        
+
         {/* Name */}
         {playerName && (
           <span className="text-sm font-medium text-gray-900">
             {playerName}
           </span>
         )}
-        
+
         {/* Status badge */}
         <Badge variant={statusConfig.badgeVariant} size="sm">
           {statusConfig.label}
@@ -128,20 +134,22 @@ export function PlayerStatusIndicator({
   }
 
   return (
-    <div className={cn('flex items-center gap-3 p-3 rounded-lg border', className)}>
+    <div
+      className={cn("flex items-center gap-3 p-3 rounded-lg border", className)}
+    >
       {/* Status indicator */}
       <div className="relative flex items-center justify-center">
         {isPlaying && (
           <span
             className={cn(
-              'absolute inline-flex h-4 w-4 rounded-full opacity-75 animate-ping',
+              "absolute inline-flex h-4 w-4 rounded-full opacity-75 animate-ping",
               statusConfig.pulseColor
             )}
           />
         )}
         <span
           className={cn(
-            'relative inline-flex h-4 w-4 rounded-full',
+            "relative inline-flex h-4 w-4 rounded-full",
             statusConfig.color
           )}
         />
@@ -159,13 +167,13 @@ export function PlayerStatusIndicator({
             {statusConfig.label}
           </Badge>
         </div>
-        
+
         {showDetails && (
           <div className="mt-1 text-xs text-gray-500">
             {statusConfig.description}
           </div>
         )}
-        
+
         {showLastSeen && lastSeen && !isOnline && (
           <div className="mt-1 text-xs text-gray-500">
             Last seen: {formatLastSeen(lastSeen)}
@@ -215,32 +223,34 @@ export function PlayerStatusList({
 
   // Filter players based on status
   const filteredPlayerIds = useMemo(() => {
-    return playerIds.filter(playerId => {
+    return playerIds.filter((playerId) => {
       const presence = playerPresence[playerId];
       if (!presence) return !onlineOnly && !playingOnly;
-      
+
       if (playingOnly && !presence.is_playing) return false;
       if (onlineOnly && !presence.is_online) return false;
-      
+
       return true;
     });
   }, [playerIds, playerPresence, onlineOnly, playingOnly]);
 
   if (filteredPlayerIds.length === 0) {
     return (
-      <div className={cn('text-center py-8 text-gray-500', className)}>
+      <div className={cn("text-center py-8 text-gray-500", className)}>
         <div className="text-sm">
-          {playingOnly ? 'No players currently playing' : 
-           onlineOnly ? 'No players online' : 
-           'No players found'}
+          {playingOnly
+            ? "No players currently playing"
+            : onlineOnly
+              ? "No players online"
+              : "No players found"}
         </div>
       </div>
     );
   }
 
   return (
-    <div className={cn('space-y-2', className)}>
-      {filteredPlayerIds.map(playerId => (
+    <div className={cn("space-y-2", className)}>
+      {filteredPlayerIds.map((playerId) => (
         <PlayerStatusIndicator
           key={playerId}
           playerId={playerId}
@@ -280,30 +290,28 @@ export function PlayerStatusSummary({
     const players = Object.values(playerPresence);
     return {
       total: players.length,
-      online: players.filter(p => p.is_online).length,
-      playing: players.filter(p => p.is_playing).length,
-      offline: players.filter(p => !p.is_online).length,
+      online: players.filter((p) => p.is_online).length,
+      playing: players.filter((p) => p.is_playing).length,
+      offline: players.filter((p) => !p.is_online).length,
     };
   }, [playerPresence]);
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn("space-y-3", className)}>
       {/* Quick summary */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-green-500 rounded-full" />
-          <span className="text-sm text-gray-600">
-            {summary.online} Online
-          </span>
+          <span className="text-sm text-gray-600">{summary.online} Online</span>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
           <span className="text-sm text-gray-600">
             {summary.playing} Playing
           </span>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-gray-400 rounded-full" />
           <span className="text-sm text-gray-600">
@@ -321,7 +329,9 @@ export function PlayerStatusSummary({
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Available:</span>
-            <span className="font-medium">{summary.online - summary.playing}</span>
+            <span className="font-medium">
+              {summary.online - summary.playing}
+            </span>
           </div>
         </div>
       )}
@@ -341,16 +351,20 @@ export function PlayerStatusHeaderIndicator({
 }) {
   const { playerPresence } = usePlayerPresence({ playDateId });
 
-  const onlineCount = Object.values(playerPresence).filter(p => p.is_online).length;
-  const playingCount = Object.values(playerPresence).filter(p => p.is_playing).length;
+  const onlineCount = Object.values(playerPresence).filter(
+    (p) => p.is_online
+  ).length;
+  const playingCount = Object.values(playerPresence).filter(
+    (p) => p.is_playing
+  ).length;
 
   return (
-    <div className={cn('flex items-center gap-3 text-sm', className)}>
+    <div className={cn("flex items-center gap-3 text-sm", className)}>
       <div className="flex items-center gap-1">
         <div className="w-2 h-2 bg-green-500 rounded-full" />
         <span className="text-gray-600">{onlineCount}</span>
       </div>
-      
+
       <div className="flex items-center gap-1">
         <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
         <span className="text-gray-600">{playingCount}</span>

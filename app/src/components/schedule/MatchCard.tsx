@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Trophy, Edit2, Check, X, Clock, History, Zap } from 'lucide-react';
-import { Card, Button, Input, Badge, useModal } from '../common';
-import { cn } from '../../lib/utils';
-import { useAuthStore } from '../../stores/authStore';
-import { db } from '../../lib/supabase';
-import { useToast } from '../../hooks/useToast';
-import { ScoreEntryModal, QuickScoreEntry, ScoreHistoryInline } from '../score';
-import type { Match as ScheduleMatch } from '../../lib/algorithms/scheduling';
-import type { Match as DatabaseMatch } from '../../types/database';
+import React, { useState } from "react";
+import { Trophy, Edit2, Check, X, Clock, History, Zap } from "lucide-react";
+import { Card, Button, Input, Badge, useModal } from "../common";
+import { cn } from "../../lib/utils";
+import { useAuthStore } from "../../stores/authStore";
+import { db } from "../../lib/supabase";
+import { useToast } from "../../hooks/useToast";
+import { ScoreEntryModal, QuickScoreEntry, ScoreHistoryInline } from "../score";
+import type { Match as ScheduleMatch } from "../../lib/algorithms/scheduling";
+import type { Match as DatabaseMatch } from "../../types/database";
 
 interface MatchCardProps {
   match: ScheduleMatch & {
@@ -16,7 +16,7 @@ interface MatchCardProps {
     version?: number;
   };
   playDateId: string;
-  winCondition: 'first-to-target' | 'win-by-2';
+  winCondition: "first-to-target" | "win-by-2";
   targetScore: number;
   isCurrentRound: boolean;
   courtName?: string;
@@ -32,7 +32,7 @@ export function MatchCard({
   isCurrentRound,
   courtName,
   showQuickEntry = false,
-  showHistory = true
+  showHistory = true,
 }: MatchCardProps) {
   const { player, canUpdateScore } = useAuthStore();
   const { showToast } = useToast();
@@ -41,17 +41,17 @@ export function MatchCard({
   const [team2Score, setTeam2Score] = useState(match.team2_score || 0);
   const [isSaving, setIsSaving] = useState(false);
   const [showScoreHistory, setShowScoreHistory] = useState(false);
-  
+
   // Modal state for enhanced score entry
   const scoreModal = useModal();
 
   const hasScore = match.team1_score !== null && match.team2_score !== null;
-  const isPlayerInMatch = player && (
-    match.partnership1.player1.id === player.id ||
-    match.partnership1.player2.id === player.id ||
-    match.partnership2.player1.id === player.id ||
-    match.partnership2.player2.id === player.id
-  );
+  const isPlayerInMatch =
+    player &&
+    (match.partnership1.player1.id === player.id ||
+      match.partnership1.player2.id === player.id ||
+      match.partnership2.player1.id === player.id ||
+      match.partnership2.player2.id === player.id);
 
   const canEdit = canUpdateScore(isPlayerInMatch ? player.id : undefined);
 
@@ -66,15 +66,15 @@ export function MatchCard({
       );
       setIsEditing(false);
       showToast({
-        title: 'Score Updated',
-        description: 'Match score has been saved successfully.',
-        variant: 'success'
+        title: "Score Updated",
+        description: "Match score has been saved successfully.",
+        variant: "success",
       });
     } catch (error) {
       showToast({
-        title: 'Error',
-        description: error.message || 'Failed to update score',
-        variant: 'destructive'
+        title: "Error",
+        description: error.message || "Failed to update score",
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -85,7 +85,7 @@ export function MatchCard({
     // Update local state to reflect the changes
     setTeam1Score(updatedMatch.team1_score || 0);
     setTeam2Score(updatedMatch.team2_score || 0);
-    
+
     // Refresh the match data - would typically come from parent component
     // For now, we'll just trust the updated match data
   };
@@ -106,11 +106,13 @@ export function MatchCard({
   const winner = getWinner();
 
   return (
-    <Card className={cn(
-      "p-4 transition-all",
-      isCurrentRound && "shadow-md",
-      isPlayerInMatch && "ring-1 ring-primary/20"
-    )}>
+    <Card
+      className={cn(
+        "p-4 transition-all",
+        isCurrentRound && "shadow-md",
+        isPlayerInMatch && "ring-1 ring-primary/20"
+      )}
+    >
       <div className="space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -133,7 +135,7 @@ export function MatchCard({
               </Badge>
             )}
           </div>
-          
+
           {canEdit && !isEditing && (
             <div className="flex items-center gap-1">
               {showHistory && (
@@ -147,7 +149,7 @@ export function MatchCard({
                   <History className="h-4 w-4" />
                 </Button>
               )}
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -157,7 +159,7 @@ export function MatchCard({
               >
                 <Edit2 className="h-4 w-4" />
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -174,23 +176,25 @@ export function MatchCard({
         {/* Teams and Scores */}
         <div className="space-y-2">
           {/* Team 1 */}
-          <div className={cn(
-            "flex items-center justify-between p-2 rounded-md transition-colors",
-            winner === 1 && "bg-success/10",
-            isEditing && "bg-muted/50"
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between p-2 rounded-md transition-colors",
+              winner === 1 && "bg-success/10",
+              isEditing && "bg-muted/50"
+            )}
+          >
             <div className="flex items-center gap-2">
               {winner === 1 && <Trophy className="h-4 w-4 text-success" />}
               <div>
-                <p className={cn(
-                  "font-medium",
-                  winner === 1 && "text-success"
-                )}>
-                  {match.partnership1.player1.name} & {match.partnership1.player2.name}
+                <p
+                  className={cn("font-medium", winner === 1 && "text-success")}
+                >
+                  {match.partnership1.player1.name} &{" "}
+                  {match.partnership1.player2.name}
                 </p>
               </div>
             </div>
-            
+
             {isEditing ? (
               <Input
                 type="number"
@@ -201,33 +205,37 @@ export function MatchCard({
                 max={21}
               />
             ) : (
-              <span className={cn(
-                "text-2xl font-bold",
-                winner === 1 && "text-success"
-              )}>
-                {hasScore ? match.team1_score : '-'}
+              <span
+                className={cn(
+                  "text-2xl font-bold",
+                  winner === 1 && "text-success"
+                )}
+              >
+                {hasScore ? match.team1_score : "-"}
               </span>
             )}
           </div>
 
           {/* Team 2 */}
-          <div className={cn(
-            "flex items-center justify-between p-2 rounded-md transition-colors",
-            winner === 2 && "bg-success/10",
-            isEditing && "bg-muted/50"
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between p-2 rounded-md transition-colors",
+              winner === 2 && "bg-success/10",
+              isEditing && "bg-muted/50"
+            )}
+          >
             <div className="flex items-center gap-2">
               {winner === 2 && <Trophy className="h-4 w-4 text-success" />}
               <div>
-                <p className={cn(
-                  "font-medium",
-                  winner === 2 && "text-success"
-                )}>
-                  {match.partnership2.player1.name} & {match.partnership2.player2.name}
+                <p
+                  className={cn("font-medium", winner === 2 && "text-success")}
+                >
+                  {match.partnership2.player1.name} &{" "}
+                  {match.partnership2.player2.name}
                 </p>
               </div>
             </div>
-            
+
             {isEditing ? (
               <Input
                 type="number"
@@ -238,11 +246,13 @@ export function MatchCard({
                 max={21}
               />
             ) : (
-              <span className={cn(
-                "text-2xl font-bold",
-                winner === 2 && "text-success"
-              )}>
-                {hasScore ? match.team2_score : '-'}
+              <span
+                className={cn(
+                  "text-2xl font-bold",
+                  winner === 2 && "text-success"
+                )}
+              >
+                {hasScore ? match.team2_score : "-"}
               </span>
             )}
           </div>
@@ -289,10 +299,7 @@ export function MatchCard({
         {/* Score History */}
         {showScoreHistory && showHistory && (
           <div className="pt-3 border-t">
-            <ScoreHistoryInline
-              matchId={match.id}
-              maxEntries={3}
-            />
+            <ScoreHistoryInline matchId={match.id} maxEntries={3} />
           </div>
         )}
       </div>

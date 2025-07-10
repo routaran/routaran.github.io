@@ -1,9 +1,9 @@
-import { PlayDateCard } from './PlayDateCard';
-import { Button } from '../common/Button';
-import { LoadingSpinner } from '../common/LoadingSpinner';
-import type { PlayDateWithStats } from '../../lib/supabase/playDates';
-import type { SupabaseError } from '../../lib/supabase/errors';
-import { CalendarPlus, RefreshCw } from 'lucide-react';
+import { PlayDateCard } from "./PlayDateCard";
+import { Button } from "../common/Button";
+import { LoadingSpinner } from "../common/LoadingSpinner";
+import type { PlayDateWithStats } from "../../lib/supabase/playDates";
+import type { SupabaseError } from "../../lib/supabase/errors";
+import { CalendarPlus, RefreshCw } from "lucide-react";
 
 export interface PlayDateListProps {
   playDates: PlayDateWithStats[];
@@ -66,7 +66,7 @@ export function PlayDateList({
           Failed to Load Play Dates
         </h3>
         <p className="text-gray-500 mb-6">
-          {error.message || 'An unexpected error occurred'}
+          {error.message || "An unexpected error occurred"}
         </p>
         {onRefresh && (
           <Button
@@ -119,11 +119,7 @@ export function PlayDateList({
       {/* Play date cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {playDates.map((playDate) => (
-          <PlayDateCard
-            key={playDate.id}
-            playDate={playDate}
-            onEdit={onEdit}
-          />
+          <PlayDateCard key={playDate.id} playDate={playDate} onEdit={onEdit} />
         ))}
       </div>
 
@@ -142,7 +138,7 @@ export function PlayDateList({
                 Loading...
               </>
             ) : (
-              'Load More'
+              "Load More"
             )}
           </Button>
         </div>

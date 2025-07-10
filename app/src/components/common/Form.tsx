@@ -1,5 +1,5 @@
-import { cn } from '../../lib/utils';
-import { forwardRef } from 'react';
+import { cn } from "../../lib/utils";
+import { forwardRef } from "react";
 
 // Input Component
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -12,11 +12,24 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, helpText, leftIcon, rightIcon, fullWidth = false, className, ...props }, ref) => {
-    const inputId = props.id || `input-${Math.random().toString(36).substr(2, 9)}`;
-    
+  (
+    {
+      label,
+      error,
+      helpText,
+      leftIcon,
+      rightIcon,
+      fullWidth = false,
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    const inputId =
+      props.id || `input-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
-      <div className={cn('flex flex-col', fullWidth && 'w-full')}>
+      <div className={cn("flex flex-col", fullWidth && "w-full")}>
         {label && (
           <label
             htmlFor={inputId}
@@ -35,10 +48,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[44px] text-sm',
-              leftIcon && 'pl-10',
-              rightIcon && 'pr-10',
-              error && 'border-error-500 focus:border-error-500 focus:ring-error-500',
+              "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[44px] text-sm",
+              leftIcon && "pl-10",
+              rightIcon && "pr-10",
+              error &&
+                "border-error-500 focus:border-error-500 focus:ring-error-500",
               className
             )}
             {...props}
@@ -55,16 +69,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </p>
         )}
         {helpText && !error && (
-          <p className="mt-1 text-sm text-gray-500">
-            {helpText}
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{helpText}</p>
         )}
       </div>
     );
   }
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 // Select Component
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -77,11 +89,24 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, helpText, options, placeholder, fullWidth = false, className, ...props }, ref) => {
-    const selectId = props.id || `select-${Math.random().toString(36).substr(2, 9)}`;
-    
+  (
+    {
+      label,
+      error,
+      helpText,
+      options,
+      placeholder,
+      fullWidth = false,
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    const selectId =
+      props.id || `select-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
-      <div className={cn('flex flex-col', fullWidth && 'w-full')}>
+      <div className={cn("flex flex-col", fullWidth && "w-full")}>
         {label && (
           <label
             htmlFor={selectId}
@@ -94,8 +119,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={cn(
-            'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[44px] text-sm bg-white',
-            error && 'border-error-500 focus:border-error-500 focus:ring-error-500',
+            "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[44px] text-sm bg-white",
+            error &&
+              "border-error-500 focus:border-error-500 focus:ring-error-500",
             className
           )}
           {...props}
@@ -106,7 +132,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           )}
           {options.map((option) => (
-            <option key={option.value} value={option.value} disabled={option.disabled}>
+            <option
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+            >
               {option.label}
             </option>
           ))}
@@ -117,19 +147,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </p>
         )}
         {helpText && !error && (
-          <p className="mt-1 text-sm text-gray-500">
-            {helpText}
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{helpText}</p>
         )}
       </div>
     );
   }
 );
 
-Select.displayName = 'Select';
+Select.displayName = "Select";
 
 // Textarea Component
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
   helpText?: string;
@@ -138,10 +167,11 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, helpText, fullWidth = false, className, ...props }, ref) => {
-    const textareaId = props.id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
-    
+    const textareaId =
+      props.id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
-      <div className={cn('flex flex-col', fullWidth && 'w-full')}>
+      <div className={cn("flex flex-col", fullWidth && "w-full")}>
         {label && (
           <label
             htmlFor={textareaId}
@@ -154,8 +184,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={textareaId}
           className={cn(
-            'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[88px] text-sm',
-            error && 'border-error-500 focus:border-error-500 focus:ring-error-500',
+            "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[88px] text-sm",
+            error &&
+              "border-error-500 focus:border-error-500 focus:ring-error-500",
             className
           )}
           {...props}
@@ -166,16 +197,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           </p>
         )}
         {helpText && !error && (
-          <p className="mt-1 text-sm text-gray-500">
-            {helpText}
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{helpText}</p>
         )}
       </div>
     );
   }
 );
 
-Textarea.displayName = 'Textarea';
+Textarea.displayName = "Textarea";
 
 // Checkbox Component
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -186,8 +215,9 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ label, error, helpText, className, ...props }, ref) => {
-    const checkboxId = props.id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
-    
+    const checkboxId =
+      props.id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
       <div className="flex flex-col">
         <div className="flex items-start">
@@ -196,8 +226,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             id={checkboxId}
             type="checkbox"
             className={cn(
-              'h-4 w-4 mt-1 text-primary-600 border-gray-300 rounded focus:ring-2 focus:ring-primary-500 focus:border-primary-500',
-              error && 'border-error-500 focus:ring-error-500',
+              "h-4 w-4 mt-1 text-primary-600 border-gray-300 rounded focus:ring-2 focus:ring-primary-500 focus:border-primary-500",
+              error && "border-error-500 focus:ring-error-500",
               className
             )}
             {...props}
@@ -215,16 +245,14 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           </p>
         )}
         {helpText && !error && (
-          <p className="mt-1 text-sm text-gray-500">
-            {helpText}
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{helpText}</p>
         )}
       </div>
     );
   }
 );
 
-Checkbox.displayName = 'Checkbox';
+Checkbox.displayName = "Checkbox";
 
 // Radio Component
 interface RadioProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -235,8 +263,9 @@ interface RadioProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Radio = forwardRef<HTMLInputElement, RadioProps>(
   ({ label, error, helpText, className, ...props }, ref) => {
-    const radioId = props.id || `radio-${Math.random().toString(36).substr(2, 9)}`;
-    
+    const radioId =
+      props.id || `radio-${Math.random().toString(36).substr(2, 9)}`;
+
     return (
       <div className="flex flex-col">
         <div className="flex items-start">
@@ -245,8 +274,8 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
             id={radioId}
             type="radio"
             className={cn(
-              'h-4 w-4 mt-1 text-primary-600 border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500',
-              error && 'border-error-500 focus:ring-error-500',
+              "h-4 w-4 mt-1 text-primary-600 border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500",
+              error && "border-error-500 focus:ring-error-500",
               className
             )}
             {...props}
@@ -264,16 +293,14 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
           </p>
         )}
         {helpText && !error && (
-          <p className="mt-1 text-sm text-gray-500">
-            {helpText}
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{helpText}</p>
         )}
       </div>
     );
   }
 );
 
-Radio.displayName = 'Radio';
+Radio.displayName = "Radio";
 
 // Form Group Component
 interface FormGroupProps {
@@ -282,11 +309,7 @@ interface FormGroupProps {
 }
 
 export function FormGroup({ children, className }: FormGroupProps) {
-  return (
-    <div className={cn('space-y-1', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("space-y-1", className)}>{children}</div>;
 }
 
 // Form Row Component
@@ -297,7 +320,12 @@ interface FormRowProps {
 
 export function FormRow({ children, className }: FormRowProps) {
   return (
-    <div className={cn('flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0', className)}>
+    <div
+      className={cn(
+        "flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -312,7 +340,7 @@ interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
 export function Label({ children, required, className, ...props }: LabelProps) {
   return (
     <label
-      className={cn('block text-sm font-medium text-gray-700', className)}
+      className={cn("block text-sm font-medium text-gray-700", className)}
       {...props}
     >
       {children}
@@ -328,7 +356,7 @@ interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
 
 export function Form({ children, className, ...props }: FormProps) {
   return (
-    <form className={cn('space-y-6', className)} {...props}>
+    <form className={cn("space-y-6", className)} {...props}>
       {children}
     </form>
   );
@@ -342,9 +370,9 @@ interface ErrorMessageProps {
 
 export function ErrorMessage({ error, className }: ErrorMessageProps) {
   if (!error) return null;
-  
+
   return (
-    <p className={cn('mt-1 text-sm text-error-600', className)} role="alert">
+    <p className={cn("mt-1 text-sm text-error-600", className)} role="alert">
       {error}
     </p>
   );

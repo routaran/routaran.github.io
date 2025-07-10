@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
-import { Card } from '../components/common/Card';
-import { handleAuthCallback } from '../lib/supabase/auth';
-import { logger } from '../lib/logger';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LoadingSpinner } from "../components/common/LoadingSpinner";
+import { Card } from "../components/common/Card";
+import { handleAuthCallback } from "../lib/supabase/auth";
+import { logger } from "../lib/logger";
 
 export function AuthCallbackPage() {
   const navigate = useNavigate();
@@ -15,9 +15,9 @@ export function AuthCallbackPage() {
 
   const handleCallback = async () => {
     try {
-      logger.info('Processing auth callback', {
-        component: 'AuthCallbackPage',
-        action: 'handleCallback',
+      logger.info("Processing auth callback", {
+        component: "AuthCallbackPage",
+        action: "handleCallback",
       });
 
       const { error } = await handleAuthCallback();
@@ -26,20 +26,26 @@ export function AuthCallbackPage() {
         throw error;
       }
 
-      logger.info('Auth callback successful, redirecting to login', {
-        component: 'AuthCallbackPage',
-        action: 'handleCallback',
+      logger.info("Auth callback successful, redirecting to login", {
+        component: "AuthCallbackPage",
+        action: "handleCallback",
       });
 
       // Redirect to login page which will handle the rest
-      navigate('/login', { replace: true });
+      navigate("/login", { replace: true });
     } catch (error) {
-      logger.error('Auth callback failed', {
-        component: 'AuthCallbackPage',
-        action: 'handleCallback',
-      }, error as Error);
+      logger.error(
+        "Auth callback failed",
+        {
+          component: "AuthCallbackPage",
+          action: "handleCallback",
+        },
+        error as Error
+      );
 
-      setError(error instanceof Error ? error.message : 'Authentication failed');
+      setError(
+        error instanceof Error ? error.message : "Authentication failed"
+      );
     }
   };
 
@@ -67,11 +73,9 @@ export function AuthCallbackPage() {
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
               Authentication failed
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {error}
-            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
               className="mt-4 text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
             >
               Back to login

@@ -1,13 +1,13 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { 
-  subscribeToTable, 
+import { useEffect, useRef, useCallback } from "react";
+import {
+  subscribeToTable,
   unsubscribe,
   type TableName,
   type RealtimeEventType,
   type RealtimeCallback,
   type SubscriptionConfig,
-} from '../lib/supabase/realtime';
-import { logger } from '../lib/logger';
+} from "../lib/supabase/realtime";
+import { logger } from "../lib/logger";
 
 export interface UseRealtimeSubscriptionOptions<T extends TableName> {
   table: T;
@@ -19,7 +19,7 @@ export interface UseRealtimeSubscriptionOptions<T extends TableName> {
 
 /**
  * React hook for managing Supabase Realtime subscriptions
- * 
+ *
  * @example
  * ```tsx
  * // Subscribe to all match updates for a specific play date
@@ -31,7 +31,7 @@ export interface UseRealtimeSubscriptionOptions<T extends TableName> {
  *   console.log('Match updated:', payload);
  *   refetchMatches();
  * });
- * 
+ *
  * // Subscribe to specific events
  * useRealtimeSubscription({
  *   table: 'players',
@@ -46,7 +46,7 @@ export function useRealtimeSubscription<T extends TableName>(
   callback: RealtimeCallback<T>
 ): void {
   const { table, event, filter, enabled = true, onError } = options;
-  
+
   // Use refs to maintain stable references
   const callbackRef = useRef(callback);
   const onErrorRef = useRef(onError);
@@ -62,41 +62,48 @@ export function useRealtimeSubscription<T extends TableName>(
   }, [onError]);
 
   // Memoized error handler
-  const handleError = useCallback((error: Error) => {
-    logger.error('Realtime subscription error', {
-      component: 'useRealtimeSubscription',
-      action: 'subscriptionError',
-      metadata: {
-        table,
-        event,
-        filter,
-        error: error.message,
-      },
-    }, error);
+  const handleError = useCallback(
+    (error: Error) => {
+      logger.error(
+        "Realtime subscription error",
+        {
+          component: "useRealtimeSubscription",
+          action: "subscriptionError",
+          metadata: {
+            table,
+            event,
+            filter,
+            error: error.message,
+          },
+        },
+        error
+      );
 
-    if (onErrorRef.current) {
-      onErrorRef.current(error);
-    }
-  }, [table, event, filter]);
+      if (onErrorRef.current) {
+        onErrorRef.current(error);
+      }
+    },
+    [table, event, filter]
+  );
 
   useEffect(() => {
     // Skip if not enabled
     if (!enabled) {
-      logger.debug('Realtime subscription disabled', {
-        component: 'useRealtimeSubscription',
-        action: 'subscriptionDisabled',
+      logger.debug("Realtime subscription disabled", {
+        component: "useRealtimeSubscription",
+        action: "subscriptionDisabled",
         metadata: { table, event, filter },
       });
       return;
     }
 
     // Generate unique subscription ID
-    const subscriptionId = `${table}-${event || '*'}-${filter || 'all'}-${Date.now()}`;
+    const subscriptionId = `${table}-${event || "*"}-${filter || "all"}-${Date.now()}`;
     subscriptionIdRef.current = subscriptionId;
 
-    logger.info('Setting up realtime subscription', {
-      component: 'useRealtimeSubscription',
-      action: 'subscribe',
+    logger.info("Setting up realtime subscription", {
+      component: "useRealtimeSubscription",
+      action: "subscribe",
       metadata: {
         subscriptionId,
         table,
@@ -122,9 +129,9 @@ export function useRealtimeSubscription<T extends TableName>(
 
     // Cleanup function
     return () => {
-      logger.info('Cleaning up realtime subscription', {
-        component: 'useRealtimeSubscription',
-        action: 'cleanup',
+      logger.info("Cleaning up realtime subscription", {
+        component: "useRealtimeSubscription",
+        action: "cleanup",
         metadata: {
           subscriptionId,
           table,
@@ -142,9 +149,9 @@ export function useRealtimeSubscription<T extends TableName>(
   useEffect(() => {
     return () => {
       if (subscriptionIdRef.current) {
-        logger.debug('Component with realtime subscription unmounting', {
-          component: 'useRealtimeSubscription',
-          action: 'componentUnmount',
+        logger.debug("Component with realtime subscription unmounting", {
+          component: "useRealtimeSubscription",
+          action: "componentUnmount",
           metadata: {
             subscriptionId: subscriptionIdRef.current,
             table,
@@ -157,7 +164,7 @@ export function useRealtimeSubscription<T extends TableName>(
 
 /**
  * Hook for subscribing to multiple tables at once
- * 
+ *
  * @example
  * ```tsx
  * useRealtimeSubscriptions([
@@ -201,11 +208,11 @@ export function useRealtimeSubscriptions<T extends TableName>(
 
 /**
  * Hook for subscribing to all events on a table with filtering
- * 
+ *
  * @example
  * ```tsx
  * const { data: matches, refetch } = useQuery(...);
- * 
+ *
  * useTableSubscription('matches', {
  *   filter: `play_date_id=eq.${playDateId}`,
  *   onInsert: (newMatch) => {
@@ -228,13 +235,23 @@ export function useTableSubscription<T extends TableName>(
   options: {
     filter?: string;
     enabled?: boolean;
-    onInsert?: (record: Database['public']['Tables'][T]['Row']) => void;
-    onUpdate?: (record: Database['public']['Tables'][T]['Row'], oldRecord: Database['public']['Tables'][T]['Row']) => void;
-    onDelete?: (record: Database['public']['Tables'][T]['Row']) => void;
+    onInsert?: (record: Database["public"]["Tables"][T]["Row"]) => void;
+    onUpdate?: (
+      record: Database["public"]["Tables"][T]["Row"],
+      oldRecord: Database["public"]["Tables"][T]["Row"]
+    ) => void;
+    onDelete?: (record: Database["public"]["Tables"][T]["Row"]) => void;
     onError?: (error: Error) => void;
   }
 ): void {
-  const { filter, enabled = true, onInsert, onUpdate, onDelete, onError } = options;
+  const {
+    filter,
+    enabled = true,
+    onInsert,
+    onUpdate,
+    onDelete,
+    onError,
+  } = options;
 
   useRealtimeSubscription(
     {
@@ -245,17 +262,17 @@ export function useTableSubscription<T extends TableName>(
     },
     (payload) => {
       switch (payload.eventType) {
-        case 'INSERT':
+        case "INSERT":
           if (onInsert && payload.new) {
             onInsert(payload.new);
           }
           break;
-        case 'UPDATE':
+        case "UPDATE":
           if (onUpdate && payload.new && payload.old) {
             onUpdate(payload.new, payload.old);
           }
           break;
-        case 'DELETE':
+        case "DELETE":
           if (onDelete && payload.old) {
             onDelete(payload.old);
           }
@@ -266,4 +283,4 @@ export function useTableSubscription<T extends TableName>(
 }
 
 // Type helper to ensure we have the Database type available
-import type { Database } from '../types/database';
+import type { Database } from "../types/database";

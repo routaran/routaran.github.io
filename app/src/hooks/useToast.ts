@@ -1,9 +1,9 @@
-import { useToast as useToastContext } from '../contexts/ToastContext';
+import { useToast as useToastContext } from "../contexts/ToastContext";
 
 export interface ShowToastOptions {
   title: string;
   description?: string;
-  variant?: 'default' | 'success' | 'destructive' | 'warning';
+  variant?: "default" | "success" | "destructive" | "warning";
   duration?: number;
   action?: {
     label: string;
@@ -15,9 +15,14 @@ export function useToast() {
   const { addToast } = useToastContext();
 
   const showToast = (options: ShowToastOptions) => {
-    const type = options.variant === 'destructive' ? 'error' : 
-                 options.variant === 'success' ? 'success' :
-                 options.variant === 'warning' ? 'warning' : 'info';
+    const type =
+      options.variant === "destructive"
+        ? "error"
+        : options.variant === "success"
+          ? "success"
+          : options.variant === "warning"
+            ? "warning"
+            : "info";
 
     addToast({
       type,

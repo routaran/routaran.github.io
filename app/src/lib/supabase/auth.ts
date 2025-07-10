@@ -1,6 +1,6 @@
-import { supabase } from '../supabase';
-import { logger } from '../logger';
-import type { Player } from '../../types/database';
+import { supabase } from "../supabase";
+import { logger } from "../logger";
+import type { Player } from "../../types/database";
 
 /**
  * Authentication utilities for Supabase Auth
@@ -11,9 +11,9 @@ import type { Player } from '../../types/database';
  */
 export async function sendMagicLink(email: string) {
   try {
-    logger.info('Sending magic link', {
-      component: 'auth',
-      action: 'sendMagicLink',
+    logger.info("Sending magic link", {
+      component: "auth",
+      action: "sendMagicLink",
       metadata: { email },
     });
 
@@ -26,27 +26,35 @@ export async function sendMagicLink(email: string) {
     });
 
     if (error) {
-      logger.error('Failed to send magic link', {
-        component: 'auth',
-        action: 'sendMagicLink',
-        metadata: { email, errorCode: error.message },
-      }, error);
+      logger.error(
+        "Failed to send magic link",
+        {
+          component: "auth",
+          action: "sendMagicLink",
+          metadata: { email, errorCode: error.message },
+        },
+        error
+      );
       throw error;
     }
 
-    logger.info('Magic link sent successfully', {
-      component: 'auth',
-      action: 'sendMagicLink',
+    logger.info("Magic link sent successfully", {
+      component: "auth",
+      action: "sendMagicLink",
       metadata: { email },
     });
 
     return { data, error: null };
   } catch (error) {
-    logger.error('Unexpected error sending magic link', {
-      component: 'auth',
-      action: 'sendMagicLink',
-      metadata: { email },
-    }, error as Error);
+    logger.error(
+      "Unexpected error sending magic link",
+      {
+        component: "auth",
+        action: "sendMagicLink",
+        metadata: { email },
+      },
+      error as Error
+    );
     return { data: null, error: error as Error };
   }
 }
@@ -56,32 +64,40 @@ export async function sendMagicLink(email: string) {
  */
 export async function signOut() {
   try {
-    logger.info('Signing out user', {
-      component: 'auth',
-      action: 'signOut',
+    logger.info("Signing out user", {
+      component: "auth",
+      action: "signOut",
     });
 
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      logger.error('Sign out failed', {
-        component: 'auth',
-        action: 'signOut',
-      }, error);
+      logger.error(
+        "Sign out failed",
+        {
+          component: "auth",
+          action: "signOut",
+        },
+        error
+      );
       throw error;
     }
 
-    logger.info('Sign out successful', {
-      component: 'auth',
-      action: 'signOut',
+    logger.info("Sign out successful", {
+      component: "auth",
+      action: "signOut",
     });
 
     return { error: null };
   } catch (error) {
-    logger.error('Unexpected error during sign out', {
-      component: 'auth',
-      action: 'signOut',
-    }, error as Error);
+    logger.error(
+      "Unexpected error during sign out",
+      {
+        component: "auth",
+        action: "signOut",
+      },
+      error as Error
+    );
     return { error: error as Error };
   }
 }
@@ -94,19 +110,27 @@ export async function getSession() {
     const { data, error } = await supabase.auth.getSession();
 
     if (error) {
-      logger.error('Failed to get session', {
-        component: 'auth',
-        action: 'getSession',
-      }, error);
+      logger.error(
+        "Failed to get session",
+        {
+          component: "auth",
+          action: "getSession",
+        },
+        error
+      );
       throw error;
     }
 
     return { session: data.session, error: null };
   } catch (error) {
-    logger.error('Unexpected error getting session', {
-      component: 'auth',
-      action: 'getSession',
-    }, error as Error);
+    logger.error(
+      "Unexpected error getting session",
+      {
+        component: "auth",
+        action: "getSession",
+      },
+      error as Error
+    );
     return { session: null, error: error as Error };
   }
 }
@@ -119,19 +143,27 @@ export async function getUser() {
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
-      logger.error('Failed to get user', {
-        component: 'auth',
-        action: 'getUser',
-      }, error);
+      logger.error(
+        "Failed to get user",
+        {
+          component: "auth",
+          action: "getUser",
+        },
+        error
+      );
       throw error;
     }
 
     return { user: data.user, error: null };
   } catch (error) {
-    logger.error('Unexpected error getting user', {
-      component: 'auth',
-      action: 'getUser',
-    }, error as Error);
+    logger.error(
+      "Unexpected error getting user",
+      {
+        component: "auth",
+        action: "getUser",
+      },
+      error as Error
+    );
     return { user: null, error: error as Error };
   }
 }
@@ -139,22 +171,24 @@ export async function getUser() {
 /**
  * Get player by user ID
  */
-export async function getPlayerByUserId(userId: string): Promise<Player | null> {
+export async function getPlayerByUserId(
+  userId: string
+): Promise<Player | null> {
   try {
-    logger.debug('Fetching player by user ID', {
-      component: 'auth',
-      action: 'getPlayerByUserId',
+    logger.debug("Fetching player by user ID", {
+      component: "auth",
+      action: "getPlayerByUserId",
       userId,
     });
 
     const { data, error } = await supabase
-      .from('players')
-      .select('*')
-      .eq('claim_user_id', userId)
+      .from("players")
+      .select("*")
+      .eq("claim_user_id", userId)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         // No rows found
         return null;
       }
@@ -163,11 +197,15 @@ export async function getPlayerByUserId(userId: string): Promise<Player | null> 
 
     return data;
   } catch (error) {
-    logger.error('Failed to get player by user ID', {
-      component: 'auth',
-      action: 'getPlayerByUserId',
-      userId,
-    }, error as Error);
+    logger.error(
+      "Failed to get player by user ID",
+      {
+        component: "auth",
+        action: "getPlayerByUserId",
+        userId,
+      },
+      error as Error
+    );
     throw error;
   }
 }
@@ -177,31 +215,35 @@ export async function getPlayerByUserId(userId: string): Promise<Player | null> 
  */
 export async function getUnclaimedPlayers(): Promise<Player[]> {
   try {
-    logger.debug('Fetching unclaimed players', {
-      component: 'auth',
-      action: 'getUnclaimedPlayers',
+    logger.debug("Fetching unclaimed players", {
+      component: "auth",
+      action: "getUnclaimedPlayers",
     });
 
     const { data, error } = await supabase
-      .from('players')
-      .select('*')
-      .is('claim_user_id', null)
-      .order('name');
+      .from("players")
+      .select("*")
+      .is("claim_user_id", null)
+      .order("name");
 
     if (error) throw error;
 
-    logger.info('Fetched unclaimed players', {
-      component: 'auth',
-      action: 'getUnclaimedPlayers',
+    logger.info("Fetched unclaimed players", {
+      component: "auth",
+      action: "getUnclaimedPlayers",
       metadata: { count: data.length },
     });
 
     return data;
   } catch (error) {
-    logger.error('Failed to get unclaimed players', {
-      component: 'auth',
-      action: 'getUnclaimedPlayers',
-    }, error as Error);
+    logger.error(
+      "Failed to get unclaimed players",
+      {
+        component: "auth",
+        action: "getUnclaimedPlayers",
+      },
+      error as Error
+    );
     throw error;
   }
 }
@@ -209,24 +251,26 @@ export async function getUnclaimedPlayers(): Promise<Player[]> {
 /**
  * Claim a player
  */
-export async function claimPlayer(playerId: string, userId: string): Promise<boolean> {
+export async function claimPlayer(
+  playerId: string,
+  userId: string
+): Promise<boolean> {
   try {
-    logger.info('Attempting to claim player', {
-      component: 'auth',
-      action: 'claimPlayer',
+    logger.info("Attempting to claim player", {
+      component: "auth",
+      action: "claimPlayer",
       userId,
       metadata: { playerId },
     });
 
     // Call the RPC function to safely claim a player
-    const { data, error } = await supabase
-      .rpc('claim_player', {
-        p_player_id: playerId,
-        p_user_id: userId,
-      });
+    const { data, error } = await supabase.rpc("claim_player", {
+      p_player_id: playerId,
+      p_user_id: userId,
+    });
 
     if (error) {
-      if (error.code === 'P0001') {
+      if (error.code === "P0001") {
         // Custom error from our RPC function
         throw new Error(error.message);
       }
@@ -234,24 +278,28 @@ export async function claimPlayer(playerId: string, userId: string): Promise<boo
     }
 
     if (!data) {
-      throw new Error('Failed to claim player');
+      throw new Error("Failed to claim player");
     }
 
-    logger.info('Player claimed successfully', {
-      component: 'auth',
-      action: 'claimPlayer',
+    logger.info("Player claimed successfully", {
+      component: "auth",
+      action: "claimPlayer",
       userId,
       metadata: { playerId },
     });
 
     return true;
   } catch (error) {
-    logger.error('Failed to claim player', {
-      component: 'auth',
-      action: 'claimPlayer',
-      userId,
-      metadata: { playerId },
-    }, error as Error);
+    logger.error(
+      "Failed to claim player",
+      {
+        component: "auth",
+        action: "claimPlayer",
+        userId,
+        metadata: { playerId },
+      },
+      error as Error
+    );
     throw error;
   }
 }
@@ -261,9 +309,9 @@ export async function claimPlayer(playerId: string, userId: string): Promise<boo
  */
 export async function handleAuthCallback(): Promise<{ error: Error | null }> {
   try {
-    logger.info('Handling auth callback', {
-      component: 'auth',
-      action: 'handleAuthCallback',
+    logger.info("Handling auth callback", {
+      component: "auth",
+      action: "handleAuthCallback",
     });
 
     // Exchange the code for a session
@@ -274,21 +322,25 @@ export async function handleAuthCallback(): Promise<{ error: Error | null }> {
     if (error) throw error;
 
     if (!data.session) {
-      throw new Error('No session found in callback');
+      throw new Error("No session found in callback");
     }
 
-    logger.info('Auth callback handled successfully', {
-      component: 'auth',
-      action: 'handleAuthCallback',
+    logger.info("Auth callback handled successfully", {
+      component: "auth",
+      action: "handleAuthCallback",
       userId: data.session.user.id,
     });
 
     return { error: null };
   } catch (error) {
-    logger.error('Failed to handle auth callback', {
-      component: 'auth',
-      action: 'handleAuthCallback',
-    }, error as Error);
+    logger.error(
+      "Failed to handle auth callback",
+      {
+        component: "auth",
+        action: "handleAuthCallback",
+      },
+      error as Error
+    );
     return { error: error as Error };
   }
 }
@@ -296,7 +348,9 @@ export async function handleAuthCallback(): Promise<{ error: Error | null }> {
 /**
  * Subscribe to auth state changes
  */
-export function onAuthStateChange(callback: (event: string, session: any) => void) {
+export function onAuthStateChange(
+  callback: (event: string, session: any) => void
+) {
   return supabase.auth.onAuthStateChange(callback);
 }
 
