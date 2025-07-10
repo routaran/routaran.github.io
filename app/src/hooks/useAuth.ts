@@ -115,10 +115,32 @@ export function useAuth() {
         userId: authUser.id,
       });
 
+      // First find the player claim for this auth user
+      const { data: claim, error: claimError } = await db.supabase
+        .from("player_claims")
+        .select("player_id")
+        .eq("auth_user_id", authUser.id)
+        .single();
+
+      if (claimError) {
+        if (claimError.code === "PGRST116") {
+          // No player claimed yet
+          logger.info("No player claimed for user", {
+            component: "useAuth",
+            action: "loadPlayerData",
+            userId: authUser.id,
+          });
+          setPlayer(null);
+          return;
+        }
+        throw claimError;
+      }
+
+      // Now get the player data
       const { data, error } = await db.supabase
         .from("players")
         .select("*")
-        .eq("claim_user_id", authUser.id)
+        .eq("id", claim.player_id)
         .single();
 
       if (error) {
@@ -166,9 +188,9 @@ export function useAuth() {
 
     try {
       const { data, error } = await db.supabase
-        .from("players")
+        .from("player_claims")
         .select("id")
-        .eq("claim_user_id", user.id)
+        .eq("auth_user_id", user.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -203,10 +225,7 @@ export function useAuth() {
       });
 
       // Call the RPC function to safely claim a player
-      const { data, error } = await db.supabase.rpc("claim_player", {
-        p_player_id: playerId,
-        p_user_id: user.id,
-      });
+      const { data, error } = await db.supabase.rpc("claim_player", playerId);
 
       if (error) {
         if (error.code === "P0001") {

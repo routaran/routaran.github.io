@@ -32,11 +32,25 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
       });
 
       // Get all players without a claim
-      const { data, error } = await supabase
+      // First get all players
+      const { data: allPlayers, error: playersError } = await supabase
         .from("players")
         .select("*")
-        .is("claim_user_id", null)
         .order("name");
+
+      if (playersError) throw playersError;
+
+      // Then get all claimed player IDs
+      const { data: claims, error: claimsError } = await supabase
+        .from("player_claims")
+        .select("player_id");
+
+      if (claimsError) throw claimsError;
+
+      // Filter out claimed players
+      const claimedPlayerIds = new Set(claims?.map((c) => c.player_id) || []);
+      const data = allPlayers?.filter((p) => !claimedPlayerIds.has(p.id)) || [];
+      const error = null;
 
       if (error) throw error;
 
