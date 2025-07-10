@@ -292,8 +292,7 @@ export async function claimPlayer(
 
     // Call the RPC function to safely claim a player
     const { data, error } = await supabase.rpc("claim_player", {
-      p_player_id: playerId,
-      p_user_id: userId,
+      player_id: playerId,
     });
 
     if (error) {
