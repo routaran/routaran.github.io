@@ -30,6 +30,17 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
         component: "PlayerClaim",
         action: "loadPlayers",
       });
+      
+      // Debug: Check if supabase client is properly initialized
+      console.log("Supabase client check:", {
+        hasClient: !!supabase,
+        clientType: typeof supabase,
+        hasFrom: typeof supabase.from,
+        envCheck: {
+          url: import.meta.env.VITE_SUPABASE_URL,
+          keyLength: import.meta.env.VITE_SUPABASE_ANON_KEY?.length || 0
+        }
+      });
 
       // Get all players without a claim
       // First get all players
