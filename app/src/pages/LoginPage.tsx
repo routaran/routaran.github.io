@@ -26,6 +26,14 @@ export function LoginPage() {
       metadata: { redirectPath: from },
     });
 
+    // Debug: Check environment variables
+    console.log("Environment check:", {
+      VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
+      VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY ? "Set" : "Not set",
+      MODE: import.meta.env.MODE,
+      PROD: import.meta.env.PROD,
+    });
+
     // Check if user is already authenticated
     if (user && !checkingClaim) {
       setCheckingClaim(true);
