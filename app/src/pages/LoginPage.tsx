@@ -34,37 +34,11 @@ export function LoginPage() {
       metadata: { redirectPath: from },
     });
 
-    console.log(
-      "LoginPage useEffect running - showPlayerClaim:",
-      showPlayerClaim
-    );
-
-    // Debug: Check environment variables
-    console.log("Environment check:", {
-      VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
-      VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY
-        ? `Set (length: ${import.meta.env.VITE_SUPABASE_ANON_KEY.length})`
-        : "Not set",
-      MODE: import.meta.env.MODE,
-      PROD: import.meta.env.PROD,
-    });
-
-    // Additional debug: Check if Supabase client is initialized
-    console.log("Supabase client check:", {
-      hasSupabaseClient:
-        !!import.meta.env.VITE_SUPABASE_URL &&
-        !!import.meta.env.VITE_SUPABASE_ANON_KEY,
-      keyFirstChars: import.meta.env.VITE_SUPABASE_ANON_KEY
-        ? import.meta.env.VITE_SUPABASE_ANON_KEY.substring(0, 10) + "..."
-        : "Not set",
-    });
-
     // Check if user is already authenticated
     if (user && !hasCheckedClaim) {
       setHasCheckedClaim(true);
       checkPlayerClaim()
         .then((hasClaim) => {
-          console.log("checkPlayerClaim result:", hasClaim);
           if (hasClaim) {
             logger.info("User already authenticated with claim", {
               component: "LoginPage",
@@ -83,7 +57,6 @@ export function LoginPage() {
           }
         })
         .catch((error) => {
-          console.error("Error checking player claim:", error);
           logger.error(
             "Failed to check player claim",
             {

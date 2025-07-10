@@ -119,7 +119,7 @@ export function useAuth() {
       const { data: claim, error: claimError } = await supabase
         .from("player_claims")
         .select("player_id")
-        .eq("auth_user_id", authUser.id)
+        .eq("supabase_uid", authUser.id)
         .single();
 
       if (claimError) {
@@ -190,7 +190,7 @@ export function useAuth() {
       const { data, error } = await supabase
         .from("player_claims")
         .select("id")
-        .eq("auth_user_id", user.id)
+        .eq("supabase_uid", user.id)
         .maybeSingle();
 
       if (error) throw error;

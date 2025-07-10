@@ -6,16 +6,6 @@ import { monitor } from "./monitoring";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Debug logging - commented out after confirming env vars are loaded
-// console.log("Supabase initialization:", {
-//   url: supabaseUrl,
-//   hasKey: !!supabaseAnonKey,
-//   keyLength: supabaseAnonKey?.length || 0,
-//   keyPreview: supabaseAnonKey
-//     ? supabaseAnonKey.substring(0, 20) + "..."
-//     : "undefined",
-// });
-
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
     "Missing Supabase environment variables. Please check your .env file."

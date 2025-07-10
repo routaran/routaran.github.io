@@ -23,20 +23,11 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
   const loadAttemptedRef = useRef(false);
 
   useEffect(() => {
-    console.log(
-      "PlayerClaim mounted, loadAttemptedRef:",
-      loadAttemptedRef.current
-    );
-
     // Prevent multiple load attempts
     if (!loadAttemptedRef.current) {
       loadAttemptedRef.current = true;
       loadUnclaimedPlayers();
     }
-
-    return () => {
-      console.log("PlayerClaim unmounting!");
-    };
   }, []);
 
   const loadUnclaimedPlayers = async () => {
@@ -46,38 +37,19 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
         action: "loadPlayers",
       });
 
-      // Debug: Check if supabase client is properly initialized
-      console.log("Supabase client check:", {
-        hasClient: !!supabase,
-        clientType: typeof supabase,
-        hasFrom: typeof supabase.from,
-        envCheck: {
-          url: import.meta.env.VITE_SUPABASE_URL,
-          keyLength: import.meta.env.VITE_SUPABASE_ANON_KEY?.length || 0,
-        },
-      });
-
-      // Debug: Log the request we're about to make
-      console.log("About to query players table...");
-
       // Get all players without a claim
       // First get all players
-      console.log("Fetching all players...");
       const { data: allPlayers, error: playersError } = await supabase
         .from("players")
         .select("*")
         .order("name");
 
-      console.log("Players response:", { allPlayers, playersError });
       if (playersError) throw playersError;
 
       // Then get all claimed player IDs
-      console.log("Fetching player claims...");
       const { data: claims, error: claimsError } = await supabase
         .from("player_claims")
         .select("player_id");
-
-      console.log("Claims response:", { claims, claimsError });
 
       // If we get a permission error, treat it as no claims
       // This handles the case where anonymous users can't read player_claims
@@ -89,9 +61,6 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
           claimsError.code === "42501" ||
           claimsError.message?.includes("permission")
         ) {
-          console.warn(
-            "Permission denied for player_claims, treating as empty"
-          );
           // Continue with empty set
         } else {
           // Other errors should still be thrown
@@ -102,9 +71,7 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
         claimedPlayerIds = new Set(claims?.map((c) => c.player_id) || []);
       }
 
-      console.log("Claimed player IDs:", Array.from(claimedPlayerIds));
       const data = allPlayers?.filter((p) => !claimedPlayerIds.has(p.id)) || [];
-      console.log("Unclaimed players:", data);
       const error = null;
 
       if (error) throw error;
