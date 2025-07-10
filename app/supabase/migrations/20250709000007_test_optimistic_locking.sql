@@ -192,37 +192,37 @@ END $$;
 
 DO $$ 
 DECLARE
-    match_id UUID;
+    test_match_id UUID;
     initial_version INTEGER;
     audit_count INTEGER;
-    player_id UUID;
+    test_player_id UUID;
 BEGIN
     RAISE NOTICE 'TEST 5: Audit Trail Integration';
     
     -- Get test data
-    SELECT m.id, m.version, p.id INTO match_id, initial_version, player_id
+    SELECT m.id, m.version, p.id INTO test_match_id, initial_version, test_player_id
     FROM matches m
     JOIN partnerships part ON m.partnership1_id = part.id OR m.partnership2_id = part.id
     JOIN players p ON part.player1_id = p.id OR part.player2_id = p.id
     LIMIT 1;
     
     -- Clear existing audit entries for this match
-    DELETE FROM audit_log WHERE audit_log.match_id = match_id;
+    DELETE FROM audit_log WHERE audit_log.match_id = test_match_id;
     
     -- Update match with audit logging
     UPDATE matches 
     SET updated_at = NOW(), version = version + 1
-    WHERE id = match_id AND version = initial_version;
+    WHERE id = test_match_id AND version = initial_version;
     
     -- Insert audit record
     INSERT INTO audit_log (match_id, player_id, action_type, old_values, new_values, created_at)
-    VALUES (match_id, player_id, 'score_update', 
+    VALUES (test_match_id, test_player_id, 'score_update', 
             json_build_object('team1', 0, 'team2', 0, 'version', initial_version),
             json_build_object('team1', 21, 'team2', 15, 'version', initial_version + 1),
             NOW());
     
     -- Check audit trail
-    SELECT COUNT(*) INTO audit_count FROM audit_log WHERE audit_log.match_id = match_id;
+    SELECT COUNT(*) INTO audit_count FROM audit_log WHERE audit_log.match_id = test_match_id;
     
     IF audit_count > 0 THEN
         RAISE NOTICE 'PASS: Audit trail created for version change';
