@@ -29,7 +29,9 @@ export function LoginPage() {
     // Debug: Check environment variables
     console.log("Environment check:", {
       VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
-      VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY ? "Set" : "Not set",
+      VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY
+        ? "Set"
+        : "Not set",
       MODE: import.meta.env.MODE,
       PROD: import.meta.env.PROD,
     });
