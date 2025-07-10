@@ -355,7 +355,7 @@ export async function canUpdateMatchScore(
         player:players (*)
       `
       )
-      .eq("supabase_uid", userId);
+      .eq("auth_user_id", userId);
 
     if (claimsError) {
       logger.error(
@@ -443,7 +443,7 @@ export async function getUserEditableMatches(
         )
       `
       )
-      .eq("supabase_uid", userId)
+      .eq("auth_user_id", userId)
       .eq("player.play_date_id", playDateId);
 
     if (claimsError) {

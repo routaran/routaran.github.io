@@ -90,7 +90,7 @@ export async function getPlayersWithClaims(playDateId: string) {
       *,
       player_claims (
         player_id,
-        supabase_uid,
+        auth_user_id,
         claimed_at
       )
     `

@@ -1,0 +1,120 @@
+10:56:24.078 GET
+https://routaran.github.io/#access_token=eyJhbGciOiJIUzI1NiIsImtpZCI6Im9EdWpnRi9kKy9pblpwSGsiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2ZycG1lcmVrbmtteGtnanF5Z2xqLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI0NmNiZGM3NC1mMWM1LTRlZTgtOTEyYi00NmQ3ODc4OWVhMzgiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUyMTcwMTgzLCJpYXQiOjE3NTIxNjY1ODMsImVtYWlsIjoicm91dGFyYW44MkBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoicm91dGFyYW44MkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiI0NmNiZGM3NC1mMWM1LTRlZTgtOTEyYi00NmQ3ODc4OWVhMzgifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJvdHAiLCJ0aW1lc3RhbXAiOjE3NTIxNjY1ODN9XSwic2Vzc2lvbl9pZCI6IjRlMDBiYmZlLWVkZGUtNGEzNS04ZjQ1LTFmNzYwMzFkMmRiOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.Bc-qEYSZwNX2_jWt6-LN2HwAWN0lxE8TWUdE3L7Fw6g&expires_at=1752170183&expires_in=3600&refresh_token=skozypaatkd6&token_type=bearer&type=magiclink
+[HTTP/2 200  108ms]
+
+10:56:24.282 GET
+https://routaran.github.io/assets/index-7KicrF4h.js
+[HTTP/2 200  139ms]
+
+10:56:24.282 GET
+https://routaran.github.io/assets/vendor-D4eJPQz7.js
+[HTTP/2 200  99ms]
+
+10:56:24.283 GET
+https://routaran.github.io/assets/router-CEWiQEVr.js
+[HTTP/2 200  167ms]
+
+10:56:24.283 GET
+https://routaran.github.io/assets/supabase-xIFLBGqr.js
+[HTTP/2 200  154ms]
+
+10:56:24.283 GET
+https://routaran.github.io/assets/ui-Bg9wgulU.js
+[HTTP/2 200  174ms]
+
+10:56:24.284 GET
+https://routaran.github.io/assets/index--XtdYLwK.css
+[HTTP/2 200  139ms]
+
+10:56:24.485 GET
+https://routaran.github.io/vite.svg
+[HTTP/2 200  95ms]
+
+10:56:24.575 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/auth/v1/user
+[HTTP/3 200  37ms]
+
+10:56:24.701 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/auth/v1/user
+[HTTP/3 200  145ms]
+
+10:56:24.891 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 200  32ms]
+
+10:56:24.891 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 200  33ms]
+
+10:56:24.891 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 200  34ms]
+
+10:56:24.891 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 200  53ms]
+
+10:56:24.925 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 406  141ms]
+
+10:56:24.927 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 406  288ms]
+
+10:56:24.927 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 406  309ms]
+
+10:56:24.949 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 406  137ms]
+
+10:56:25.122 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 200  35ms]
+
+10:56:25.123 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 200  42ms]
+
+10:56:25.160 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 400  145ms]
+
+10:56:25.167 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 406  299ms]
+
+10:56:25.315 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/players?select=*&order=name.asc
+[HTTP/3 200  38ms]
+
+10:56:25.316 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 200  34ms]
+
+10:56:25.352 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id&supabase_uid=eq.46cbdc74-f1c5-4ee8-912b-46d78789ea38
+[HTTP/3 406  127ms]
+
+10:56:25.358 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/players?select=*&order=name.asc
+[HTTP/3 200  137ms]
+
+10:56:25.501 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id
+[HTTP/3 200  32ms]
+
+10:56:25.535 XHRGET
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/player_claims?select=player_id
+[HTTP/3 200  134ms]
+
+11:01:02.228 XHROPTIONS
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/rpc/claim_player
+[HTTP/3 200  235ms]
+
+11:01:02.443 XHRPOST
+https://frpmereknkmxkgjqyglj.supabase.co/rest/v1/rpc/claim_player
+[HTTP/3 400  161ms]
+

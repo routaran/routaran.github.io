@@ -185,7 +185,7 @@ export async function getPlayerByUserId(
     const { data: claim, error: claimError } = await supabase
       .from("player_claims")
       .select("player_id")
-      .eq("supabase_uid", userId)
+      .eq("auth_user_id", userId)
       .single();
 
     if (claimError) {
