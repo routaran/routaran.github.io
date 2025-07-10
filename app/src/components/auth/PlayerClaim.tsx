@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "../common/Button";
 import { Select } from "../common/Form";
 import { LoadingSpinner } from "../common/LoadingSpinner";
@@ -17,11 +17,17 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
   const [selectedPlayerId, setSelectedPlayerId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [isClaiming, setIsClaiming] = useState(false);
+  const [hasLoadError, setHasLoadError] = useState(false);
   const { claimPlayer } = useAuth();
   const { toast } = useToast();
+  const loadAttemptedRef = useRef(false);
 
   useEffect(() => {
-    loadUnclaimedPlayers();
+    // Prevent multiple load attempts
+    if (!loadAttemptedRef.current) {
+      loadAttemptedRef.current = true;
+      loadUnclaimedPlayers();
+    }
   }, []);
 
   const loadUnclaimedPlayers = async () => {
@@ -63,10 +69,30 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
         .select("player_id");
 
       console.log("Claims response:", { claims, claimsError });
-      if (claimsError) throw claimsError;
 
-      // Filter out claimed players
-      const claimedPlayerIds = new Set(claims?.map((c) => c.player_id) || []);
+      // If we get a permission error, treat it as no claims
+      // This handles the case where anonymous users can't read player_claims
+      let claimedPlayerIds = new Set<string>();
+
+      if (claimsError) {
+        // Check if it's a permission error
+        if (
+          claimsError.code === "42501" ||
+          claimsError.message?.includes("permission")
+        ) {
+          console.warn(
+            "Permission denied for player_claims, treating as empty"
+          );
+          // Continue with empty set
+        } else {
+          // Other errors should still be thrown
+          throw claimsError;
+        }
+      } else {
+        // Successfully got claims
+        claimedPlayerIds = new Set(claims?.map((c) => c.player_id) || []);
+      }
+
       console.log("Claimed player IDs:", Array.from(claimedPlayerIds));
       const data = allPlayers?.filter((p) => !claimedPlayerIds.has(p.id)) || [];
       console.log("Unclaimed players:", data);
@@ -96,11 +122,19 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
         error as Error
       );
 
-      toast({
-        title: "Failed to load players",
-        description: "Unable to load available players. Please try again.",
-        variant: "destructive",
-      });
+      setHasLoadError(true);
+
+      // Only show toast once to prevent re-render loops
+      if (!loadAttemptedRef.current || loadAttemptedRef.current === true) {
+        // Set a flag to prevent future toasts
+        loadAttemptedRef.current = "error-shown";
+
+        toast({
+          title: "Failed to load players",
+          description: "Unable to load available players. Please try again.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -168,6 +202,47 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (hasLoadError) {
+    return (
+      <div className="text-center space-y-4">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900">
+          <svg
+            className="h-6 w-6 text-red-600 dark:text-red-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+          Failed to load players
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          There was an error loading the player list. This might be due to
+          permissions or network issues.
+        </p>
+        <Button
+          onClick={() => {
+            setHasLoadError(false);
+            setIsLoading(true);
+            loadAttemptedRef.current = false;
+            loadUnclaimedPlayers();
+          }}
+          variant="primary"
+        >
+          Try Again
+        </Button>
       </div>
     );
   }
