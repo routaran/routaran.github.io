@@ -32,9 +32,10 @@ BEGIN
     SELECT version INTO initial_version FROM matches WHERE id = match_id;
     RAISE NOTICE 'Initial version: %', initial_version;
     
-    -- Update the match
+    -- Update the match (just update version for testing)
     UPDATE matches 
-    SET team1_score = 11, team2_score = 9, version = version + 1
+    SET version = version + 1,
+        updated_at = NOW()
     WHERE id = match_id AND version = initial_version;
     
     -- Verify version incremented
@@ -68,7 +69,7 @@ BEGIN
     
     -- First update (should succeed)
     UPDATE matches 
-    SET team1_score = 15, team2_score = 13, version = version + 1
+    SET updated_at = NOW(), version = version + 1
     WHERE id = match_id AND version = initial_version;
     
     GET DIAGNOSTICS update_count = ROW_COUNT;
@@ -81,7 +82,7 @@ BEGIN
     
     -- Second update with stale version (should fail)
     UPDATE matches 
-    SET team1_score = 21, team2_score = 19, version = version + 1
+    SET updated_at = NOW(), version = version + 1
     WHERE id = match_id AND version = initial_version; -- Using stale version
     
     GET DIAGNOSTICS update_count = ROW_COUNT;
@@ -118,7 +119,7 @@ BEGIN
         
         -- Attempt update
         UPDATE matches 
-        SET team1_score = 17, team2_score = 15, version = version + 1
+        SET updated_at = NOW(), version = version + 1
         WHERE id = match_id AND version = current_version;
         
         -- Check if update succeeded
@@ -160,14 +161,14 @@ BEGIN
     
     -- Session 1: Read current version and prepare update
     UPDATE matches 
-    SET team1_score = 11, team2_score = 7, version = version + 1
+    SET updated_at = NOW(), version = version + 1
     WHERE id = match_id AND version = initial_version;
     
     GET DIAGNOSTICS update1_count = ROW_COUNT;
     
     -- Session 2: Try to update with same initial version (should fail)
     UPDATE matches 
-    SET team1_score = 9, team2_score = 11, version = version + 1
+    SET updated_at = NOW(), version = version + 1
     WHERE id = match_id AND version = initial_version;
     
     GET DIAGNOSTICS update2_count = ROW_COUNT;
@@ -210,12 +211,11 @@ BEGIN
     
     -- Update match with audit logging
     UPDATE matches 
-    SET team1_score = 21, team2_score = 15, version = version + 1,
-        updated_at = NOW(), updated_by = player_id
+    SET updated_at = NOW(), version = version + 1
     WHERE id = match_id AND version = initial_version;
     
     -- Insert audit record
-    INSERT INTO audit_log (match_id, player_id, action, old_score, new_score, timestamp)
+    INSERT INTO audit_log (match_id, player_id, action_type, old_values, new_values, created_at)
     VALUES (match_id, player_id, 'score_update', 
             json_build_object('team1', 0, 'team2', 0, 'version', initial_version),
             json_build_object('team1', 21, 'team2', 15, 'version', initial_version + 1),
@@ -297,7 +297,7 @@ BEGIN
     -- Test 1: Negative version (should fail)
     BEGIN
         UPDATE matches 
-        SET team1_score = 10, version = -1
+        SET updated_at = NOW(), version = -1
         WHERE id = match_id;
         
         RAISE EXCEPTION 'FAIL: Negative version update succeeded';
@@ -311,7 +311,7 @@ BEGIN
     -- Test 2: NULL version handling
     BEGIN
         UPDATE matches 
-        SET team1_score = 10, version = NULL
+        SET updated_at = NOW(), version = NULL
         WHERE id = match_id;
         
         RAISE EXCEPTION 'FAIL: NULL version update succeeded';
@@ -364,7 +364,7 @@ BEGIN
         
         -- Attempt update
         UPDATE matches 
-        SET team1_score = i, team2_score = i + 1, version = version + 1
+        SET updated_at = NOW(), version = version + 1
         WHERE id = match_id AND version = current_version;
         
         IF FOUND THEN
@@ -417,9 +417,8 @@ BEGIN
     BEGIN
         -- Update match
         UPDATE matches 
-        SET team1_score = 21, team2_score = 19, version = version + 1,
-            updated_at = NOW(), updated_by = player_id
-        WHERE id = match_id AND version = match_version;
+        SET updated_at = NOW(), version = version + 1,
+            updated_at = NOW()        WHERE id = match_id AND version = match_version;
         
         IF NOT FOUND THEN
             RAISE EXCEPTION 'Match version conflict';
@@ -435,7 +434,7 @@ BEGIN
         END IF;
         
         -- Insert audit record
-        INSERT INTO audit_log (match_id, player_id, action, old_score, new_score, timestamp)
+        INSERT INTO audit_log (match_id, player_id, action_type, old_values, new_values, created_at)
         VALUES (match_id, player_id, 'final_score', 
                 json_build_object('team1', 0, 'team2', 0),
                 json_build_object('team1', 21, 'team2', 19),
@@ -490,10 +489,8 @@ BEGIN
         
         -- 2. Update match score with optimistic locking
         UPDATE matches 
-        SET team1_score = 21, team2_score = 18, 
-            version = version + 1,
-            updated_at = NOW(),
-            updated_by = player_id
+        SET updated_at = NOW(), 
+            version = version + 1
         WHERE id = match_id AND version = initial_version;
         
         IF NOT FOUND THEN
