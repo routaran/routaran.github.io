@@ -26,6 +26,9 @@ export function AuthCallbackPage() {
         throw error;
       }
 
+      // Give Supabase client time to update with the new session
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       logger.info("Auth callback successful, redirecting to login", {
         component: "AuthCallbackPage",
         action: "handleCallback",

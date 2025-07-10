@@ -224,6 +224,19 @@ export function useAuth() {
         metadata: { playerId },
       });
 
+      // Debug: Check current session
+      const {
+        data: { session: currentSession },
+      } = await supabase.auth.getSession();
+      console.log("Current session before claim:", {
+        hasSession: !!currentSession,
+        userId: currentSession?.user?.id,
+        role: currentSession?.user?.role,
+        tokenRole: currentSession?.access_token
+          ? JSON.parse(atob(currentSession.access_token.split(".")[1])).role
+          : "unknown",
+      });
+
       // Call the RPC function to safely claim a player
       const { data, error } = await supabase.rpc("claim_player", {
         player_id: playerId,

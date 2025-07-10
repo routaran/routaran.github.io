@@ -27,7 +27,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   global: {
     headers: {
       apikey: supabaseAnonKey,
-      Authorization: `Bearer ${supabaseAnonKey}`,
+      // Don't set Authorization header here - let Supabase handle it based on the session
     },
   },
 });
