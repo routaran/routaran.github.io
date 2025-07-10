@@ -478,8 +478,8 @@ BEGIN
         -- 1. Check if player can update this match (authorization would be handled by RLS)
         IF NOT EXISTS (
             SELECT 1 FROM matches m
-            JOIN partnerships p1 ON m.team1_partnership_id = p1.id
-            JOIN partnerships p2 ON m.team2_partnership_id = p2.id
+            JOIN partnerships p1 ON m.partnership1_id = p1.id
+            JOIN partnerships p2 ON m.partnership2_id = p2.id
             WHERE m.id = match_id 
             AND (p1.player1_id = player_id OR p1.player2_id = player_id 
                  OR p2.player1_id = player_id OR p2.player2_id = player_id)
@@ -498,7 +498,7 @@ BEGIN
         END IF;
         
         -- 3. Create audit log entry
-        INSERT INTO audit_log (match_id, player_id, action, old_score, new_score, timestamp)
+        INSERT INTO audit_log (match_id, player_id, action_type, old_values, new_values, created_at)
         VALUES (match_id, player_id, 'score_update',
                 json_build_object('team1', 0, 'team2', 0, 'version', initial_version),
                 json_build_object('team1', 21, 'team2', 18, 'version', initial_version + 1),
