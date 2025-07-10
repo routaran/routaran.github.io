@@ -202,7 +202,7 @@ BEGIN
     -- Get test data
     SELECT m.id, m.version, p.id INTO match_id, initial_version, player_id
     FROM matches m
-    JOIN partnerships part ON m.team1_partnership_id = part.id OR m.team2_partnership_id = part.id
+    JOIN partnerships part ON m.partnership1_id = part.id OR m.partnership2_id = part.id
     JOIN players p ON part.player1_id = p.id OR part.player2_id = p.id
     LIMIT 1;
     
@@ -468,7 +468,7 @@ BEGIN
     SELECT m.id, m.version, p.id, part.id
     INTO match_id, initial_version, player_id, partnership_id
     FROM matches m
-    JOIN partnerships part ON m.team1_partnership_id = part.id OR m.team2_partnership_id = part.id
+    JOIN partnerships part ON m.partnership1_id = part.id OR m.partnership2_id = part.id
     JOIN players p ON part.player1_id = p.id OR part.player2_id = p.id
     WHERE m.team1_score = 0 AND m.team2_score = 0
     LIMIT 1;
