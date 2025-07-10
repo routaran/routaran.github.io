@@ -129,7 +129,7 @@ The anonymous key is safe for client-side use. Never commit the service role key
 
 3. **Configure Authentication**
     - Go to Authentication → Settings
-    - Set site URL: `https://[your-username].github.io/routaran.github.io`
+    - Set site URL: `https://routaran.github.io/`
     - Configure email templates (optional)
     - Enable/disable auth providers as needed
 
@@ -192,7 +192,7 @@ git push origin master
 1. **Visit your site**
 
     ```
-    https://[your-username].github.io/routaran.github.io/
+    https://routaran.github.io/
     ```
 
 2. **Run through this checklist:**
