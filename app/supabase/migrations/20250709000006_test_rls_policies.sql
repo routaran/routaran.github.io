@@ -2328,7 +2328,7 @@ BEGIN
     ELSE
         final_report := final_report || '✗ Significant RLS policy issues detected' || E'\n';
         final_report := final_report || '✗ Security vulnerabilities may exist' || E'\n';
-        final_report := final_result || '✗ Review and fix all failed tests before deployment' || E'\n';
+        final_report := final_report || '✗ Review and fix all failed tests before deployment' || E'\n';
     END IF;
     
     final_report := final_report || E'\n' ||
