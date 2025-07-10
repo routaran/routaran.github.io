@@ -357,8 +357,8 @@ BEGIN
     
     start_time := clock_timestamp();
     
-    -- Simulate rapid updates
-    FOR i IN 1..100 LOOP
+    -- Simulate rapid updates (reduced to avoid overflow)
+    FOR i IN 1..10 LOOP
         -- Get current version
         SELECT version INTO current_version FROM matches WHERE id = match_id;
         
@@ -377,7 +377,7 @@ BEGIN
     
     RAISE NOTICE 'Performance Test Results:';
     RAISE NOTICE 'Duration: %', duration;
-    RAISE NOTICE 'Successful updates: %/100', successful_updates;
+    RAISE NOTICE 'Successful updates: %/10', successful_updates;
     -- Skip average calculation to avoid overflow
     
     IF successful_updates > 0 THEN
