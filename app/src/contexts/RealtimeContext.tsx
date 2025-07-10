@@ -97,11 +97,11 @@ export function RealtimeProvider({
       // Small delay to ensure everything is initialized
       const timer = setTimeout(() => {
         realtimeReconnect();
-      }, 100);
+      }, 1000); // Increased delay to ensure auth is ready
 
       return () => clearTimeout(timer);
     }
-  }, [autoConnect, connectionState]);
+  }, [autoConnect]); // Removed connectionState dependency to prevent loops
 
   // Memoized reconnect function
   const reconnect = useCallback(() => {

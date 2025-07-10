@@ -40,28 +40,23 @@ supabase.auth.onAuthStateChange((event, session) => {
       : "none",
   });
 
-  // Update realtime connection with new auth token
-  if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-    // Force realtime to use the new access token
-    if (session?.access_token) {
-      supabase.realtime.setAuth(session.access_token);
-      // Reconnect realtime to use the new token
-      logger.info("Reconnecting realtime with new auth token", {
-        component: "supabase",
-        action: "realtimeReconnect",
-      });
-      realtimeReconnect();
-    }
-  }
-
-  // Disconnect realtime when signing out
-  if (event === "SIGNED_OUT") {
-    logger.info("Disconnecting realtime after sign out", {
+  // Handle realtime reconnection on auth changes
+  if (
+    event === "SIGNED_IN" ||
+    event === "TOKEN_REFRESHED" ||
+    event === "SIGNED_OUT"
+  ) {
+    // Reconnect all realtime channels to use the updated auth state
+    logger.info("Auth state changed, reconnecting realtime", {
       component: "supabase",
-      action: "realtimeDisconnect",
+      action: "realtimeReconnect",
+      metadata: { event, hasSession: !!session },
     });
-    // The realtime connection will automatically reconnect with anon access
-    realtimeReconnect();
+
+    // Small delay to ensure auth state is fully updated
+    setTimeout(() => {
+      realtimeReconnect();
+    }, 100);
   }
 });
 

@@ -302,7 +302,13 @@ export class RealtimeManager {
    * Create a new channel with error handling
    */
   private createChannel(channelName: string): RealtimeChannel {
-    const channel = supabase.channel(channelName);
+    // Create channel with proper configuration
+    const channel = supabase.channel(channelName, {
+      config: {
+        // Ensure the channel uses the current auth state
+        private: true,
+      },
+    });
 
     // Set up channel-level error handling
     channel.on("system", { event: "error" }, (payload) => {
@@ -338,17 +344,30 @@ export class RealtimeManager {
     try {
       this.updateConnectionState("connecting");
 
-      const result = await channel.subscribe((status) => {
+      const result = await channel.subscribe((status, error) => {
         logger.info("Channel subscription status changed", {
           component: "realtime",
           action: "subscriptionStatus",
-          metadata: { channelName, status },
+          metadata: {
+            channelName,
+            status,
+            error: error?.message || null,
+            errorDetails: error || null,
+          },
         });
 
         if (status === "SUBSCRIBED") {
           this.updateConnectionState("connected");
           this.reconnectAttempts = 0; // Reset on successful connection
         } else if (status === "CLOSED" || status === "CHANNEL_ERROR") {
+          this.updateConnectionState("error");
+          this.scheduleReconnection();
+        } else if (status === "TIMED_OUT") {
+          logger.error("Channel subscription timed out", {
+            component: "realtime",
+            action: "subscriptionTimeout",
+            metadata: { channelName },
+          });
           this.updateConnectionState("error");
           this.scheduleReconnection();
         }
