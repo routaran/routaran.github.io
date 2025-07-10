@@ -1,7 +1,7 @@
 import { supabase } from '../supabase';
 import { logger } from '../logger';
 import { monitor } from '../monitoring';
-import type { Match, AuditLog, MatchUpdate } from '../../types/database';
+import type { Match, AuditLog } from '../../types/database';
 import { validateMatchScore, type ScoreValidationConfig } from '../validation/scoreValidation';
 
 export interface ScoreUpdateRequest {

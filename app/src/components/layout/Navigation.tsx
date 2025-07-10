@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useIsRealtimeConnected } from '../../contexts/RealtimeContext';
 import { cn } from '../../lib/utils';
 import { FocusTrap, useFocusManagement } from '../common/Accessibility';
-import { User, Shield, Crown, LogOut, Menu, X, Wifi, WifiOff } from 'lucide-react';
+import { User, Crown, LogOut, Wifi, WifiOff } from 'lucide-react';
 
 export function Navigation() {
   const location = useLocation();
@@ -49,9 +49,6 @@ export function Navigation() {
       console.error('Sign out failed:', error);
     }
   };
-
-  // Determine user role
-  const userRole = player?.project_owner ? 'project_owner' : 'player';
 
   const navItems = [
     {

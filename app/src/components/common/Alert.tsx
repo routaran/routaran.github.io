@@ -1,22 +1,12 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
-import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'destructive' | 'success' | 'warning';
 }
 
-const iconMap = {
-  default: Info,
-  destructive: AlertCircle,
-  success: CheckCircle,
-  warning: AlertTriangle,
-};
-
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   ({ className, variant = 'default', children, ...props }, ref) => {
-    const Icon = iconMap[variant];
-
     return (
       <div
         ref={ref}

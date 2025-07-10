@@ -5,7 +5,6 @@ import {
   Calendar, 
   Users, 
   Trophy, 
-  Settings,
   Download,
   RefreshCw,
   Trash2,
@@ -36,6 +35,7 @@ export function PlayDateDetailPage() {
   
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
 
   if (loading || !playDate) {
@@ -50,7 +50,7 @@ export function PlayDateDetailPage() {
     try {
       await updatePlayDate(data)
       setIsEditing(false)
-    } catch (error) {
+    } catch {
       // Error is handled in the hook
     }
   }
@@ -59,7 +59,7 @@ export function PlayDateDetailPage() {
     try {
       setActionLoading(true)
       await deletePlayDate()
-    } catch (error) {
+    } catch {
       // Error is handled in the hook
     } finally {
       setActionLoading(false)
@@ -67,18 +67,19 @@ export function PlayDateDetailPage() {
     }
   }
 
-  const handleRegenerateSchedule = async () => {
-    if (!confirm('Are you sure you want to regenerate the schedule? This will delete all existing matches.')) {
-      return
-    }
+  const handleRegenerateSchedule = () => {
+    setShowRegenerateConfirm(true)
+  }
 
+  const confirmRegenerateSchedule = async () => {
     try {
       setActionLoading(true)
       await regenerateSchedule()
-    } catch (error) {
+    } catch {
       // Error is handled in the hook
     } finally {
       setActionLoading(false)
+      setShowRegenerateConfirm(false)
     }
   }
 
@@ -86,7 +87,7 @@ export function PlayDateDetailPage() {
     try {
       setActionLoading(true)
       await exportToJson()
-    } catch (error) {
+    } catch {
       // Error is handled in the hook
     } finally {
       setActionLoading(false)
@@ -335,6 +336,38 @@ export function PlayDateDetailPage() {
                 <Button
                   variant="secondary"
                   onClick={() => setShowDeleteConfirm(false)}
+                  disabled={actionLoading}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* Regenerate schedule confirmation modal */}
+        {showRegenerateConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <Card className="max-w-md w-full p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Regenerate Schedule?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                This will delete all existing matches and create a new schedule. Any scores that have been entered will be lost. This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="destructive"
+                  onClick={confirmRegenerateSchedule}
+                  disabled={actionLoading}
+                  className="flex-1"
+                >
+                  {actionLoading ? 'Regenerating...' : 'Regenerate'}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowRegenerateConfirm(false)}
                   disabled={actionLoading}
                   className="flex-1"
                 >

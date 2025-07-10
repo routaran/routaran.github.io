@@ -60,7 +60,6 @@ export function RankingsPage() {
   const {
     progress,
     loading: progressLoading,
-    error: progressError,
     refresh: refreshProgress
   } = useTournamentProgress(playDateId || '')
 

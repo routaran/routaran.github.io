@@ -14,7 +14,7 @@ describe('WinConditionSelector', () => {
     render(<WinConditionSelector {...defaultProps} />)
     
     expect(screen.getByLabelText('Win Condition')).toHaveValue('first-to-target')
-    expect(screen.getByLabelText('Target Score')).toHaveValue('11')
+    expect(screen.getByLabelText('Target Score')).toHaveValue(11)
   })
 
   it('shows correct description for first-to-target', () => {
