@@ -35,11 +35,15 @@ export function LoginPage() {
       MODE: import.meta.env.MODE,
       PROD: import.meta.env.PROD,
     });
-    
+
     // Additional debug: Check if Supabase client is initialized
     console.log("Supabase client check:", {
-      hasSupabaseClient: !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY,
-      keyFirstChars: import.meta.env.VITE_SUPABASE_ANON_KEY ? import.meta.env.VITE_SUPABASE_ANON_KEY.substring(0, 10) + "..." : "Not set"
+      hasSupabaseClient:
+        !!import.meta.env.VITE_SUPABASE_URL &&
+        !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+      keyFirstChars: import.meta.env.VITE_SUPABASE_ANON_KEY
+        ? import.meta.env.VITE_SUPABASE_ANON_KEY.substring(0, 10) + "..."
+        : "Not set",
     });
 
     // Check if user is already authenticated

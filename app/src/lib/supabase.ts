@@ -11,7 +11,9 @@ console.log("Supabase initialization:", {
   url: supabaseUrl,
   hasKey: !!supabaseAnonKey,
   keyLength: supabaseAnonKey?.length || 0,
-  keyPreview: supabaseAnonKey ? supabaseAnonKey.substring(0, 20) + "..." : "undefined"
+  keyPreview: supabaseAnonKey
+    ? supabaseAnonKey.substring(0, 20) + "..."
+    : "undefined",
 });
 
 if (!supabaseUrl || !supabaseAnonKey) {
