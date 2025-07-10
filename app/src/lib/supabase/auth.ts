@@ -319,28 +319,35 @@ export async function handleAuthCallback(): Promise<{ error: Error | null }> {
 
     // For implicit flow, Supabase automatically handles the session from URL
     // We just need to verify the session was created
-    const { data: { session }, error } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
     if (error) {
       throw error;
     }
 
     if (!session) {
       // If no session yet, wait a bit for Supabase to process the URL
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Try again
-      const { data: { session: retrySession }, error: retryError } = await supabase.auth.getSession();
-      
+      const {
+        data: { session: retrySession },
+        error: retryError,
+      } = await supabase.auth.getSession();
+
       if (retryError) throw retryError;
-      if (!retrySession) throw new Error("No session found after auth callback");
-      
+      if (!retrySession)
+        throw new Error("No session found after auth callback");
+
       logger.info("Auth callback handled successfully after retry", {
         component: "auth",
         action: "handleAuthCallback",
         userId: retrySession.user.id,
       });
-      
+
       return { error: null };
     }
 
