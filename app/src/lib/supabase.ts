@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../types/database";
 import { logger } from "./logger";
 import { monitor } from "./monitoring";
+import { reconnect as realtimeReconnect } from "./supabase/realtime";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -38,6 +39,30 @@ supabase.auth.onAuthStateChange((event, session) => {
       ? JSON.parse(atob(session.access_token.split(".")[1])).role
       : "none",
   });
+
+  // Update realtime connection with new auth token
+  if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+    // Force realtime to use the new access token
+    if (session?.access_token) {
+      supabase.realtime.setAuth(session.access_token);
+      // Reconnect realtime to use the new token
+      logger.info("Reconnecting realtime with new auth token", {
+        component: "supabase",
+        action: "realtimeReconnect",
+      });
+      realtimeReconnect();
+    }
+  }
+
+  // Disconnect realtime when signing out
+  if (event === "SIGNED_OUT") {
+    logger.info("Disconnecting realtime after sign out", {
+      component: "supabase",
+      action: "realtimeDisconnect",
+    });
+    // The realtime connection will automatically reconnect with anon access
+    realtimeReconnect();
+  }
 });
 
 // Auth helpers
