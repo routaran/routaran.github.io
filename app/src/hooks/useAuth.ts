@@ -238,6 +238,18 @@ export function useAuth() {
       });
 
       // Call the RPC function to safely claim a player
+      // First, ensure we have the latest session
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        throw new Error("No active session found");
+      }
+
+      console.log("Making claim with session token:", {
+        hasToken: !!sessionData.session.access_token,
+        tokenPreview: sessionData.session.access_token.substring(0, 50) + "...",
+      });
+
       const { data, error } = await supabase.rpc("claim_player", {
         player_id: playerId,
       });

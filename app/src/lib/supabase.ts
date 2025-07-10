@@ -24,12 +24,20 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       eventsPerSecond: 10, // Optimize for real-time performance
     },
   },
-  global: {
-    headers: {
-      apikey: supabaseAnonKey,
-      // Don't set Authorization header here - let Supabase handle it based on the session
-    },
-  },
+  // Don't set any global headers - let Supabase handle all auth headers automatically
+});
+
+// Debug: Monitor auth state changes
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log("🔐 Auth state changed:", {
+    event,
+    hasSession: !!session,
+    userId: session?.user?.id,
+    accessToken: session?.access_token ? "Present" : "Missing",
+    tokenRole: session?.access_token
+      ? JSON.parse(atob(session.access_token.split(".")[1])).role
+      : "none",
+  });
 });
 
 // Auth helpers
