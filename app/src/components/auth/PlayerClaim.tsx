@@ -47,23 +47,29 @@ export function PlayerClaim({ onSuccess }: PlayerClaimProps) {
 
       // Get all players without a claim
       // First get all players
+      console.log("Fetching all players...");
       const { data: allPlayers, error: playersError } = await supabase
         .from("players")
         .select("*")
         .order("name");
 
+      console.log("Players response:", { allPlayers, playersError });
       if (playersError) throw playersError;
 
       // Then get all claimed player IDs
+      console.log("Fetching player claims...");
       const { data: claims, error: claimsError } = await supabase
         .from("player_claims")
         .select("player_id");
 
+      console.log("Claims response:", { claims, claimsError });
       if (claimsError) throw claimsError;
 
       // Filter out claimed players
       const claimedPlayerIds = new Set(claims?.map((c) => c.player_id) || []);
+      console.log("Claimed player IDs:", Array.from(claimedPlayerIds));
       const data = allPlayers?.filter((p) => !claimedPlayerIds.has(p.id)) || [];
+      console.log("Unclaimed players:", data);
       const error = null;
 
       if (error) throw error;

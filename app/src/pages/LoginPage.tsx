@@ -49,25 +49,42 @@ export function LoginPage() {
     // Check if user is already authenticated
     if (user && !checkingClaim) {
       setCheckingClaim(true);
-      checkPlayerClaim().then((hasClaim) => {
-        if (hasClaim) {
-          logger.info("User already authenticated with claim", {
-            component: "LoginPage",
-            action: "redirect",
-            userId: user.id,
-            metadata: { redirectPath: from },
-          });
-          navigate(from, { replace: true });
-        } else {
-          logger.info("User authenticated but needs to claim player", {
-            component: "LoginPage",
-            action: "showClaim",
-            userId: user.id,
-          });
+      checkPlayerClaim()
+        .then((hasClaim) => {
+          console.log("checkPlayerClaim result:", hasClaim);
+          if (hasClaim) {
+            logger.info("User already authenticated with claim", {
+              component: "LoginPage",
+              action: "redirect",
+              userId: user.id,
+              metadata: { redirectPath: from },
+            });
+            navigate(from, { replace: true });
+          } else {
+            logger.info("User authenticated but needs to claim player", {
+              component: "LoginPage",
+              action: "showClaim",
+              userId: user.id,
+            });
+            setShowPlayerClaim(true);
+          }
+          setCheckingClaim(false);
+        })
+        .catch((error) => {
+          console.error("Error checking player claim:", error);
+          logger.error(
+            "Failed to check player claim",
+            {
+              component: "LoginPage",
+              action: "checkPlayerClaim",
+              userId: user.id,
+            },
+            error
+          );
+          // Show player claim screen anyway
           setShowPlayerClaim(true);
-        }
-        setCheckingClaim(false);
-      });
+          setCheckingClaim(false);
+        });
     }
   }, [user, player, navigate, from, checkPlayerClaim, checkingClaim]);
 
