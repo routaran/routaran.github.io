@@ -131,21 +131,23 @@ export async function updateMatchScore(
       // Prepare audit log entry
       const auditLogEntry = {
         match_id: matchId,
-        change_type: "score_update",
+        play_date_id: currentMatch.play_date_id,
+        player_id: user.id,
+        action_type: "score_update",
         old_values: {
-          team1Score: currentMatch.team1_score,
-          team2Score: currentMatch.team2_score,
+          team1_score: currentMatch.team1_score,
+          team2_score: currentMatch.team2_score,
           version: currentMatch.version,
         },
         new_values: {
-          team1Score,
-          team2Score,
+          team1_score: team1Score,
+          team2_score: team2Score,
           version: currentVersion + 1,
         },
-        changed_by: user.id,
-        reason: reason || "Score update",
-        ip_address: null, // Would need to be passed from client
-        user_agent: navigator.userAgent,
+        metadata: {
+          reason: reason || "Score update",
+          user_agent: navigator.userAgent,
+        },
       };
 
       // Update match score with optimistic locking
@@ -252,11 +254,11 @@ export async function getScoreHistory(
         .select(
           `
         *,
-        players!changed_by (name)
+        players!audit_log_player_id_fkey (name)
       `
         )
         .eq("match_id", matchId)
-        .order("changed_at", { ascending: false });
+        .order("created_at", { ascending: false });
 
       if (error) {
         logger.error(
@@ -274,15 +276,13 @@ export async function getScoreHistory(
       const history = data.map((entry) => ({
         id: entry.id,
         matchId: entry.match_id,
-        changeType: entry.change_type,
+        actionType: entry.action_type,
         oldValues: entry.old_values as any,
         newValues: entry.new_values as any,
-        changedBy: entry.changed_by,
-        changedAt: entry.changed_at,
-        reason: entry.reason,
+        playerId: entry.player_id,
+        createdAt: entry.created_at,
+        metadata: entry.metadata,
         playerName: entry.players?.name,
-        ipAddress: entry.ip_address,
-        userAgent: entry.user_agent,
       }));
 
       logger.info("Successfully fetched score history", {
@@ -395,7 +395,7 @@ export async function canUpdateMatchScore(
       playerIds.includes(claim.player.id)
     );
 
-    if (userPlayerClaim?.player.project_owner) {
+    if (userPlayerClaim?.player.is_project_owner) {
       return { canUpdate: true };
     }
 
@@ -439,7 +439,7 @@ export async function getUserEditableMatches(
         player:players!inner (
           id,
           play_date_id,
-          project_owner
+          is_project_owner
         )
       `
       )
@@ -465,7 +465,7 @@ export async function getUserEditableMatches(
     }
 
     // If user is project owner, they can edit all matches
-    if (playerClaims.some((claim) => claim.player.project_owner)) {
+    if (playerClaims.some((claim) => claim.player.is_project_owner)) {
       const { data: matches, error: matchesError } = await supabase
         .from("matches")
         .select("id")

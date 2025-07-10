@@ -107,7 +107,7 @@ export interface Database {
           play_date_id: string;
           player1_id: string;
           player2_id: string;
-          partnership_name?: string;
+          partnership_name: string;
           created_at?: string;
         };
         Update: {
@@ -198,35 +198,35 @@ export interface Database {
       audit_log: {
         Row: {
           id: string;
-          play_date_id: string;
-          match_id: string;
-          player_id: string;
+          play_date_id: string | null;
+          match_id: string | null;
+          player_id: string | null;
           action_type: string;
-          old_values: Json;
-          new_values: Json;
-          metadata: Json;
+          old_values: Json | null;
+          new_values: Json | null;
+          metadata: Json | null;
           created_at: string;
         };
         Insert: {
           id?: string;
-          play_date_id: string;
-          match_id: string;
-          player_id: string;
+          play_date_id?: string | null;
+          match_id?: string | null;
+          player_id?: string | null;
           action_type: string;
-          old_values: Json;
-          new_values: Json;
-          metadata?: Json;
+          old_values?: Json | null;
+          new_values?: Json | null;
+          metadata?: Json | null;
           created_at?: string;
         };
         Update: {
           id?: string;
-          play_date_id?: string;
-          match_id?: string;
-          player_id?: string;
+          play_date_id?: string | null;
+          match_id?: string | null;
+          player_id?: string | null;
           action_type?: string;
-          old_values?: Json;
-          new_values?: Json;
-          metadata?: Json;
+          old_values?: Json | null;
+          new_values?: Json | null;
+          metadata?: Json | null;
           created_at?: string;
         };
       };

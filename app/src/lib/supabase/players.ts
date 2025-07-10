@@ -159,11 +159,11 @@ export async function getPlayersForPlayDate(playDateId: string) {
 }
 
 export async function checkPlayerNameExists(name: string, playDateId: string) {
+  // Players are global entities, so we only check if the name exists globally
   const { data, error } = await supabase
     .from("players")
     .select("id")
     .eq("name", name)
-    .eq("play_date_id", playDateId)
     .single();
 
   if (error && error.code !== "PGRST116") throw error; // PGRST116 = Row not found

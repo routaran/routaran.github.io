@@ -46,9 +46,9 @@ export function usePlayDate(playDateId?: string) {
     },
   });
 
-  // Subscribe to player updates
+  // Subscribe to partnership updates (players are linked to play dates through partnerships)
   useRealtimeSubscription({
-    table: "players",
+    table: "partnerships",
     filter: playDateId ? `play_date_id=eq.${playDateId}` : undefined,
     onInsert: () => loadPlayDate(),
     onUpdate: () => loadPlayDate(),
@@ -238,10 +238,12 @@ export function usePlayDate(playDateId?: string) {
 
     try {
       setLoading(true);
-      const newPlayer = await playersApi.createPlayer({
-        ...player,
-        play_date_id: playDateId,
-      });
+      // Create player (players are global entities)
+      const newPlayer = await playersApi.createPlayer(player);
+
+      // Add player to play date by creating partnerships
+      // This should be handled by regenerating the schedule
+      await playDatesApi.generateScheduleForPlayDate(playDateId);
 
       // Reload play date to get updated players list
       await loadPlayDate();

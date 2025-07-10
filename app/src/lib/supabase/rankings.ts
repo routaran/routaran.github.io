@@ -3,6 +3,10 @@
  *
  * Provides efficient data access for ranking calculations using
  * the match_results materialized view and related tables
+ *
+ * NOTE: The match_results table/view referenced in this file does not exist in the current schema.
+ * This file needs to be refactored to calculate rankings directly from the matches table.
+ * TODO: Either create the match_results view in the database or refactor this code.
  */
 
 import { supabase } from "@/lib/supabase";
@@ -44,8 +48,16 @@ export async function getRankingsData(
       // Get all partnerships for the play date
       supabase.from("partnerships").select("*").eq("play_date_id", playDateId),
 
-      // Get all players for the play date
-      supabase.from("players").select("*").eq("play_date_id", playDateId),
+      // Get all players for the play date through partnerships
+      supabase
+        .from("partnerships")
+        .select(
+          `
+          player1:players!partnerships_player1_id_fkey (*),
+          player2:players!partnerships_player2_id_fkey (*)
+        `
+        )
+        .eq("play_date_id", playDateId),
     ]);
 
     // Check for errors
@@ -70,11 +82,22 @@ export async function getRankingsData(
       );
     }
 
+    // Extract unique players from partnerships
+    const playersMap = new Map<string, Player>();
+    playersResponse.data?.forEach((partnership: any) => {
+      if (partnership.player1) {
+        playersMap.set(partnership.player1.id, partnership.player1);
+      }
+      if (partnership.player2) {
+        playersMap.set(partnership.player2.id, partnership.player2);
+      }
+    });
+
     return {
       matchResults: matchResultsResponse.data || [],
       matches: matchesResponse.data || [],
       partnerships: partnershipsResponse.data || [],
-      players: playersResponse.data || [],
+      players: Array.from(playersMap.values()),
     };
   } catch (error) {
     console.error("Error fetching rankings data:", error);
@@ -95,7 +118,7 @@ export async function getPlayerHistoricalStats(playerId: string): Promise<{
       .from("match_results")
       .select("*")
       .eq("player_id", playerId)
-      .order("play_date", { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (matchResultsResponse.error) {
       throw new Error(
@@ -158,7 +181,16 @@ export async function getPartnershipStats(playDateId: string): Promise<{
           .not("team1_score", "is", null)
           .not("team2_score", "is", null),
 
-        supabase.from("players").select("*").eq("play_date_id", playDateId),
+        // Get all players for the play date through partnerships
+        supabase
+          .from("partnerships")
+          .select(
+            `
+            player1:players!partnerships_player1_id_fkey (*),
+            player2:players!partnerships_player2_id_fkey (*)
+          `
+          )
+          .eq("play_date_id", playDateId),
       ]);
 
     if (partnershipsResponse.error) {
@@ -177,10 +209,21 @@ export async function getPartnershipStats(playDateId: string): Promise<{
       );
     }
 
+    // Extract unique players from partnerships
+    const playersMap = new Map<string, Player>();
+    playersResponse.data?.forEach((partnership: any) => {
+      if (partnership.player1) {
+        playersMap.set(partnership.player1.id, partnership.player1);
+      }
+      if (partnership.player2) {
+        playersMap.set(partnership.player2.id, partnership.player2);
+      }
+    });
+
     return {
       partnerships: partnershipsResponse.data || [],
       matches: matchesResponse.data || [],
-      players: playersResponse.data || [],
+      players: Array.from(playersMap.values()),
     };
   } catch (error) {
     console.error("Error fetching partnership stats:", error);
@@ -453,7 +496,7 @@ export async function getPlayerPerformanceTrends(
       `
       )
       .eq("player_id", playerId)
-      .order("play_date", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (response.error) {

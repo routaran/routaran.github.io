@@ -55,7 +55,7 @@ export function useSchedule(playDateId: string): UseScheduleResult {
           .from("courts")
           .select("*")
           .eq("play_date_id", playDateId)
-          .order("number"),
+          .order("court_number"),
       ]);
 
       if (courtsData.error) {
@@ -99,13 +99,18 @@ export function useSchedule(playDateId: string): UseScheduleResult {
             );
 
             if (dbMatch) {
+              // Find the court for this match
+              const matchCourt = courtsData.data?.find(
+                (c) => c.id === dbMatch.court_id
+              );
+
               // Merge database data with schedule data
               return {
                 ...scheduleMatch,
                 id: dbMatch.id,
                 team1_score: dbMatch.team1_score,
                 team2_score: dbMatch.team2_score,
-                court: dbMatch.court_number,
+                court: matchCourt?.court_number || undefined,
                 version: dbMatch.version,
               };
             }
