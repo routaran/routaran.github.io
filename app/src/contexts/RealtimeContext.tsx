@@ -100,7 +100,9 @@ export function RealtimeProvider({
           component: "RealtimeProvider",
           action: "autoConnectTimer",
         });
-        realtimeReconnect();
+        // Temporarily disabled auto-reconnect to debug connection issues
+        // realtimeReconnect();
+        console.log("Auto-reconnect disabled for debugging");
       }, 2000); // 2 second delay to ensure auth is ready
 
       return () => clearTimeout(timer);

@@ -13,9 +13,9 @@ The existing schema in SQL format is located at: `/mnt/podman-dev/ci_projects/ro
 ## Parameters
 
 - `path`: (Required) Path to a source file or directory to check against the DB schema.
-    - If a directory is provided, all relevant files will be checked.
-    - You must stay with in the provided patha and not go outside of it.
-    - Supported file types: .ts, .js, .jsx, .tsx, .sql
+  - If a directory is provided, all relevant files will be checked.
+  - You must stay with in the provided patha and not go outside of it.
+  - Supported file types: .ts, .js, .jsx, .tsx, .sql
 
 ## Options
 
@@ -28,90 +28,90 @@ The existing schema in SQL format is located at: `/mnt/podman-dev/ci_projects/ro
 ### 1. Initialization
 
 - The master agent will:
-    - Validate the specified source path exists
-    - Load the current DB schema from the schema file
-    - Parse the schema to extract table definitions, columns, data types, and relationships
-    - If the schema file doesn't exist or can't be parsed, prompt the user for an alternative
-    - Identify all source files to be analyzed (recursively if a directory is provided)
-    - Group files into batches for parallel processing
+  - Validate the specified source path exists
+  - Load the current DB schema from the schema file
+  - Parse the schema to extract table definitions, columns, data types, and relationships
+  - If the schema file doesn't exist or can't be parsed, prompt the user for an alternative
+  - Identify all source files to be analyzed (recursively if a directory is provided)
+  - Group files into batches for parallel processing
 
 ### 2. Source Analysis (Parallel Processing)
 
 - The master agent will:
-    - Create multiple sub-agents to process files in parallel
-    - Distribute file batches among sub-agents
-    - Provide each sub-agent with the parsed schema information
-    - Coordinate the parallel execution and collect results
+  - Create multiple sub-agents to process files in parallel
+  - Distribute file batches among sub-agents
+  - Provide each sub-agent with the parsed schema information
+  - Coordinate the parallel execution and collect results
 
 - Each sub-agent will:
-    - Process its assigned batch of files
-    - For each source file:
-        - Read the file content
-        - Parse the file to identify database interaction code:
-            - SQL queries (string literals, template literals)
-            - Table/column references in ORM models
-            - Database function calls
-            - API endpoint handlers that interact with the database
-        - Extract database entities referenced (tables, columns, types, relationships)
-        - If no database interactions are found, mark the file as "no interactions" in its report
-    - Return analysis results to the master agent
+  - Process its assigned batch of files
+  - For each source file:
+    - Read the file content
+    - Parse the file to identify database interaction code:
+      - SQL queries (string literals, template literals)
+      - Table/column references in ORM models
+      - Database function calls
+      - API endpoint handlers that interact with the database
+    - Extract database entities referenced (tables, columns, types, relationships)
+    - If no database interactions are found, mark the file as "no interactions" in its report
+  - Return analysis results to the master agent
 
 - The master agent will:
-    - Aggregate results from all sub-agents
-    - Compile a comprehensive list of files with and without database interactions
-    - Prepare the aggregated data for the comparison phase
+  - Aggregate results from all sub-agents
+  - Compile a comprehensive list of files with and without database interactions
+  - Prepare the aggregated data for the comparison phase
 
 ### 3. Comparison & Recommendations
 
 - For each file with database interactions:
-    - Compare the extracted database references with the parsed schema
-    - Identify discrepancies:
-        - Missing or renamed tables
-        - Missing, renamed, or type-mismatched columns
-        - Incorrect relationships or constraints
-    - Generate specific recommendations to align the code with the schema
-    - Classify each recommendation by risk level (low, medium, high)
-    - The recommendations MUST NOT change the business logic of the source file
+  - Compare the extracted database references with the parsed schema
+  - Identify discrepancies:
+    - Missing or renamed tables
+    - Missing, renamed, or type-mismatched columns
+    - Incorrect relationships or constraints
+  - Generate specific recommendations to align the code with the schema
+  - Classify each recommendation by risk level (low, medium, high)
+  - The recommendations MUST NOT change the business logic of the source file
 
 ### 4. Reporting
 
 - Generate a comprehensive report including:
-    - Summary of files analyzed
-    - Files with no issues found
-    - Files with discrepancies, grouped by severity
-    - Specific recommendations for each file
-    - Risk assessment for each recommendation
+  - Summary of files analyzed
+  - Files with no issues found
+  - Files with discrepancies, grouped by severity
+  - Specific recommendations for each file
+  - Risk assessment for each recommendation
 
 ### 5. User Confirmation
 
 - Present the report to the user
 - If not in dry-run mode:
-    - Ask for confirmation before applying changes
-    - Allow selective application of changes (all, by file, or by specific recommendation)
+  - Ask for confirmation before applying changes
+  - Allow selective application of changes (all, by file, or by specific recommendation)
 
 ### 6. Implementation
 
 - If the user confirms:
-    - Apply the approved changes to the source files
-    - Format the updated files using Prettier
-    - Notify the user of successful updates
-    - If any changes couldn't be applied, explain why
+  - Apply the approved changes to the source files
+  - Format the updated files using Prettier
+  - Notify the user of successful updates
+  - If any changes couldn't be applied, explain why
 
 ### 7. Verification
 
 - If test files exist for the modified sources:
-    - Suggest running relevant tests to verify functionality
-    - If the user agrees, execute the tests and report results
-    - Flag any test failures for manual review
+  - Suggest running relevant tests to verify functionality
+  - If the user agrees, execute the tests and report results
+  - Flag any test failures for manual review
 
 ### 8. Git Integration (if --no-git is not specified)
 
 - If Git is available:
-    - Show a diff of the changes made
-    - Ask if the user wants to commit the changes
-    - If confirmed, commit with a descriptive message
-    - Ask if the user wants to push the changes
-    - If confirmed, push to the current branch
+  - Show a diff of the changes made
+  - Ask if the user wants to commit the changes
+  - If confirmed, commit with a descriptive message
+  - Ask if the user wants to push the changes
+  - If confirmed, push to the current branch
 
 ## Limitations
 
@@ -151,11 +151,11 @@ The existing schema in SQL format is located at: `/mnt/podman-dev/ci_projects/ro
 ## Troubleshooting
 
 - If the command fails to detect database interactions in your code:
-    - Check if your database access is through a custom abstraction layer
-    - Consider analyzing the abstraction layer files directly
-    - Use more explicit database access patterns in critical code
+  - Check if your database access is through a custom abstraction layer
+  - Consider analyzing the abstraction layer files directly
+  - Use more explicit database access patterns in critical code
 
 - If recommendations seem incorrect:
-    - Use `--verbose` to see the detailed analysis
-    - Check if your schema file is up-to-date
-    - Consider running in `--dry-run` mode and manually implementing changes
+  - Use `--verbose` to see the detailed analysis
+  - Check if your schema file is up-to-date
+  - Consider running in `--dry-run` mode and manually implementing changes

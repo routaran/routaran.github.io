@@ -68,23 +68,64 @@ export function ConnectionStatus({
 
   // Create a test subscription to ensure at least one channel exists
   useEffect(() => {
-    console.log("ConnectionStatus mounting, creating test subscription");
+    // Skip in StrictMode double-mount scenario
+    let mounted = true;
+    let unsubscribe: (() => void) | null = null;
 
-    // Subscribe to play_dates table just to establish a connection
-    const unsubscribe = subscribeToTable("connection-test", {
-      table: "play_dates",
-      event: "*",
-      callback: (payload) => {
-        console.log("Received realtime event:", payload);
-      },
-      onError: (error) => {
-        console.error("Realtime subscription error:", error);
-      },
-    });
+    const setupSubscription = async () => {
+      // Small delay to avoid race conditions during mount
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      if (!mounted) return;
+
+      console.log("ConnectionStatus setting up test subscription");
+
+      // Subscribe to play_dates table just to establish a connection
+      unsubscribe = subscribeToTable("connection-test", {
+        table: "play_dates",
+        event: "*",
+        callback: (payload) => {
+          console.log("Received realtime event:", payload);
+        },
+        onError: (error) => {
+          console.error("Realtime subscription error:", error);
+          console.error("Error details:", {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+          });
+        },
+      });
+
+      // Also log the Supabase client state
+      const checkSupabaseState = () => {
+        if (!mounted) return;
+
+        const supabaseClient = (window as any).supabase;
+        if (supabaseClient?.realtime) {
+          console.log("Supabase Realtime State:", {
+            isConnected: supabaseClient.realtime.isConnected(),
+            channels: supabaseClient.realtime.channels?.length || 0,
+            conn: {
+              readyState: supabaseClient.realtime.conn?.readyState,
+              url: supabaseClient.realtime.conn?.url,
+            },
+          });
+        }
+      };
+
+      // Check state after a delay
+      setTimeout(checkSupabaseState, 3000);
+    };
+
+    setupSubscription();
 
     return () => {
+      mounted = false;
       console.log("ConnectionStatus unmounting, cleaning up test subscription");
-      unsubscribe();
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
   }, []);
 

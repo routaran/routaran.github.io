@@ -13,6 +13,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
+// Log when Supabase client is created
+console.log("Creating Supabase client instance");
+
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
@@ -27,6 +30,11 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
   // Don't set any global headers - let Supabase handle all auth headers automatically
 });
+
+// Make supabase available globally for debugging (development only)
+if (typeof window !== "undefined" && import.meta.env.DEV) {
+  (window as any).supabase = supabase;
+}
 
 // Debug: Monitor auth state changes
 supabase.auth.onAuthStateChange((event, session) => {
@@ -46,6 +54,18 @@ supabase.auth.onAuthStateChange((event, session) => {
     event === "TOKEN_REFRESHED" ||
     event === "SIGNED_OUT"
   ) {
+    // Update the realtime client with the new access token
+    if (session?.access_token) {
+      // Update the access token for all realtime connections
+      (supabase as any).realtime?.setAuth?.(session.access_token);
+
+      logger.info("Updated realtime auth token", {
+        component: "supabase",
+        action: "realtimeAuthUpdate",
+        metadata: { event, hasToken: true },
+      });
+    }
+
     // Reconnect all realtime channels to use the updated auth state
     logger.info("Auth state changed, reconnecting realtime", {
       component: "supabase",

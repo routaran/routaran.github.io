@@ -379,6 +379,15 @@ export class RealtimeManager {
             error: error?.message || null,
             errorDetails: error || null,
             errorCode: (error as any)?.code || null,
+            channelState: channel.state,
+            channelTopic: channel.topic,
+            // Log which tables are being subscribed to
+            subscriptions:
+              channel._events?.postgres_changes?.map((sub: any) => ({
+                table: sub.table,
+                event: sub.event,
+                filter: sub.filter,
+              })) || [],
           },
         });
 
@@ -631,6 +640,9 @@ export class RealtimeManager {
 
 // Export singleton instance
 export const realtimeManager = new RealtimeManager();
+
+// Log when realtime manager is created
+console.log("Created RealtimeManager singleton instance");
 
 // Export convenience functions
 export const subscribeToTable = <T extends TableName>(
