@@ -302,11 +302,17 @@ export class RealtimeManager {
    * Create a new channel with error handling
    */
   private createChannel(channelName: string): RealtimeChannel {
-    // Create channel with proper configuration
-    const channel = supabase.channel(channelName, {
-      config: {
-        // Ensure the channel uses the current auth state
-        private: true,
+    // Create channel without private configuration
+    // RLS policies on tables will handle access control
+    const channel = supabase.channel(channelName);
+
+    // Log channel creation
+    logger.info("Creating realtime channel", {
+      component: "realtime",
+      action: "createChannel",
+      metadata: {
+        channelName,
+        channelState: channel.state,
       },
     });
 
@@ -344,6 +350,20 @@ export class RealtimeManager {
     try {
       this.updateConnectionState("connecting");
 
+      // Log current auth state before subscribing
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      logger.info("Subscribing channel with auth state", {
+        component: "realtime",
+        action: "preSubscribe",
+        metadata: {
+          channelName,
+          hasSession: !!session,
+          userId: session?.user?.id,
+        },
+      });
+
       const result = await channel.subscribe((status, error) => {
         logger.info("Channel subscription status changed", {
           component: "realtime",
@@ -353,6 +373,7 @@ export class RealtimeManager {
             status,
             error: error?.message || null,
             errorDetails: error || null,
+            errorCode: (error as any)?.code || null,
           },
         });
 

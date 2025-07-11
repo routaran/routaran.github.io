@@ -94,10 +94,14 @@ export function RealtimeProvider({
         action: "autoConnect",
       });
 
-      // Small delay to ensure everything is initialized
+      // Delay to ensure auth state is fully initialized
       const timer = setTimeout(() => {
+        logger.info("Attempting realtime auto-connect", {
+          component: "RealtimeProvider",
+          action: "autoConnectTimer",
+        });
         realtimeReconnect();
-      }, 1000); // Increased delay to ensure auth is ready
+      }, 2000); // 2 second delay to ensure auth is ready
 
       return () => clearTimeout(timer);
     }
