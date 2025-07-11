@@ -1,0 +1,96 @@
+@startuml Player Management Partnership Assignment
+!theme plain
+
+title Pickleball Tracker - Player Management & Partnership Assignment Workflow
+
+actor "Organizer" as Organizer
+participant "PlayerSelector" as Selector
+participant "Partnership\nGenerator" as PartnerGen
+participant "Schedule\nGenerator" as SchedGen
+database "Database" as DB
+participant "UI" as UI
+
+== Player Addition (Creation Only) ==
+note over Organizer #lightblue: Players can ONLY be added\nduring tournament creation
+
+Organizer -> Selector: Add players
+Selector -> Selector: Enforce constraints:\n- Min: 4 players\n- Max: 16 players
+Selector -> DB: Search existing players
+DB --> Selector: Global player list
+
+alt Existing player
+    Organizer -> Selector: Select from autocomplete
+    Selector -> Selector: Add to tournament
+else New player
+    Organizer -> Selector: Enter name + email
+    Selector -> Selector: Validate email format
+    Selector -> DB: Check duplicate names
+end
+
+Selector -> Selector: Validate uniqueness
+note right: No duplicate:\n- Names\n- Emails\nwithin tournament
+
+== Partnership Generation ==
+Organizer -> UI: Create tournament
+UI -> PartnerGen: generatePartnerships(players)
+
+PartnerGen -> PartnerGen: Calculate C(n,2) combinations
+note over PartnerGen: For n players:\nPartnerships = n(n-1)/2\n\nExample (8 players):\n28 partnerships total
+
+loop For each combination
+    PartnerGen -> PartnerGen: Create partnership:\n{player1_id, player2_id}
+    note right: ID format:\n"player1_id-player2_id"
+end
+
+PartnerGen -> PartnerGen: Validate coverage
+note over PartnerGen: Each player appears in\nexactly (n-1) partnerships
+
+PartnerGen --> SchedGen: Partnership list
+
+== Schedule Creation ==
+SchedGen -> SchedGen: Create round-robin matches
+note over SchedGen: Each partnership plays\nevery other partnership\n(no shared players)
+
+SchedGen -> DB: INSERT partnerships
+SchedGen -> DB: INSERT matches
+DB --> UI: Tournament ready
+
+== After Tournament Creation ==
+note over UI #pink: NO MODIFICATIONS ALLOWED
+
+Organizer -> UI: Try to add player
+UI -> UI: Check hasScores
+alt No scores yet
+    UI --> Organizer: "Regenerate schedule?"
+    note right: Would DELETE all:\n- Partnerships\n- Matches\n- Progress
+else Scores exist
+    UI --> Organizer: ERROR: Cannot modify
+    note over UI: "Players and schedule\ncannot be modified after\nscores have been entered"
+end
+
+== Not Supported Features ==
+note over UI #lightcoral: System does NOT support:\n× Late player addition\n× Player removal\n× Player substitution\n× Partnership rebalancing\n× Manual partnerships\n× Handling dropouts
+
+== Regenerate Schedule (Destructive) ==
+alt No scores entered
+    Organizer -> UI: Regenerate schedule
+    UI --> Organizer: Warning dialog
+    note over UI: "This will delete:\n- All partnerships\n- All matches\n- All progress"
+    
+    Organizer -> UI: Confirm
+    UI -> DB: DELETE FROM matches\nWHERE play_date_id = ?
+    UI -> DB: DELETE FROM partnerships\nWHERE play_date_id = ?
+    
+    UI -> PartnerGen: Regenerate all
+    note right: Complete rebuild\nfrom scratch
+end
+
+== Business Rules ==
+note over PartnerGen: Partnership Rules:\n- Pure combinatorial\n- No balancing algorithm\n- No skill consideration\n- No manual assignment
+
+note over UI: Player Rules:\n- All players known upfront\n- No changes after start\n- Email required for all\n- Global player entities
+
+== Database Schema ==
+note over DB: players table (global):\n- id, name, email\n- is_project_owner\n\npartnerships table:\n- play_date_id\n- player1_id, player2_id\n\nNo player-play_date relation
+
+@enduml

@@ -1,0 +1,74 @@
+@startuml Real-time Conflict Resolution
+!theme plain
+
+title Pickleball Tracker - Real-time Conflict Resolution Workflow
+
+actor "Player A" as PlayerA
+actor "Player B" as PlayerB
+participant "ScoreEntryForm A" as FormA
+participant "ScoreEntryForm B" as FormB
+participant "useScoreEntry A" as HookA
+participant "useScoreEntry B" as HookB
+participant "Realtime\nSubscription" as Realtime
+database "Supabase DB" as DB
+database "Audit Log" as Audit
+
+== Concurrent Score Updates ==
+PlayerA -> FormA: Update score to 5-3
+PlayerB -> FormB: Update score to 4-4
+note over FormA, FormB: Both users editing\nsame match simultaneously
+
+== Optimistic UI Updates ==
+FormA -> HookA: Update local state
+HookA -> FormA: Show 5-3 immediately
+FormB -> HookB: Update local state  
+HookB -> FormB: Show 4-4 immediately
+
+== Database Updates with Version Check ==
+group Player A Update (First)
+    HookA -> DB: UPDATE matches\nSET score1=5, score2=3,\nversion=version+1\nWHERE id=? AND version=1
+    DB -> DB: Check version=1 ✓
+    DB -> DB: Update successful
+    DB -> Audit: Log score change
+    note over Audit: Records:\n- Old: 0-0, v1\n- New: 5-3, v2\n- User: Player A
+    DB --> HookA: Success (version=2)
+    DB -> Realtime: Broadcast change
+end
+
+group Player B Update (Conflict)
+    HookB -> DB: UPDATE matches\nSET score1=4, score2=4,\nversion=version+1\nWHERE id=? AND version=1
+    DB -> DB: Check version=1 ✗
+    note over DB: Version mismatch!\nCurrent version is 2
+    DB --> HookB: Error: Version conflict
+end
+
+== Conflict Resolution ==
+HookB -> HookB: Detect version conflict
+HookB -> FormB: Show conflict UI
+FormB --> PlayerB: "Score was updated\nby another user"
+
+alt Option 1: Auto-Resolution (Latest Wins)
+    Realtime -> HookB: Receive broadcast\n(5-3, version=2)
+    HookB -> FormB: Update to latest\n(5-3)
+    FormB --> PlayerB: Show updated score
+else Option 2: Manual Resolution
+    FormB --> PlayerB: Show conflict dialog
+    note right of PlayerB: Shows:\n- Your change: 4-4\n- Their change: 5-3\n- Who & when
+    PlayerB -> FormB: Choose resolution
+    alt Keep Mine
+        FormB -> HookB: Retry with version=2
+        HookB -> DB: UPDATE matches\nSET score1=4, score2=4,\nversion=3\nWHERE id=? AND version=2
+    else Accept Theirs
+        FormB -> HookB: Accept broadcast
+        HookB -> FormB: Update to 5-3
+    end
+end
+
+== Real-time Propagation ==
+Realtime -> FormA: Broadcast updates
+note over FormA: Player A sees\nfinal resolution
+
+== Advanced Features (Available but not fully implemented) ==
+note over FormA, FormB #lightblue: Available Infrastructure:\n- useConflictResolution hook\n- Conflict strategies (latest-wins, keep-mine, merge)\n- Presence indicators\n- Edit locking mechanisms
+
+@enduml

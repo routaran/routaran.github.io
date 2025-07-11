@@ -1,0 +1,84 @@
+@startuml Authentication Workflow
+!theme plain
+
+title Pickleball Tracker - Authentication Workflow
+
+actor User
+participant "Browser" as Browser
+participant "LoginForm" as LoginForm
+participant "AuthCallbackPage" as Callback
+participant "useAuth Hook" as AuthHook
+participant "authStore" as Store
+participant "PlayerClaim\nComponent" as PlayerClaim
+database "Supabase Auth" as SupaAuth
+database "Supabase DB" as DB
+
+== Magic Link Authentication ==
+User -> LoginForm: Enter email
+LoginForm -> LoginForm: Validate email format
+LoginForm -> SupaAuth: signInWithOtp(email)
+SupaAuth --> User: Send magic link email
+LoginForm --> User: "Check your email"
+
+... User checks email ...
+
+== Auth Callback Handling ==
+User -> Browser: Click magic link
+Browser -> Callback: Navigate to /auth/callback\nwith tokens in URL
+Callback -> SupaAuth: Extract session from URL
+SupaAuth -> SupaAuth: Create session
+Callback -> SupaAuth: getSession()
+alt Session created
+    SupaAuth --> Callback: Session data
+    Callback -> Browser: Redirect to /login
+else No session
+    Callback -> Callback: Wait 1 second
+    Callback -> SupaAuth: Retry getSession()
+end
+
+== Session Management ==
+Browser -> AuthHook: Mount component
+AuthHook -> SupaAuth: Subscribe to auth changes
+SupaAuth --> AuthHook: SIGNED_IN event
+AuthHook -> Store: setAuth(user, session)
+AuthHook -> DB: Check player claim\nSELECT * FROM player_claims\nWHERE auth_user_id = ?
+
+alt Has existing claim
+    DB --> AuthHook: Player claim data
+    AuthHook -> DB: Load player data\nSELECT * FROM players\nWHERE id = ?
+    DB --> AuthHook: Player data
+    AuthHook -> Store: Set player & role
+    note right of Store: Role based on\nis_project_owner flag
+else First time user
+    DB --> AuthHook: No claim found
+    AuthHook -> PlayerClaim: Show claim component
+end
+
+== Player Claiming Process ==
+group First Time User Only
+    PlayerClaim -> DB: Get unclaimed players
+    DB --> PlayerClaim: Player list
+    PlayerClaim --> User: Show available names
+    User -> PlayerClaim: Select name
+    PlayerClaim -> DB: claim_player RPC
+    
+    note over DB: RPC validates:\n- User authenticated\n- Player not claimed\n- User has no other claim
+    
+    DB -> DB: INSERT INTO player_claims
+    DB -> DB: INSERT INTO audit_log
+    DB --> PlayerClaim: Success
+    PlayerClaim -> AuthHook: Reload auth data
+    AuthHook -> Store: Update player & role
+end
+
+== Protected Route Access ==
+Browser -> Browser: Navigate to protected route
+note over Browser: ProtectedRoute checks:\n- isAuthenticated\n- requiresPlayer\n- requiredRole
+alt Authorized
+    Browser --> User: Show page
+else Not authorized
+    Browser -> Browser: Redirect to /login
+    note right: Preserves attempted\nroute for post-login
+end
+
+@enduml

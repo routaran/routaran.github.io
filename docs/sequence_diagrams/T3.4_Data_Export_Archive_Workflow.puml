@@ -1,0 +1,102 @@
+@startuml Data Export Archive Workflow
+!theme plain
+
+title Pickleball Tracker - Data Export/Archive Workflow
+
+actor "Organizer" as Organizer
+participant "ExportButton" as ExportUI
+participant "ExportGenerator" as Generator
+participant "DataValidator" as Validator
+participant "PrivacyFilter" as Privacy
+participant "FormatConverter" as Converter
+database "Database" as DB
+participant "FileDownload" as Download
+
+== Export Initiation ==
+Organizer -> ExportUI: Click export
+ExportUI -> ExportUI: Show export options
+note over ExportUI: Export types:\n- Rankings (CSV/JSON)\n- Player stats\n- Partnership stats\n- Tournament summary
+
+Organizer -> ExportUI: Select format & options
+ExportUI -> Generator: startExport(options)
+
+== Data Collection ==
+Generator -> DB: Query tournament data
+note over DB: Collected data:\n- Play date settings\n- Player rankings\n- Match results\n- Partnership statistics
+
+DB --> Generator: Raw tournament data
+
+== Data Validation ==
+Generator -> Validator: validateExportData()
+
+Validator -> Validator: Check data integrity
+note over Validator: Validation rules:\n- Non-empty rankings\n- No negative stats\n- No duplicate ranks\n- Consistent relationships
+
+alt Validation failed
+    Validator --> ExportUI: Show validation errors
+    ExportUI --> Organizer: "Cannot export:\nData integrity issues"
+else Validation passed
+    Validator --> Generator: Data validated
+end
+
+== Privacy Filtering ==
+Generator -> Privacy: applyPrivacyFilters()
+
+Privacy -> Privacy: Process PII sanitization
+note over Privacy: Current filtering:\n✓ Player emails excluded\n✓ Organizer ID optional redaction\n× Limited audit trail export\n× Basic metadata sanitization
+
+alt includePersonalData = false
+    Privacy -> Privacy: Redact organizer_id
+    Privacy -> Privacy: Remove metadata
+else Standard export
+    Privacy -> Privacy: Keep player names
+    Privacy -> Privacy: Preserve statistics
+end
+
+Privacy --> Generator: Filtered data
+
+== Format Generation ==
+Generator -> Converter: generateFormat(type)
+
+alt CSV Export
+    Converter -> Converter: Create CSV structure
+    note over Converter: CSV format:\n- Headers: Rank, Name, Games,\n  Wins, Win%, Points, Differential\n- Quoted strings for safety\n- Optional timestamps
+    
+else JSON Export
+    Converter -> Converter: Create JSON structure
+    note over Converter: JSON structure:\n{\n  playDate: {...},\n  rankings: [...],\n  tournamentSummary: {...},\n  exportedAt: "ISO timestamp",\n  exportOptions: {...}\n}
+end
+
+Converter --> Generator: Formatted data
+
+== File Generation & Download ==
+Generator -> Download: triggerDownload()
+
+Download -> Download: Create blob
+note over Download: Client-side processing:\n- All in browser memory\n- No server-side generation\n- Limited by browser memory
+
+Download -> Download: Generate filename
+note right: Format:\n"tournament-name-rankings-YYYY-MM-DD.csv"\n"tournament-name-export-YYYY-MM-DD.json"
+
+Download -> Download: Trigger browser download
+Download --> Organizer: File downloaded
+
+== Error Handling ==
+alt Export fails
+    Generator -> ExportUI: Handle error
+    ExportUI --> Organizer: "Export failed:\nPlease try again"
+    
+    note over Generator: Error scenarios:\n- Memory constraints\n- Data validation failure\n- Network issues\n- Browser limitations
+end
+
+== Current Limitations ==
+note over Generator #lightcoral: Missing features:\n× No import/restore capability\n× No bulk tournament export\n× No format versioning\n× No server-side processing\n× No audit trail in exports
+
+note over Privacy #lightyellow: Privacy gaps:\n× Limited PII sanitization options\n× No IP address filtering\n× Basic metadata handling\n× Audit logs not exported
+
+== Performance Considerations ==
+note over Converter #lightblue: Scale limitations:\n- Client-side only processing\n- Memory bound by browser\n- No streaming for large data\n- No compression\n- Synchronous operations
+
+note over Generator: Current scale:\n- 4-16 players max\n- Single tournament scope\n- Statistics-focused exports\n- No cross-tournament data
+
+@enduml

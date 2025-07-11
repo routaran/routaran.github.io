@@ -1,0 +1,114 @@
+@startuml Play Date Create Update Workflow
+!theme plain
+
+title Pickleball Tracker - Play Date Create/Update Workflow
+
+actor "Organizer" as Organizer
+participant "PlayDateForm" as Form
+participant "PlayerSelector" as PlayerSelect
+participant "usePlayDate" as Hook
+participant "Validation" as Validator
+database "Supabase DB" as DB
+participant "Schedule\nGenerator" as Generator
+
+== Play Date Creation ==
+Organizer -> Form: Open create form
+Form -> Form: Initialize empty form
+
+group Tournament Settings
+    Organizer -> Form: Enter details
+    note right: Required fields:\n- Name\n- Date (today or future)\n- Target score (5-21)\n- Win condition\n- Courts (1-4)
+end
+
+group Player Selection
+    Organizer -> PlayerSelect: Add players
+    PlayerSelect -> DB: searchPlayers(query)
+    note over DB: Debounced search\n(300ms delay)
+    DB --> PlayerSelect: Matching players
+    
+    PlayerSelect --> Organizer: Show autocomplete
+    Organizer -> PlayerSelect: Select existing player
+    alt New player
+        Organizer -> PlayerSelect: Enter new name/email
+        PlayerSelect -> Validator: Validate email
+        note over Validator: Regex validation:\n^[A-Za-z0-9._%+-]+@\n[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$
+    end
+    
+    PlayerSelect -> PlayerSelect: Check duplicates
+    PlayerSelect -> PlayerSelect: Enforce limits\n(4 ≤ players ≤ 16)
+end
+
+== Form Submission ==
+Organizer -> Form: Submit
+Form -> Hook: createPlayDate(data)
+
+Hook -> Hook: Verify authentication
+Hook -> Hook: Set organizer_id = current player
+
+Hook -> DB: BEGIN TRANSACTION
+
+group Create Play Date
+    Hook -> DB: INSERT INTO play_dates
+    DB --> Hook: play_date_id
+end
+
+group Process Players
+    Hook -> DB: Find/create global players
+    note over DB: Players are global entities\ncan participate in multiple\ntournaments
+end
+
+group Generate Schedule
+    Hook -> Generator: generateScheduleForPlayDate()
+    
+    Generator -> DB: Create courts (1 to num_courts)
+    Generator -> Generator: Generate partnerships\nC(n,2) combinations
+    Generator -> Generator: Create round-robin matches
+    note right: Each partnership plays\nevery other partnership\nexactly once
+    
+    Generator -> DB: INSERT partnerships
+    Generator -> DB: INSERT matches
+    Generator -> Generator: Assign courts to matches
+    DB --> Generator: Success
+end
+
+Hook -> DB: COMMIT TRANSACTION
+DB --> Hook: Complete play date
+
+Hook --> Form: Creation successful
+Form --> Organizer: Show tournament page
+
+== Play Date Updates ==
+Organizer -> Form: Open edit form
+Form -> Hook: Load play date data
+
+Hook -> DB: Check for scores
+DB --> Hook: hasScores boolean
+
+alt No scores entered
+    Form -> Form: Enable all fields
+    Organizer -> Form: Modify settings/players
+    
+    group Regenerate Schedule
+        Organizer -> Form: Regenerate schedule
+        Form --> Organizer: Warning dialog
+        Organizer -> Form: Confirm
+        Hook -> DB: DELETE matches, partnerships
+        Hook -> Generator: Regenerate all
+    end
+    
+else Scores exist
+    Form -> Form: Disable player/schedule editing
+    Form --> Organizer: Show warning
+    note over Form: "Players and schedule\ncannot be modified after\nscores have been entered"
+    
+    Organizer -> Form: Can only edit:\n- Date\n- Win conditions\n- Target score\n- Courts
+end
+
+== Permission Checks ==
+note over Hook: canEditPlayDate():\n- Project Owner: Any play date\n- Organizer: Own play dates only\n- Player: Cannot edit
+
+== Update Process ==
+Hook -> DB: UPDATE play_dates\nSET ... version = version+1\nWHERE id=? AND version=?
+note right: Optimistic locking\nprevents concurrent\nupdates
+
+@enduml

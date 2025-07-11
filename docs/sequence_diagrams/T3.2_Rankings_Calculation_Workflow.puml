@@ -1,0 +1,112 @@
+@startuml Rankings Calculation Workflow
+!theme plain
+
+title Pickleball Tracker - Rankings Calculation Workflow
+
+actor "Player" as Player
+participant "ScoreEntry" as ScoreForm
+participant "WinValidation" as Validator
+participant "MatchUpdate" as MatchUpdater
+database "Database" as DB
+database "Materialized\nView" as MatView
+participant "Realtime" as Realtime
+participant "Rankings\nCalculator" as Calculator
+participant "TieBreaker" as TieBreaker
+participant "RankingsUI" as UI
+
+== Score Entry & Win Validation ==
+Player -> ScoreForm: Enter final scores
+ScoreForm -> Validator: validateWinCondition()
+
+Validator -> Validator: Check win condition
+alt First-to-target mode
+    Validator -> Validator: maxScore >= targetScore?
+    note right: Example: 11-5, 11-9 valid\n10-10 invalid
+else Win-by-2 mode
+    Validator -> Validator: maxScore >= target AND\nlead >= 2 points?
+    note right: Example: 11-9, 15-13 valid\n11-10 invalid
+end
+
+Validator --> ScoreForm: Validation result
+ScoreForm -> MatchUpdater: Update match
+
+== Database Update & Triggers ==
+MatchUpdater -> DB: UPDATE matches SET\n  scores, is_complete, winner
+DB -> DB: Trigger: auto_refresh_match_results()
+DB -> MatView: REFRESH MATERIALIZED VIEW\n  match_results
+
+note over MatView: Pre-calculated stats:\n- Games played\n- Wins/losses\n- Points for/against\n- Point differential
+
+== Real-time Propagation ==
+DB -> Realtime: Broadcast match update
+Realtime -> UI: Update event received
+UI -> Calculator: Recalculate rankings
+
+== Rankings Calculation Algorithm ==
+Calculator -> MatView: Query pre-aggregated stats
+MatView --> Calculator: Player statistics
+
+Calculator -> Calculator: Calculate derived metrics
+note over Calculator: For each player:\n- Win percentage = wins ÷ games\n- Point differential = for - against\n- Total points scored
+
+== Multi-Tier Tie-Breaking ==
+Calculator -> TieBreaker: Apply ranking algorithm
+
+TieBreaker -> TieBreaker: **Tier 1**: Win percentage
+note right: Higher percentage wins
+
+alt Tie on win percentage
+    TieBreaker -> TieBreaker: **Tier 2**: Point differential  
+    note right: Higher differential wins
+    
+    alt Still tied
+        TieBreaker -> TieBreaker: **Tier 3**: Head-to-head record
+        note right: More wins in direct\nmatchups wins
+        
+        alt Still tied
+            TieBreaker -> TieBreaker: **Tier 4**: Total points scored
+            note right: Higher total wins
+            
+            alt Still tied
+                TieBreaker -> TieBreaker: **Tier 5**: Alphabetical by name
+                note right: Final deterministic\ntie-breaker
+            end
+        end
+    end
+end
+
+TieBreaker --> Calculator: Final rankings
+
+== Performance Optimizations ==
+group Sub-500ms Response Time
+    Calculator -> Calculator: Use materialized view
+    note right: vs 2-3 seconds from\nraw match queries
+    
+    Calculator -> Calculator: Indexed lookups
+    note over Calculator: Critical indexes:\n- play_date_id + win_percentage\n- play_date_id + point_differential
+end
+
+group Real-time Updates
+    Calculator -> Calculator: Optimistic UI updates
+    Calculator -> Calculator: Calculate ranking changes
+    note right: Show movement arrows:\n↑ Rank improved\n↓ Rank declined\n→ No change
+end
+
+== Partnership-Level Analytics ==
+group Partnership Statistics
+    Calculator -> DB: Query partnership performance
+    note over Calculator: Partnership metrics:\n- Chemistry analysis\n- Win rate per pairing\n- Optimal combinations
+    
+    Calculator -> Calculator: Aggregate to player level
+    note right: Individual stats =\nsum across all partnerships
+end
+
+== Final UI Update ==
+Calculator -> UI: Update rankings display
+UI -> UI: Show ranking changes
+note over UI: Real-time features:\n- Live position updates\n- Change animations\n- Progress indicators
+
+UI --> Player: Updated standings visible
+note right: Sub-1-second update\nfrom score entry to display
+
+@enduml

@@ -1,0 +1,98 @@
+@startuml Enter Scores Workflow
+!theme plain
+
+title Pickleball Tracker - Enter Scores Workflow
+
+actor "Player" as Player
+participant "ScoreEntryForm" as Form
+participant "useScoreEntry" as Hook
+participant "Validation" as Validator
+participant "Realtime" as Realtime
+database "Supabase DB" as DB
+database "Audit Log" as Audit
+participant "Rankings" as Rankings
+actor "Other Users" as Others
+
+== Score Entry UI ==
+Player -> Form: Open match to score
+Form -> Hook: Load match data
+Hook -> DB: SELECT match details\nwith partnerships
+DB --> Hook: Match data (version=n)
+Hook -> Form: Display current scores
+
+Player -> Form: Update scores
+note right: Input methods:\n- +/- buttons\n- Direct input\n- Shortcuts (11-0, 11-9)
+
+== Real-time Validation ==
+Form -> Validator: Validate scores
+Validator -> Validator: Check win conditions
+
+alt First-to-target mode
+    Validator -> Validator: Either score ≥ target?
+    note right: Example: target=11\nValid: 11-5, 11-9\nInvalid: 10-10
+else Win-by-2 mode
+    Validator -> Validator: Score ≥ target AND\nlead ≥ 2?
+    note right: Example: target=11\nValid: 11-9, 15-13\nInvalid: 11-10
+end
+
+alt Invalid scores
+    Validator --> Form: Show error
+    Form --> Player: Display validation error
+else Valid scores
+    Validator --> Form: Validation passed
+end
+
+== Optimistic UI Update ==
+Form -> Hook: updateScore(score1, score2)
+Hook -> Form: Update UI immediately
+note over Form: Player sees updated\nscores instantly
+
+== Database Update with Version Check ==
+Hook -> DB: UPDATE matches SET\n  partnership1_score = ?,\n  partnership2_score = ?,\n  is_complete = ?,\n  completed_at = ?,\n  recorded_by = ?,\n  version = version + 1\nWHERE id = ? AND version = ?
+
+alt Update successful
+    DB -> DB: Version check passed ✓
+    DB --> Hook: Success (new version)
+    
+    group Audit Trail
+        DB -> Audit: INSERT INTO audit_log
+        note over Audit: Records:\n- match_id\n- old/new scores\n- changed_by_uid\n- timestamp\n- browser info
+    end
+    
+else Version conflict
+    DB -> DB: Version check failed ✗
+    DB --> Hook: Error: Version mismatch
+    Hook -> Hook: Handle conflict
+    Hook -> Form: Show conflict message
+    note over Form: "Another user\nupdated scores"
+end
+
+== Match Completion Check ==
+alt Match completed
+    Hook -> Hook: Determine winner
+    note right: Based on:\n- Win condition\n- Final scores
+    Hook -> DB: Mark match complete
+end
+
+== Real-time Propagation ==
+DB -> Realtime: Broadcast change
+note over Realtime: Event: UPDATE\nTable: matches\nPayload: new match data
+
+Realtime --> Others: Push updates
+note over Others: All users viewing\nthis match/tournament\nreceive update
+
+Realtime --> Rankings: Trigger refresh
+Rankings -> DB: Recalculate standings
+note over Rankings: Query match_results\nRecalculate:\n- Wins/losses\n- Points for/against\n- Win percentage
+
+== Error Handling ==
+alt Network error
+    Hook -> Form: Show error toast
+    Form -> Form: Keep local changes
+    note right: Can retry when\nconnection restored
+else Permission denied
+    Hook -> Form: Show permission error
+    note right: Only match players\ncan update scores
+end
+
+@enduml
