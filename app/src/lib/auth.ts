@@ -274,7 +274,7 @@ export const authService = {
               .eq("id", context.playDateId)
               .single();
 
-            return data?.organizer_id === user.id;
+            return data?.organizer_id === player.id;
           }
           return false;
 

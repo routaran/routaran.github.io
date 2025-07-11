@@ -16,7 +16,7 @@ import * as playersApi from "../lib/supabase/players";
 
 export function usePlayDate(playDateId?: string) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, player } = useAuth();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [playDate, setPlayDate] = useState<PlayDateWithDetails | null>(null);
@@ -71,16 +71,20 @@ export function usePlayDate(playDateId?: string) {
       setPlayDate(data);
 
       // Check permissions
-      if (user) {
-        setIsOrganizer(data.organizer_id === user.id);
+      if (user && player) {
+        setIsOrganizer(data.organizer_id === player.id);
 
         // Check if user is project owner
         const projectOwner = await playersApi.getProjectOwner();
-        setIsProjectOwner(projectOwner?.email === user.email);
+        setIsProjectOwner(projectOwner?.id === player.id);
 
         // Check if play date can be edited
-        const editable = await playDatesApi.canEditPlayDate(playDateId);
-        setCanEdit(editable && (isOrganizer || isProjectOwner));
+        const editable = playDatesApi.canEditPlayDate(
+          data,
+          player.id,
+          player.is_project_owner || false
+        );
+        setCanEdit(editable);
       } else {
         setIsOrganizer(false);
         setIsProjectOwner(false);
@@ -109,13 +113,21 @@ export function usePlayDate(playDateId?: string) {
       return;
     }
 
+    if (!player) {
+      showToast(
+        "You must claim a player name before creating a play date",
+        "error"
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
       // Create play date
       const newPlayDate = await playDatesApi.createPlayDate({
         ...data,
-        organizer_id: user.id,
+        organizer_id: player.id,
       });
 
       // Create or find players (players are global, not tied to play dates)

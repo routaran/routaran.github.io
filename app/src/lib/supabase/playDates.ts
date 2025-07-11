@@ -448,29 +448,152 @@ export function formatPlayDateStatus(status: PlayDateStatus): string {
 
   return statusMap[status] || status;
 }
-// Temporary implementation - actual schedule generation to be implemented
+// Generate round-robin schedule for a play date
 export async function generateScheduleForPlayDate(
-  id: string,
+  playDateId: string,
   players: Player[]
 ) {
-  // TODO: Implement actual schedule generation
-  // This should:
-  // 1. Create partnerships (pairs of players)
-  // 2. Create courts for the play date
-  // 3. Generate round-robin matches
-  // 4. Assign matches to courts and rounds
+  try {
+    logger.info("Generating schedule for play date", {
+      component: "playDates",
+      action: "generateSchedule",
+      metadata: { playDateId, playerCount: players.length },
+    });
 
-  logger.info("Schedule generation requested", {
-    component: "playDates",
-    action: "generateSchedule",
-    metadata: { playDateId: id, playerCount: players.length },
-  });
+    // Validate player count
+    if (players.length < 4) {
+      throw new Error("At least 4 players are required for a play date");
+    }
+    if (players.length > 16) {
+      throw new Error("Maximum 16 players allowed per play date");
+    }
 
-  // For now, just return success
-  return {
-    data: { message: "Schedule generation not yet implemented" },
-    error: null,
-  };
+    // Get play date details to know how many courts
+    const { data: playDate, error: playDateError } = await supabase
+      .from("play_dates")
+      .select("*")
+      .eq("id", playDateId)
+      .single();
+
+    if (playDateError) throw playDateError;
+    if (!playDate) throw new Error("Play date not found");
+
+    // Step 1: Create courts for the play date
+    const courts = [];
+    for (let i = 1; i <= playDate.num_courts; i++) {
+      const { data: court, error: courtError } = await supabase
+        .from("courts")
+        .insert({
+          play_date_id: playDateId,
+          court_number: i,
+          court_name: `Court ${i}`,
+        })
+        .select()
+        .single();
+
+      if (courtError) throw courtError;
+      courts.push(court);
+    }
+
+    // Step 2: Generate all possible partnerships (pairs of players)
+    const partnerships = [];
+    for (let i = 0; i < players.length; i++) {
+      for (let j = i + 1; j < players.length; j++) {
+        const { data: partnership, error: partnershipError } = await supabase
+          .from("partnerships")
+          .insert({
+            play_date_id: playDateId,
+            player1_id: players[i].id,
+            player2_id: players[j].id,
+            partnership_name: `${players[i].name} & ${players[j].name}`,
+          })
+          .select()
+          .single();
+
+        if (partnershipError) throw partnershipError;
+        partnerships.push(partnership);
+      }
+    }
+
+    // Step 3: Generate round-robin matches
+    const matches = [];
+    let roundNumber = 1;
+    let courtIndex = 0;
+
+    // Create matches where each partnership plays every other partnership once
+    for (let i = 0; i < partnerships.length; i++) {
+      for (let j = i + 1; j < partnerships.length; j++) {
+        const partnership1 = partnerships[i];
+        const partnership2 = partnerships[j];
+
+        // Check if these partnerships share a player (can't play against themselves)
+        const p1Players = [partnership1.player1_id, partnership1.player2_id];
+        const p2Players = [partnership2.player1_id, partnership2.player2_id];
+        const hasSharedPlayer = p1Players.some((p) => p2Players.includes(p));
+
+        if (!hasSharedPlayer) {
+          // Assign to a court
+          const court = courts[courtIndex % courts.length];
+
+          const { data: match, error: matchError } = await supabase
+            .from("matches")
+            .insert({
+              play_date_id: playDateId,
+              court_id: court.id,
+              round_number: roundNumber,
+              partnership1_id: partnership1.id,
+              partnership2_id: partnership2.id,
+              status: "waiting",
+            })
+            .select()
+            .single();
+
+          if (matchError) throw matchError;
+          matches.push(match);
+
+          // Move to next court
+          courtIndex++;
+          // If we've used all courts, move to next round
+          if (courtIndex % courts.length === 0) {
+            roundNumber++;
+          }
+        }
+      }
+    }
+
+    logger.info("Schedule generated successfully", {
+      component: "playDates",
+      action: "generateSchedule",
+      metadata: {
+        playDateId,
+        courtsCreated: courts.length,
+        partnershipsCreated: partnerships.length,
+        matchesCreated: matches.length,
+        totalRounds: roundNumber - 1,
+      },
+    });
+
+    return {
+      data: {
+        courts: courts.length,
+        partnerships: partnerships.length,
+        matches: matches.length,
+        rounds: roundNumber - 1,
+      },
+      error: null,
+    };
+  } catch (error) {
+    logger.error(
+      "Failed to generate schedule",
+      {
+        component: "playDates",
+        action: "generateSchedule",
+        metadata: { playDateId },
+      },
+      error as Error
+    );
+    return { data: null, error: error as SupabaseError };
+  }
 }
 export async function exportPlayDateToJson(id: string) {
   return { data: null, error: new Error("Not implemented") };

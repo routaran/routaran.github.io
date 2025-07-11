@@ -31,7 +31,7 @@ export function PlayDateForm({
 }: PlayDateFormProps) {
   const [formData, setFormData] = useState<PlayDateInsert>({
     date: initialData?.date || "",
-    win_condition: initialData?.win_condition || "first_to_target",
+    win_condition: initialData?.win_condition || "win_by_2",
     target_score: initialData?.target_score || 11,
     num_courts: initialData?.num_courts || 1,
     organizer_id: "", // Will be set by the parent
