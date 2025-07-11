@@ -394,6 +394,15 @@ export class RealtimeManager {
         if (status === "SUBSCRIBED") {
           this.updateConnectionState("connected");
           this.reconnectAttempts = 0; // Reset on successful connection
+
+          logger.info("Channel successfully subscribed", {
+            component: "realtime",
+            action: "subscriptionSuccess",
+            metadata: {
+              channelName,
+              channelTopic: channel.topic,
+            },
+          });
         } else if (status === "CLOSED" || status === "CHANNEL_ERROR") {
           // Check if this is an authentication error
           const isAuthError =
