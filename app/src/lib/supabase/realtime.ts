@@ -302,9 +302,14 @@ export class RealtimeManager {
    * Create a new channel with error handling
    */
   private createChannel(channelName: string): RealtimeChannel {
-    // Create channel without private configuration
-    // RLS policies on tables will handle access control
-    const channel = supabase.channel(channelName);
+    // Create public channel - RLS policies on tables handle access control
+    // Using public channels avoids auth token injection issues
+    const channel = supabase.channel(channelName, {
+      config: {
+        // Broadcast self to receive own messages (useful for optimistic updates)
+        broadcast: { self: true },
+      },
+    });
 
     // Log channel creation
     logger.info("Creating realtime channel", {
@@ -381,8 +386,31 @@ export class RealtimeManager {
           this.updateConnectionState("connected");
           this.reconnectAttempts = 0; // Reset on successful connection
         } else if (status === "CLOSED" || status === "CHANNEL_ERROR") {
-          this.updateConnectionState("error");
-          this.scheduleReconnection();
+          // Check if this is an authentication error
+          const isAuthError =
+            error?.message?.includes("JWT") ||
+            error?.message?.includes("token") ||
+            error?.message?.includes("unauthorized") ||
+            (error as any)?.code === "PGRST301";
+
+          if (isAuthError) {
+            logger.error("Authentication error in realtime channel", {
+              component: "realtime",
+              action: "authError",
+              metadata: {
+                channelName,
+                errorMessage: error?.message,
+                errorCode: (error as any)?.code,
+              },
+            });
+
+            // For auth errors, we should reconnect immediately to get new token
+            this.updateConnectionState("error");
+            this.handleReconnection();
+          } else {
+            this.updateConnectionState("error");
+            this.scheduleReconnection();
+          }
         } else if (status === "TIMED_OUT") {
           logger.error("Channel subscription timed out", {
             component: "realtime",

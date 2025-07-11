@@ -4,6 +4,7 @@ import {
   useRealtimeConnectionChange,
 } from "../contexts/RealtimeContext";
 import { cn } from "../lib/utils";
+import { subscribeToTable } from "../lib/supabase/realtime";
 
 export interface ConnectionStatusProps {
   /**
@@ -65,6 +66,28 @@ export function ConnectionStatus({
   const [isVisible, setIsVisible] = useState(true);
   const [showReconnectButton, setShowReconnectButton] = useState(false);
 
+  // Create a test subscription to ensure at least one channel exists
+  useEffect(() => {
+    console.log("ConnectionStatus mounting, creating test subscription");
+
+    // Subscribe to play_dates table just to establish a connection
+    const unsubscribe = subscribeToTable("connection-test", {
+      table: "play_dates",
+      event: "*",
+      callback: (payload) => {
+        console.log("Received realtime event:", payload);
+      },
+      onError: (error) => {
+        console.error("Realtime subscription error:", error);
+      },
+    });
+
+    return () => {
+      console.log("ConnectionStatus unmounting, cleaning up test subscription");
+      unsubscribe();
+    };
+  }, []);
+
   // Handle auto-hide logic
   useEffect(() => {
     if (!autoHide) {
@@ -115,6 +138,11 @@ export function ConnectionStatus({
         break;
     }
   });
+
+  // Log connection state changes
+  useEffect(() => {
+    console.log("Connection state changed:", connectionState);
+  }, [connectionState]);
 
   // Position classes
   const positionClasses = {
