@@ -66,7 +66,6 @@ export const useAppStore = create<AppState>()(
           playDateId: currentPlayDate?.id,
           metadata: {
             hasPlayDate: !!currentPlayDate,
-            playDateName: currentPlayDate?.name,
             date: currentPlayDate?.date,
           },
         });
