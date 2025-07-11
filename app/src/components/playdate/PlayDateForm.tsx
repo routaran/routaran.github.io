@@ -30,7 +30,6 @@ export function PlayDateForm({
   loading = false,
 }: PlayDateFormProps) {
   const [formData, setFormData] = useState<PlayDateInsert>({
-    name: initialData?.name || "",
     date: initialData?.date || "",
     win_condition: initialData?.win_condition || "first_to_target",
     target_score: initialData?.target_score || 11,
@@ -52,10 +51,6 @@ export function PlayDateForm({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Play date name is required";
-    }
 
     if (!formData.date) {
       newErrors.date = "Date is required";
@@ -124,21 +119,6 @@ export function PlayDateForm({
 
   return (
     <Form onSubmit={handleSubmit} className="space-y-6">
-      <FormGroup>
-        <Label htmlFor="name">Play Date Name</Label>
-        <Input
-          id="name"
-          type="text"
-          value={formData.name}
-          onChange={(e) => handleFieldChange("name", e.target.value)}
-          onBlur={() => handleBlur("name")}
-          placeholder="e.g., Saturday Morning Pickleball"
-          disabled={loading}
-          required
-        />
-        {touched.name && errors.name && <ErrorMessage error={errors.name} />}
-      </FormGroup>
-
       <FormGroup>
         <Label htmlFor="date">Date</Label>
         <div className="relative">
