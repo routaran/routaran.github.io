@@ -1,0 +1,97 @@
+@startuml Audit Trail Dispute Resolution
+!theme plain
+
+title Pickleball Tracker - Audit Trail & Dispute Resolution Workflow
+
+actor "Player" as Player
+actor "Admin" as Admin
+participant "ScoreEntry" as ScoreForm
+participant "AuditLogger" as Logger
+database "Audit Log" as AuditDB
+participant "ScoreHistory" as History
+participant "DisputeDetector" as Detector
+participant "AdminInterface" as AdminUI
+participant "ConflictResolver" as Resolver
+
+== Automatic Audit Capture ==
+Player -> ScoreForm: Update score
+ScoreForm -> Logger: Log score change
+
+Logger -> Logger: Create audit entry
+note over Logger: Capture:\n- Old/new values\n- User ID & email\n- Timestamp\n- Version numbers\n- User agent & metadata
+
+Logger -> AuditDB: INSERT INTO audit_log
+note over AuditDB: Entry structure:\n- match_id, player_id\n- action_type: "score_update"\n- old_values: {score1: 8, score2: 6}\n- new_values: {score1: 11, score2: 9}\n- metadata: {reason, user_agent}
+
+AuditDB -> AuditDB: Immutable storage
+note right: No updates/deletes allowed\nfor data integrity
+
+== Score History Viewing ==
+Player -> History: View match history
+History -> AuditDB: Query audit trail
+AuditDB --> History: Chronological changes
+
+History -> History: Format for display
+note over History: Show:\n- Timeline view\n- Before/after scores\n- User attribution\n- Relative timestamps
+
+History --> Player: Complete change history
+
+== Dispute Detection ==
+group Automatic Flagging
+    Detector -> AuditDB: Monitor for patterns
+    
+    alt Rapid changes detected
+        Detector -> Detector: Flag: Multiple edits <1min
+    else Large corrections
+        Detector -> Detector: Flag: Score change >5 points
+    else Version conflicts
+        Detector -> Detector: Flag: Concurrent edit attempts
+    else Unusual patterns
+        Detector -> Detector: Flag: Non-standard scores
+    end
+    
+    Detector -> AdminUI: Create dispute alert
+end
+
+== Dispute Investigation ==
+Admin -> AdminUI: Access dispute dashboard
+AdminUI -> AuditDB: Query flagged entries
+
+AdminUI -> AdminUI: Show investigation tools
+note over AdminUI: Investigation features:\n- Complete change timeline\n- User session info (IP, browser)\n- Concurrent edit detection\n- Cross-match analysis
+
+AdminUI --> Admin: Dispute details
+
+== Administrative Override ==
+Admin -> AdminUI: Review dispute
+AdminUI -> AdminUI: Show resolution options
+note right: Options:\n- Manual correction\n- Accept latest change\n- Revert to previous\n- Mark as resolved
+
+Admin -> Resolver: Choose resolution
+Resolver -> Logger: Log admin action
+
+note over Logger: Admin override audit:\n- admin_override: true\n- original_user: player_id\n- resolution_reason: text\n- authority: "project_owner"
+
+Resolver -> AuditDB: Record resolution
+Resolver -> ScoreForm: Apply correction
+
+== Data Integrity & Security ==
+group RLS Enforcement
+    note over AuditDB: Row Level Security:\n- Players: Own match logs only\n- Organizers: Own tournament logs\n- Project owners: Full access
+end
+
+group Immutable Audit Trail
+    AuditDB -> AuditDB: Prevent tampering
+    note right: Provides:\n- Legal compliance\n- Forensic evidence\n- Dispute confidence
+end
+
+== Missing Capabilities ==
+note over Resolver #lightcoral: Current limitations:\n× No automated rollback\n× No ML pattern detection\n× No bulk dispute resolution\n× Manual investigation only
+
+note over AdminUI #lightyellow: Recommended enhancements:\n+ Automated rollback system\n+ Pattern recognition alerts\n+ Bulk resolution tools\n+ Notification system
+
+== Real-time Updates ==
+AuditDB -> History: Realtime subscription
+note over History: Live audit updates:\n- New changes appear instantly\n- Collaborative investigation\n- Multi-admin monitoring
+
+@enduml

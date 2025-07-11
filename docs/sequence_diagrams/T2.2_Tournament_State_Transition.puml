@@ -1,0 +1,82 @@
+@startuml Tournament State Transition Workflow
+!theme plain
+
+title Pickleball Tracker - Tournament State Transition Workflow
+
+participant "System" as System
+participant "UI Logic" as UI
+database "Database" as DB
+participant "Schedule Lock" as Lock
+participant "Completion\nChecker" as Checker
+
+== Tournament States (Database) ==
+note over DB: States defined but not actively used:\n- scheduled (default)\n- active\n- completed\n- cancelled
+
+== Actual State Management (UI-Based) ==
+note over UI #lightblue: System relies on score presence\nrather than explicit states
+
+== Initial State ==
+System -> DB: Create play date
+DB -> DB: status = 'scheduled'\nschedule_locked = false
+DB --> System: New tournament
+
+== First Score Entry (Implicit Transition) ==
+actor Player
+Player -> UI: Enter first score
+UI -> DB: UPDATE match SET scores
+
+group Schedule Lock Check
+    UI -> UI: hasScores = matches.some(score != null)
+    alt hasScores = true
+        UI -> UI: Set editing restrictions
+        note over UI: Frontend enforces:\n- No player changes\n- No schedule regeneration
+        
+        note over Lock #pink: schedule_locked field exists\nbut not automatically set!\nOnly UI enforcement
+    end
+end
+
+== Tournament Progress Monitoring ==
+loop Every UI update
+    UI -> Checker: calculateTournamentSummary()
+    Checker -> DB: Count completed matches
+    Checker -> Checker: completed = matches with scores\ntotal = all matches
+    Checker -> Checker: percentage = (completed/total) × 100
+    
+    alt percentage = 100
+        Checker --> UI: Tournament complete
+        UI -> UI: Show completion badge
+        UI -> UI: Enable export features
+        note over DB #pink: status field not updated\nto 'completed'
+    else percentage < 100
+        Checker --> UI: In progress
+        UI -> UI: Show progress bar
+    end
+end
+
+== What Should Happen (Not Implemented) ==
+note over System #lightyellow: Missing automatic transitions:\n1. First score → status='active'\n2. First score → schedule_locked=true\n3. All complete → status='completed'
+
+== Permission-Based Operations ==
+group Based on hasScores
+    alt No scores (Implicit 'scheduled')
+        UI --> Player: Can edit everything
+        note right: - Add/remove players\n- Change settings\n- Regenerate schedule
+    else Some scores (Implicit 'active')
+        UI --> Player: Limited editing
+        note right: - Only tournament settings\n- No player changes\n- No schedule changes
+    else All complete (Implicit 'completed')
+        UI --> Player: Read-only + export
+    end
+end
+
+== Database Helper Functions ==
+note over DB: is_schedule_locked(uuid):\nChecks schedule_locked field\n(but field not auto-updated)
+
+== State Validation Rules ==
+UI -> UI: Validation is implicit:
+note over UI: - Can't score if not a player\n- Can't regenerate if hasScores\n- Project owners can override
+
+== Missing Features ==
+note over System #pink: 1. No database triggers for state changes\n2. State field exists but unused\n3. No RLS enforcement of states\n4. No audit trail for state changes\n5. No locked_at timestamp
+
+@enduml

@@ -1,0 +1,93 @@
+@startuml Tournament Scheduling Algorithm
+!theme plain
+
+title Pickleball Tracker - Tournament Scheduling Algorithm Workflow
+
+actor "Organizer" as Organizer
+participant "PlayDateForm" as Form
+participant "useCreatePlayDate" as Hook
+participant "generateSchedule" as Scheduler
+participant "Court Assignment" as CourtAssign
+database "Supabase DB" as DB
+
+== Play Date Creation ==
+Organizer -> Form: Create tournament
+Form -> Form: Input details:\n- Name, Date, Location\n- Max players (4-16)\n- Max courts (1-4)\n- Win conditions
+
+Organizer -> Form: Add players
+Form -> Form: Validate player count\n(4 ≤ n ≤ 16)
+Form -> Hook: Submit form
+
+== Schedule Generation Process ==
+Hook -> Scheduler: generateSchedule(players, courts)
+
+group Partnership Generation
+    Scheduler -> Scheduler: Generate all C(n,2) combinations
+    note right: For n players:\nTotal partnerships = n(n-1)/2\n\nExample (8 players):\n28 partnerships
+    Scheduler -> Scheduler: Create partnership objects:\n[{player1, player2}, ...]
+end
+
+group Round-Robin Matrix
+    Scheduler -> Scheduler: Create match matrix
+    note over Scheduler: Each partnership must play\nevery other partnership\nexactly once
+    
+    alt Even number of partnerships
+        Scheduler -> Scheduler: Standard round-robin\nRotation algorithm
+    else Odd number (bye rounds)
+        Scheduler -> Scheduler: Add "bye" partnership
+        note right: Some partnerships\nwill have bye rounds
+    end
+    
+    Scheduler -> Scheduler: Generate rounds[]
+    note right: Round structure:\n- No player in multiple\n  matches per round\n- Minimize total rounds
+end
+
+group Court Assignment Optimization
+    Scheduler -> CourtAssign: Assign courts to matches
+    
+    loop For each round
+        CourtAssign -> CourtAssign: Pack matches into courts
+        note over CourtAssign: Greedy algorithm:\n1. Sort by priority\n2. Assign to available courts\n3. Track court usage
+        
+        alt Matches > Courts
+            CourtAssign -> CourtAssign: Some matches unassigned
+            note right: Will play in\nlater time slots
+        else Matches ≤ Courts
+            CourtAssign -> CourtAssign: All matches assigned
+        end
+    end
+    
+    CourtAssign --> Scheduler: Court assignments
+end
+
+== Database Persistence ==
+Hook -> DB: BEGIN TRANSACTION
+
+group Save Play Date
+    Hook -> DB: INSERT INTO play_dates
+    DB --> Hook: play_date_id
+end
+
+group Save Partnerships
+    Hook -> DB: INSERT INTO partnerships\n(play_date_id, player1_id, player2_id)
+    note right: Bulk insert all\ngenerated partnerships
+    DB --> Hook: partnership_ids[]
+end
+
+group Save Matches
+    Hook -> DB: INSERT INTO matches
+    note over DB: For each match:\n- partnership1_id\n- partnership2_id\n- round_number\n- court_number (nullable)\n- scores (default 0-0)\n- version = 1
+    DB --> Hook: match_ids[]
+end
+
+Hook -> DB: COMMIT TRANSACTION
+DB --> Hook: Success
+
+== Schedule Display ==
+Hook -> Form: Schedule created
+Form -> Form: Show schedule grid:\n- Rounds as rows\n- Courts as columns\n- Matches in cells
+
+== Example Schedule (8 players, 2 courts) ==
+note over Form: Round 1: Court 1: (A,B) vs (C,D)\n         Court 2: (E,F) vs (G,H)\nRound 2: Court 1: (A,C) vs (B,D)\n         Court 2: (E,G) vs (F,H)\n...continues for all 28 matches
+
+@enduml

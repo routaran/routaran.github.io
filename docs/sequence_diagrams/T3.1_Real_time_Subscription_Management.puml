@@ -1,0 +1,105 @@
+@startuml Real-time Subscription Management
+!theme plain
+
+title Pickleball Tracker - Real-time Subscription Management Workflow
+
+actor "User" as User
+participant "RealtimeProvider" as Provider
+participant "RealtimeManager" as Manager
+participant "Connection\nMonitor" as Monitor
+participant "Channel\nManager" as Channels
+participant "Subscription\nHandler" as Handler
+database "Supabase\nRealtime" as Realtime
+participant "UI Components" as UI
+
+== Application Startup ==
+User -> Provider: App loads
+Provider -> Provider: Auto-connect delay (1s)
+note right: Ensures auth is ready\nbefore connecting
+Provider -> Manager: initialize()
+Manager -> Realtime: Establish WebSocket
+Realtime --> Manager: Connection established
+Manager -> Monitor: Start monitoring
+Monitor -> UI: Update status (Connected)
+
+== Subscription Creation ==
+UI -> Handler: useRealtimeSubscription(config)
+Handler -> Channels: createChannel(table, filter)
+
+alt Channel exists
+    Channels -> Channels: Reuse existing channel
+    note right: Channel naming:\nrealtime:tableName:filterHash
+else New channel
+    Channels -> Realtime: Create channel
+    note over Realtime: Channel config:\nprivate: true (enforces RLS)
+    Realtime --> Channels: Channel created
+end
+
+Handler -> Channels: Add subscription
+Channels -> Realtime: Subscribe to events
+note over Realtime: Subscribed tables:\n- matches (score updates)\n- players (additions)\n- play_dates (settings)\n- partnerships (changes)\n- audit_log (history)
+
+== Real-time Event Processing ==
+Realtime -> Handler: Event received
+Handler -> Handler: Filter by permissions
+note right: RLS policies filter\nevents at database level
+
+Handler -> UI: Callback execution
+note over UI: Updates React state\ntriggers re-renders
+
+== Connection Errors & Reconnection ==
+group Network Failure
+    Realtime -x Manager: Connection lost
+    Manager -> Monitor: Update status (Disconnected)
+    Monitor -> UI: Show offline indicator
+    
+    Manager -> Manager: Start reconnection
+    note over Manager: Exponential backoff:\n1s → 2s → 4s → 8s → ... → 30s max\nMax 10 attempts
+    
+    loop Reconnection attempts
+        Manager -> Realtime: Reconnect attempt
+        alt Connection successful
+            Realtime --> Manager: Connected
+            Manager -> Channels: Reestablish channels
+            Manager -> Monitor: Update status (Connected)
+            Monitor -> UI: Show online indicator
+        else Connection failed
+            Manager -> Manager: Increment backoff
+            note right: Next attempt in\n2^attempt seconds
+        end
+    end
+end
+
+== Performance Optimizations ==
+group Subscription Batching
+    note over Handler: OptimizedRealtimeManager:\n- Batches subscriptions (50ms delay)\n- Max 10 per batch\n- Reduces WebSocket overhead
+end
+
+group Memory Management
+    Handler -> Handler: Monitor memory usage
+    alt Memory > 50MB threshold
+        Handler -> Handler: Force garbage collection
+        Handler -> Channels: Clean unused channels
+    end
+end
+
+group Query Optimization
+    Handler -> Handler: Deduplicate identical queries
+    Handler -> Handler: Cache results (5s TTL)
+    note right: Sub-1-second latency\nrequirement (NFR-08)
+end
+
+== Subscription Cleanup ==
+UI -> Handler: Component unmount
+Handler -> Channels: Unsubscribe
+Channels -> Channels: Check remaining subscriptions
+alt No subscriptions left
+    Channels -> Realtime: Remove channel
+    Channels -> Channels: Clean from cache
+end
+
+Provider -> Manager: App unmount
+Manager -> Channels: unsubscribeAll()
+Manager -> Realtime: Close connection
+
+@enduml
