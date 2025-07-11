@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Realtime Debug</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <h1>Supabase Realtime Debug</h1>
+    <div id="status">Initializing...</div>
+    <div id="logs"></div>
+
+    <script>
+      const SUPABASE_URL = "https://frpmereknkmxkgjqyglj.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZycG1lcmVrbmtteGtnanF5Z2xqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwODAzMzcsImV4cCI6MjA2NzY1NjMzN30.7tPlf5BHhyD7jvhcAFnSBHpwMp2tbHP2BQXOumXVH9U";
+
+      const log = (msg) => {
+        const timestamp = new Date().toISOString();
+        const logDiv = document.getElementById("logs");
+        logDiv.innerHTML += `<div>[${timestamp}] ${msg}</div>`;
+        console.log(msg);
+      };
+
+      const updateStatus = (status) => {
+        document.getElementById("status").innerHTML =
+          `<strong>Status: ${status}</strong>`;
+      };
+
+      // Create Supabase client
+      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      log("Created Supabase client");
+
+      // Test direct channel subscription
+      async function testRealtime() {
+        try {
+          updateStatus("Creating channel...");
+          const channel = supabase.channel("test-channel");
+          log("Created channel: test-channel");
+
+          // Subscribe to play_dates table
+          channel.on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "play_dates",
+            },
+            (payload) => {
+              log(`Received event: ${JSON.stringify(payload)}`);
+            }
+          );
+
+          updateStatus("Subscribing...");
+          const result = await channel.subscribe((status, err) => {
+            log(`Subscription status: ${status}`);
+            if (err) {
+              log(`Subscription error: ${err.message}`);
+              updateStatus(`Error: ${err.message}`);
+            } else if (status === "SUBSCRIBED") {
+              updateStatus("Connected! Listening for changes...");
+            } else {
+              updateStatus(status);
+            }
+          });
+
+          log(`Subscribe result: ${result}`);
+
+          // Check connection after 2 seconds
+          setTimeout(() => {
+            const isConnected = supabase.realtime.isConnected();
+            log(`Is connected: ${isConnected}`);
+
+            const channels = supabase.realtime.channels;
+            log(`Active channels: ${channels.length}`);
+
+            if (channels.length > 0) {
+              channels.forEach((ch, i) => {
+                log(`Channel ${i}: ${ch.topic}, state: ${ch.state}`);
+              });
+            }
+          }, 2000);
+        } catch (error) {
+          log(`Error: ${error.message}`);
+          updateStatus(`Error: ${error.message}`);
+        }
+      }
+
+      // Run test
+      testRealtime();
+    </script>
+  </body>
+</html>

@@ -67,7 +67,12 @@ export function usePlayDate(playDateId?: string) {
 
     try {
       setLoading(true);
-      const data = await playDatesApi.getPlayDateById(playDateId);
+      const { data, error } = await playDatesApi.getPlayDateById(playDateId);
+
+      if (error || !data) {
+        throw new Error(error?.message || "Failed to load play date");
+      }
+
       setPlayDate(data);
 
       // Check permissions
@@ -75,8 +80,13 @@ export function usePlayDate(playDateId?: string) {
         setIsOrganizer(data.organizer_id === player.id);
 
         // Check if user is project owner
-        const projectOwner = await playersApi.getProjectOwner();
-        setIsProjectOwner(projectOwner?.id === player.id);
+        try {
+          const projectOwner = await playersApi.getProjectOwner();
+          setIsProjectOwner(projectOwner?.id === player.id);
+        } catch (error) {
+          // No project owner found is okay
+          setIsProjectOwner(false);
+        }
 
         // Check if play date can be edited
         const editable = playDatesApi.canEditPlayDate(
@@ -125,19 +135,29 @@ export function usePlayDate(playDateId?: string) {
       setLoading(true);
 
       // Create play date
-      const newPlayDate = await playDatesApi.createPlayDate({
-        ...data,
-        organizer_id: player.id,
-      });
+      const { data: newPlayDate, error: createError } =
+        await playDatesApi.createPlayDate({
+          ...data,
+          organizer_id: player.id,
+        });
+
+      if (createError || !newPlayDate) {
+        throw new Error(createError?.message || "Failed to create play date");
+      }
 
       // Create or find players (players are global, not tied to play dates)
       const createdPlayers = await playersApi.createPlayers(players);
 
       // Generate schedule (this should create partnerships and matches)
-      await playDatesApi.generateScheduleForPlayDate(
-        newPlayDate.id,
-        createdPlayers
-      );
+      const { error: scheduleError } =
+        await playDatesApi.generateScheduleForPlayDate(
+          newPlayDate.id,
+          createdPlayers
+        );
+
+      if (scheduleError) {
+        throw new Error(scheduleError.message || "Failed to generate schedule");
+      }
 
       showToast("Play date created successfully", "success");
       navigate(`/play-dates/${newPlayDate.id}`);
@@ -201,7 +221,18 @@ export function usePlayDate(playDateId?: string) {
 
     try {
       setLoading(true);
-      await playDatesApi.generateScheduleForPlayDate(playDateId);
+
+      // Need to get the current players for this play date
+      const players = await playersApi.getPlayersForPlayDate(playDateId);
+      const { error } = await playDatesApi.generateScheduleForPlayDate(
+        playDateId,
+        players
+      );
+
+      if (error) {
+        throw error;
+      }
+
       await loadPlayDate();
       showToast("Schedule regenerated successfully", "success");
     } catch (error: any) {
@@ -255,10 +286,21 @@ export function usePlayDate(playDateId?: string) {
 
       // Add player to play date by creating partnerships
       // This should be handled by regenerating the schedule
-      await playDatesApi.generateScheduleForPlayDate(playDateId);
+      const players = await playersApi.getPlayersForPlayDate(playDateId);
+      const { error: scheduleError } =
+        await playDatesApi.generateScheduleForPlayDate(playDateId, [
+          ...players,
+          newPlayer,
+        ]);
+
+      if (scheduleError) {
+        throw scheduleError;
+      }
 
       // Reload play date to get updated players list
-      await loadPlayDate();
+      if (playDateId) {
+        await loadPlayDate();
+      }
       showToast("Player added successfully", "success");
       return newPlayer;
     } catch (error) {

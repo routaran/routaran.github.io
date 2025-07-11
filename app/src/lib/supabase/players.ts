@@ -34,37 +34,62 @@ export async function createPlayer(player: PlayerInsert) {
 }
 
 export async function createPlayers(players: PlayerInsert[]) {
-  // Since players are global and have unique email constraint,
+  // Since players are global and have unique constraints on both name and email,
   // we need to handle the case where players already exist
   const createdPlayers: Player[] = [];
 
   for (const player of players) {
-    // Try to create the player
-    const { data, error } = await supabase
+    // First check if a player with this email already exists
+    const { data: existingPlayer, error: checkError } = await supabase
       .from("players")
-      .insert(player)
-      .select()
+      .select("*")
+      .eq("email", player.email)
       .single();
 
-    if (error) {
-      // If player already exists (unique constraint violation), fetch the existing player
-      if (error.code === "23505") {
-        // Unique constraint violation
-        const { data: existingPlayer, error: fetchError } = await supabase
+    if (checkError && checkError.code !== "PGRST116") {
+      // PGRST116 = Row not found, which is expected
+      throw checkError;
+    }
+
+    if (existingPlayer) {
+      // Player with this email already exists
+      // Check if the name matches
+      if (existingPlayer.name !== player.name) {
+        // Update the player's name if it's different
+        const { data: updatedPlayer, error: updateError } = await supabase
           .from("players")
-          .select("*")
-          .eq("email", player.email)
+          .update({ name: player.name })
+          .eq("id", existingPlayer.id)
+          .select()
           .single();
 
-        if (fetchError) throw fetchError;
-        if (existingPlayer) {
-          createdPlayers.push(existingPlayer);
-        }
+        if (updateError) throw updateError;
+        createdPlayers.push(updatedPlayer || existingPlayer);
       } else {
-        throw error;
+        createdPlayers.push(existingPlayer);
       }
-    } else if (data) {
-      createdPlayers.push(data);
+    } else {
+      // Try to create the new player
+      const { data, error } = await supabase
+        .from("players")
+        .insert(player)
+        .select()
+        .single();
+
+      if (error) {
+        if (
+          error.code === "23505" &&
+          error.message.includes("players_name_key")
+        ) {
+          // Name already exists but with a different email
+          throw new Error(
+            `A player named "${player.name}" already exists with a different email address`
+          );
+        }
+        throw error;
+      } else if (data) {
+        createdPlayers.push(data);
+      }
     }
   }
 
